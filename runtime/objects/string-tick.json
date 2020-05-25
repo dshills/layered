@@ -1,0 +1,8 @@
+{
+	"name": "string-tick",
+	"start": "`",
+	"end": "`",
+	"multiline": true,
+	"keys": "`"
+}
+

@@ -1,0 +1,339 @@
+[
+	{
+		"group": "comment.goComment",
+		"type": "region",
+		"start": "/\\*",
+		"end": "\\*/",
+		"contains": [
+			"@goCommentGroup",
+			"@Spell"
+		]
+	},
+	{
+		"group": "comment.goComment",
+		"type": "region",
+		"start": "//",
+		"end": "$",
+		"contains": [
+			"@goCommentGroup",
+			"@Spell"
+		]
+	},
+	{
+		"group": "statement.goDirective",
+		"type": "keyword",
+		"keywords": [
+			"package",
+			"import"
+		]
+	},
+	{
+		"group": "keyword.goDeclaration",
+		"type": "keyword",
+		"keywords": [
+			"var",
+			"const",
+			"type"
+		]
+	},
+	{
+		"group": "keyword.goDeclType",
+		"type": "keyword",
+		"keywords": [
+			"struct",
+			"interface"
+		]
+	},
+	{
+		"group": "statement.goStatement",
+		"type": "keyword",
+		"keywords": [
+			"defer",
+			"go",
+			"goto",
+			"return",
+			"break",
+			"continue",
+			"fallthrough"
+		]
+	},
+	{
+		"group": "conditional.goConditional",
+		"type": "keyword",
+		"keywords": [
+			"if",
+			"else",
+			"switch",
+			"select"
+		]
+	},
+	{
+		"group": "label.goLabel",
+		"type": "keyword",
+		"keywords": [
+			"case",
+			"default"
+		]
+	},
+	{
+		"group": "repeat.goRepeat",
+		"type": "keyword",
+		"keywords": [
+			"for",
+			"range"
+		]
+	},
+	{
+		"group": "type.goType",
+		"type": "keyword",
+		"keywords": [
+			"chan",
+			"map",
+			"bool",
+			"string",
+			"error"
+		]
+	},
+	{
+		"group": "type.goSignedInts",
+		"type": "keyword",
+		"keywords": [
+			"int",
+			"int8",
+			"int16",
+			"int32",
+			"int64",
+			"rune"
+		]
+	},
+	{
+		"group": "type.goUnsignedInts",
+		"type": "keyword",
+		"keywords": [
+			"byte",
+			"uint",
+			"uint8",
+			"uint16",
+			"uint32",
+			"uint64",
+			"uintptr"
+		]
+	},
+	{
+		"group": "type.goFloats",
+		"type": "keyword",
+		"keywords": [
+			"float32",
+			"float64"
+		]
+	},
+	{
+		"group": "type.goComplexes",
+		"type": "keyword",
+		"keywords": [
+			"complex64",
+			"complex128"
+		]
+	},
+	{
+		"group": "type.goType",
+		"type": "match",
+		"match": "\\Afunc\\z"
+	},
+	{
+		"group": "keyword.goDeclaration",
+		"type": "match",
+		"match": "^func"
+	},
+	{
+		"group": "keyword.goBuiltins",
+		"type": "keyword",
+		"keywords": [
+			"append",
+			"cap",
+			"close",
+			"complex",
+			"copy",
+			"delete",
+			"imag",
+			"len"
+		]
+	},
+	{
+		"group": "keyword.goBuiltins",
+		"type": "keyword",
+		"keywords": [
+			"make",
+			"new",
+			"panic",
+			"print",
+			"println",
+			"real",
+			"recover"
+		]
+	},
+	{
+		"group": "keyword.goConstants",
+		"type": "keyword",
+		"keywords": [
+			"iota",
+			"true",
+			"false",
+			"nil"
+		]
+	},
+	{
+		"group": "todo.goTodo",
+		"type": "keyword",
+		"keywords": [
+			"TODO",
+			"FIXME",
+			"XXX",
+			"BUG"
+		],
+		"contained": true
+	},
+	{
+		"group": "special.goEscapeOctal",
+		"type": "match",
+		"match": "\\\\[0-7]{3}",
+		"display": true,
+		"contained": true
+	},
+	{
+		"group": "special.goEscapeC",
+		"type": "match",
+		"match": "\\\\[abfnrtv\\\\'\"]",
+		"display": true,
+		"contained": true
+	},
+	{
+		"group": "special.goEscapeX",
+		"type": "match",
+		"match": "\\\\x[[:xdigit:]]{2}",
+		"display": true,
+		"contained": true
+	},
+	{
+		"group": "special.goEscapeU",
+		"type": "match",
+		"match": "\\\\u[[:xdigit:]]{4}",
+		"display": true,
+		"contained": true
+	},
+	{
+		"group": "special.goEscapeBigU",
+		"type": "match",
+		"match": "\\\\U[[:xdigit:]]{8}",
+		"display": true,
+		"contained": true
+	},
+	{
+		"group": "constant.string.goString",
+		"type": "region",
+		"same": "\"",
+		"skip": "\\\\\\\\|\\\\\"",
+		"contains": [
+			"@goStringGroup"
+		]
+	},
+	{
+		"group": "constant.string.goRawString",
+		"type": "region",
+		"same": "`"
+	},
+	{
+		"group": "character.goCharacter",
+		"type": "region",
+		"same": "'",
+		"skip": "\\\\\\\\|\\\\'",
+		"contains": [
+			"@goCharacterGroup"
+		]
+	},
+	{
+		"group": "goBlock",
+		"type": "region",
+		"start": "{",
+		"end": "}",
+		"transparent": true,
+		"fold": true
+	},
+	{
+		"group": "goParen",
+		"type": "region",
+		"start": "\\(",
+		"end": "\\)",
+		"transparent": true
+	},
+	{
+		"group": "constant.number.goDecimalInt",
+		"type": "match",
+		"match": "\\A\\d+([Ee]\\d+)?\\z"
+	},
+	{
+		"group": "constant.number.goHexadecimalInt",
+		"type": "match",
+		"match": "\\A0x[[:xdigit:]]+\\z"
+	},
+	{
+		"group": "constant.number.goOctalInt",
+		"type": "match",
+		"match": "\\A0S+\\z"
+	},
+	{
+		"group": "Float.goFloat",
+		"type": "match",
+		"match": "\\A\\d+.\\d*([Ee][-\\+]\\d+)?\\z"
+	},
+	{
+		"group": "Float.goFloat",
+		"type": "match",
+		"match": "\\A.\\d+([Ee][-\\+]\\d+)?\\z"
+	},
+	{
+		"group": "Float.goFloat",
+		"type": "match",
+		"match": "\\A\\d+[Ee][-\\+]\\d+\\z"
+	},
+	{
+		"group": "constant.number.goImaginary",
+		"type": "match",
+		"match": "\\A\\d+i\\z"
+	},
+	{
+		"group": "constant.number.goImaginary",
+		"type": "match",
+		"match": "\\A\\d+.\\d*([Ee][-\\+]\\d+)?i\\z"
+	},
+	{
+		"group": "constant.number.goImaginary",
+		"type": "match",
+		"match": "\\A.\\d+([Ee][-\\+]\\d+)?i\\z"
+	},
+	{
+		"group": "constant.number.goImaginary",
+		"type": "match",
+		"match": "\\A\\d+[Ee][-\\+]\\d+i\\z"
+	},
+	{
+		"group": "type.goExtraType",
+		"type": "match",
+		"match": "\\Abytes.(Buffer)\\z"
+	},
+	{
+		"group": "type.goExtraType",
+		"type": "match",
+		"match": "\\Aio.(Reader|Writer|ReadWriter|ReadWriteCloser)\\z"
+	},
+	{
+		"group": "type.goExtraType",
+		"type": "match",
+		"match": "\\Areflect.(Kind|Type|Value)\\z"
+	},
+	{
+		"group": "type.goExtraType",
+		"type": "match",
+		"match": "\\Aunsafe.Pointer\\z"
+	}
+]

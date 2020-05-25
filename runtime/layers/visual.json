@@ -1,0 +1,17 @@
+{
+	"name": "visual",
+	"on_begin_actions": [{ "action": "StartSelection", "target": "line" }],
+	"on_end_actions": [{ "action": "StopSelection" }],
+	"no_match_actions": [],
+	"partial_match_actions": [],
+	"match_actions": [],
+	"commands": [
+		{ "keys":  "<esc>" , "actions": [ { "action": "ChangeMode", "target": "normal" } ] },
+		{ "keys":  ">>" , "actions":[ { "action": "Indent", "target": "selection" } ] },
+		{ "keys":  "<<" , "actions":[ { "action": "Outdent", "target": "selection" } ] },
+		{ "keys":  "y" , "actions":[ { "action": "Yank", "target": "selection" } ] },
+		{ "keys":  "p" , "actions":[ { "action": "Paste", "target": "selection" } ] },
+		{ "keys":  "d" , "actions":[ { "action": "Delete", "target": "selection" } ] }
+	]
+}
+

@@ -1,0 +1,7 @@
+{
+	"name": "word-ext",
+	"start": "([^\\s\\t]+|^$)",
+	"simple": true,
+	"keys": "W"
+}
+

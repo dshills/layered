@@ -1,0 +1,10 @@
+{
+	"name": "paragraph",
+	"start": "(^$)",
+	"alt_start": "BOF-NOT-EMPTY",
+	"alt_end": "EOF",
+	"simple": true,
+	"multiline": true,
+	"keys": "p"
+}
+

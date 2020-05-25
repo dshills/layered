@@ -1,0 +1,8 @@
+{
+	"name": "insert",
+	"no_match_actions": [{ "action": "Insert", "target": "char" }],
+	"commands": [
+		{ "keys":  "<esc>", "actions": [{ "action": "ChangeMode", "target": "normal" }]},
+		{ "keys":  "<cr>", "actions": [{ "action": "Insert",  "target": "line"}] }
+	]
+}

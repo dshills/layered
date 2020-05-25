@@ -1,0 +1,64 @@
+{
+	"name": "normal",
+	"commands": [
+		{ "keys": "<CTRL-V>", "actions":[ { "action": "ChangeMode", "target": "visualblock" } ]},
+		{ "keys": ":", "actions":[ { "action": "ChangeMode", "target": "colon" } ]},
+		{ "keys": "/", "actions":[ { "action": "ChangeMode", "target": "search" } ]},
+		{ "keys": "i", "actions":[ { "action": "ChangeMode", "target": "insert" } ]},
+		{ "keys": "V", "actions":[ { "action": "ChangeMode", "target": "visualLine" } ]},
+		{ "keys": "v", "actions":[ { "action": "ChangeMode", "target": "visual" } ]},
+
+		{ "keys": "$", "actions":[ { "action": "Move", "target": "eol" } ]},
+		{ "keys": "0", "actions":[ { "action": "Move", "target": "bol" } ]},
+		{ "keys": "^", "actions":[ { "action": "Move", "target": "bol-not-empty" } ]},
+		{ "keys": "b", "actions":[ { "action": "MovePrev", "target": "word" } ]},
+		{ "keys": "'", "actions":[ { "action": "Move", "param": "mark" } ]},
+		{ "keys": "%", "actions":[ { "action": "Move", "target": "pair-match" } ]},
+		{ "keys": "e", "actions":[ { "action": "MoveEnd", "target": "word" } ]},
+		{ "keys": "G", "actions":[ { "action": "Move", "target": "document-end" } ]},
+		{ "keys": "g_", "actions":[ { "action": "Move", "target": "eol-not-empty" } ]},
+		{ "keys": "gg", "actions":[ { "action": "Move", "target": "document-begin" } ]},
+		{ "keys": "h", "actions":[ { "action": "MovePrev", "target": "char" } ]},
+		{ "keys": "j", "actions":[ { "action": "Move", "target": "line" } ]},
+		{ "keys": "k", "actions":[ { "action": "MovePrev", "target": "line" } ]},
+		{ "keys": "l", "actions":[ { "action": "Move", "target": "char" } ]},
+		{ "keys": "N", "actions":[ { "action": "MovePrev", "target": "search" } ]},
+		{ "keys": "n", "actions":[ { "action": "Move", "target": "search" } ]},
+		{ "keys": "W", "actions":[ { "action": "Move", "target": "full-word" } ]},
+		{ "keys": "w", "actions":[ { "action": "Move", "target": "word" } ]},
+
+		{ "keys": "a", "actions":[ { "action": "ChangeMode", "target": "insert" }, { "action": "Move", "target": "char" } ]},
+		{ "keys": "A", "actions":[ { "action": "Move", "target": "eol" }, { "action": "ChangeMode", "target": "insert" } ]},
+		{ "keys": "I", "actions":[ { "action": "Move", "target": "bol-not-empty" }, { "action": "ChangeMode", "target": "insert" } ]},
+
+		{ "keys": "D", "actions":[ { "action": "DeleteTo", "target": "eol" } ]},
+		{ "keys": "d", "actions":[ { "action": "Delete", "param": "object" } ]},
+		{ "keys": "dd", "actions":[ { "action": "Delete", "target": "line" } ]},
+		{ "keys": "x", "actions":[ { "action": "Delete", "target": "char" } ]},
+		{ "keys": "X", "actions":[ { "action": "Delete", "target": "char" }, { "action": "MovePrev", "target": "char" } ]},
+
+		{ "keys": "O", "actions":[ { "action": "Insert", "target": "line-above" }, { "action": "ChangeMode", "target": "insert" } ]},
+		{ "keys": "o", "actions":[ { "action": "Insert", "target": "line" }, { "action": "ChangeMode", "target": "insert" } ]},
+
+		{ "keys": "@", "actions":[ { "action": "RunMacro" } ]},
+		{ "keys": "q", "actions":[ { "action": "ToggleRecordMacro", "param": "register" } ]},
+
+		{ "keys": ">>", "actions":[ { "action": "indent", "target": "line" }, { "action": "MoveBeginNotEmpty", "target": "line" } ]},
+		{ "keys": "<<", "actions":[ { "action": "outdent", "target": "line" }, { "action": "MoveBeginNotEmpty", "target": "line" } ]},
+
+		{ "keys": "H", "actions":[ { "action": "Move", "target": "screen-begin" } ]},
+		{ "keys": "L", "actions":[ { "action": "Move", "target": "screen-end" } ]},
+		{ "keys": "M", "actions":[ { "action": "Move", "target": "screen-center" }, { "action": "Move", "target": "bol-not-empty" } ]},
+		{ "keys": "zz", "actions":[ { "action": "Move", "target": "screen-center" } ]},
+		{ "keys": "<CTRL-D>", "actions":[ { "action": "Scroll", "target": "down" } ]},
+		{ "keys": "<CTRL-U>", "actions":[ { "action": "Scroll", "target": "up" } ]},
+
+		{ "keys": "m", "actions":[ { "action": "SetMark", "param": "mark" } ]},
+		{ "keys": "<CTRL-R>", "actions":[ { "action": "Redo" } ]},
+		{ "keys": "u", "actions":[ { "action": "Undo" } ]},
+		{ "keys": "p", "actions":[ { "action": "Paste" } ]},
+		{ "keys": "y", "actions":[ { "action": "Yank", "param": "object" } ]},
+		{ "keys": "yy", "actions":[ { "action": "Yank", "target": "line" } ]}
+	]
+}
+

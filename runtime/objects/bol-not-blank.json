@@ -1,0 +1,8 @@
+{
+	"name": "bol-not-blank",
+	"start": "([^\\s\\t])",
+	"simple": true,
+	"first_match": true,
+	"keys": "^"
+}
+

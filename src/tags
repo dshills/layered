@@ -1,0 +1,726 @@
+!_TAG_FILE_FORMAT	2
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted/
+!_TAG_PROGRAM_AUTHOR	Joel Stemmer	/stemmertech@gmail.com/
+!_TAG_PROGRAM_NAME	gotags
+!_TAG_PROGRAM_URL	https://github.com/jstemmer/gotags
+!_TAG_PROGRAM_VERSION	1.4.1	/go1.12.8/
+Action	action/action.go	4;"	t	access:public	line:4	type:struct
+Action	layer/layer.go	119;"	w	access:public	ctype:jsAction	line:119	type:string
+Actioner	action/interface.go	4;"	n	access:public	line:4	type:interface
+Actions	action/action.go	32;"	m	access:public	ctype:Transaction	line:32	signature:()	type:[]Actioner
+Actions	action/interface.go	13;"	m	access:public	line:13	ntype:Transactioner	signature:()	type:[]Actioner
+Actions	layer/layer.go	130;"	w	access:public	ctype:jsKeyAction	line:130	type:[]jsAction
+Add	editor/editor.go	30;"	m	access:public	ctype:Editor	line:30	signature:(buf buffer.Bufferer)
+Add	editor/interface.go	11;"	m	access:public	line:11	ntype:Editorer	signature:(buffer.Bufferer)
+Add	layer/interface.go	13;"	m	access:public	line:13	ntype:Collectioner	signature:(Layerer)
+Add	layer/interface.go	31;"	m	access:public	line:31	ntype:Layerer	signature:(keys []key.Keyer, actions []action.Actioner)
+Add	layer/layer.go	27;"	m	access:public	ctype:Layer	line:27	signature:(keys []key.Keyer, actions []action.Actioner)
+Add	layer/layers.go	48;"	m	access:public	ctype:Layers	line:48	signature:(a Layerer)
+Add	syntax/interface.go	16;"	m	access:public	line:16	ntype:Matcherer	signature:(Ruler)
+Add	syntax/matcher.go	47;"	m	access:public	ctype:Matcher	line:47	signature:(r Ruler)
+Add	textobject/interface.go	15;"	m	access:public	line:15	ntype:Objecter	signature:(...TextObjecter)
+Add	textobject/objects.go	57;"	m	access:public	ctype:Objects	line:57	signature:(objs ...TextObjecter)
+AddLine	undo/changeset.go	19;"	m	access:public	ctype:ChangeSet	line:19	signature:(ln int)
+AddLine	undo/interface.go	17;"	m	access:public	line:17	ntype:ChangeSetter	signature:(ln int)
+AddLine	undo/interface.go	6;"	c	access:public	line:6
+Alt	key/interface.go	6;"	m	access:public	line:6	ntype:Keyer	signature:()	type:bool
+Alt	key/key.go	21;"	m	access:public	ctype:Key	line:21	signature:()	type:bool
+Alt0	key/alt.go	124;"	c	access:public	line:124
+Alt1	key/alt.go	125;"	c	access:public	line:125
+Alt2	key/alt.go	126;"	c	access:public	line:126
+Alt3	key/alt.go	127;"	c	access:public	line:127
+Alt4	key/alt.go	128;"	c	access:public	line:128
+Alt5	key/alt.go	129;"	c	access:public	line:129
+Alt6	key/alt.go	130;"	c	access:public	line:130
+Alt7	key/alt.go	131;"	c	access:public	line:131
+Alt8	key/alt.go	132;"	c	access:public	line:132
+Alt9	key/alt.go	133;"	c	access:public	line:133
+AltA	key/alt.go	102;"	c	access:public	line:102
+AltAnd	key/alt.go	140;"	c	access:public	line:140
+AltAt	key/alt.go	135;"	c	access:public	line:135
+AltB	key/alt.go	103;"	c	access:public	line:103
+AltBang	key/alt.go	134;"	c	access:public	line:134
+AltC	key/alt.go	104;"	c	access:public	line:104
+AltCarrot	key/alt.go	139;"	c	access:public	line:139
+AltD	key/alt.go	105;"	c	access:public	line:105
+AltDollar	key/alt.go	137;"	c	access:public	line:137
+AltEe	key/alt.go	80;"	c	access:public	line:80
+AltF	key/alt.go	106;"	c	access:public	line:106
+AltG	key/alt.go	107;"	c	access:public	line:107
+AltH	key/alt.go	108;"	c	access:public	line:108
+AltIi	key/alt.go	84;"	c	access:public	line:84
+AltJ	key/alt.go	109;"	c	access:public	line:109
+AltK	key/alt.go	110;"	c	access:public	line:110
+AltL	key/alt.go	111;"	c	access:public	line:111
+AltLeftParan	key/alt.go	142;"	c	access:public	line:142
+AltM	key/alt.go	112;"	c	access:public	line:112
+AltNn	key/alt.go	89;"	c	access:public	line:89
+AltO	key/alt.go	113;"	c	access:public	line:113
+AltP	key/alt.go	114;"	c	access:public	line:114
+AltPercent	key/alt.go	138;"	c	access:public	line:138
+AltPound	key/alt.go	136;"	c	access:public	line:136
+AltQ	key/alt.go	115;"	c	access:public	line:115
+AltR	key/alt.go	116;"	c	access:public	line:116
+AltRightParan	key/alt.go	143;"	c	access:public	line:143
+AltS	key/alt.go	117;"	c	access:public	line:117
+AltStar	key/alt.go	141;"	c	access:public	line:141
+AltT	key/alt.go	118;"	c	access:public	line:118
+AltUu	key/alt.go	96;"	c	access:public	line:96
+AltV	key/alt.go	119;"	c	access:public	line:119
+AltW	key/alt.go	120;"	c	access:public	line:120
+AltX	key/alt.go	121;"	c	access:public	line:121
+AltY	key/alt.go	122;"	c	access:public	line:122
+AltZ	key/alt.go	123;"	c	access:public	line:123
+Alta	key/alt.go	76;"	c	access:public	line:76
+Altb	key/alt.go	77;"	c	access:public	line:77
+Altc	key/alt.go	78;"	c	access:public	line:78
+Altd	key/alt.go	79;"	c	access:public	line:79
+Altf	key/alt.go	81;"	c	access:public	line:81
+Altg	key/alt.go	82;"	c	access:public	line:82
+Alth	key/alt.go	83;"	c	access:public	line:83
+Altj	key/alt.go	85;"	c	access:public	line:85
+Altk	key/alt.go	86;"	c	access:public	line:86
+Altl	key/alt.go	87;"	c	access:public	line:87
+Altm	key/alt.go	88;"	c	access:public	line:88
+Alto	key/alt.go	90;"	c	access:public	line:90
+Altp	key/alt.go	91;"	c	access:public	line:91
+Altq	key/alt.go	92;"	c	access:public	line:92
+Altr	key/alt.go	93;"	c	access:public	line:93
+Alts	key/alt.go	94;"	c	access:public	line:94
+Altt	key/alt.go	95;"	c	access:public	line:95
+Altv	key/alt.go	97;"	c	access:public	line:97
+Altw	key/alt.go	98;"	c	access:public	line:98
+Altx	key/alt.go	99;"	c	access:public	line:99
+Alty	key/alt.go	100;"	c	access:public	line:100
+Altz	key/alt.go	101;"	c	access:public	line:101
+AsRange	cursor/cursor.go	15;"	m	access:public	ctype:Cursor	line:15	signature:()	type:[]int
+AsRange	cursor/interface.go	10;"	m	access:public	line:10	ntype:Cursorer	signature:()	type:[]int
+BeginActions	layer/interface.go	34;"	m	access:public	line:34	ntype:Layerer	signature:()	type:[]action.Actioner
+BeginActions	layer/layer.go	40;"	m	access:public	ctype:Layer	line:40	signature:()	type:[]action.Actioner
+Bottom	cursor/cursor.go	36;"	m	access:public	ctype:Cursor	line:36	signature:()	type:bool
+Bottom	cursor/interface.go	15;"	m	access:public	line:15	ntype:Cursorer	signature:()	type:bool
+Buffer	action/action.go	29;"	m	access:public	ctype:Transaction	line:29	signature:()	type:string
+Buffer	action/interface.go	12;"	m	access:public	line:12	ntype:Transactioner	signature:()	type:string
+Buffer	buffer/buffer.go	9;"	t	access:public	line:9	type:struct
+Buffer	editor/editor.go	38;"	m	access:public	ctype:Editor	line:38	signature:(id string)	type:buffer.Bufferer, error
+Buffer	editor/interface.go	13;"	m	access:public	line:13	ntype:Editorer	signature:(id string)	type:buffer.Bufferer, error
+Bufferer	buffer/interface.go	13;"	n	access:public	line:13	type:interface
+Buffers	editor/editor.go	27;"	m	access:public	ctype:Editor	line:27	signature:()	type:[]buffer.Bufferer
+Buffers	editor/interface.go	10;"	m	access:public	line:10	ntype:Editorer	signature:()	type:[]buffer.Bufferer
+Change	undo/change.go	6;"	t	access:public	line:6	type:struct
+ChangeLine	undo/changeset.go	24;"	m	access:public	ctype:ChangeSet	line:24	signature:(ln int, before, after string)
+ChangeLine	undo/interface.go	18;"	m	access:public	line:18	ntype:ChangeSetter	signature:(ln int, before, after string)
+ChangeLine	undo/interface.go	7;"	c	access:public	line:7
+ChangeSet	undo/changeset.go	6;"	t	access:public	line:6	type:struct
+ChangeSetter	undo/interface.go	14;"	n	access:public	line:14	type:interface
+Changelayer	action/definitions.go	17;"	c	access:public	line:17
+Changer	undo/interface.go	22;"	n	access:public	line:22	type:interface
+Changes	undo/changeset.go	11;"	m	access:public	ctype:ChangeSet	line:11	signature:()	type:[]Changer
+Changes	undo/interface.go	15;"	m	access:public	line:15	ntype:ChangeSetter	signature:()	type:[]Changer
+Collectioner	layer/interface.go	11;"	n	access:public	line:11	type:interface
+Column	cursor/cursor.go	23;"	m	access:public	ctype:Cursor	line:23	signature:()	type:int
+Column	cursor/interface.go	12;"	m	access:public	line:12	ntype:Cursorer	signature:()	type:int
+Commands	layer/layer.go	91;"	w	access:public	ctype:jsLayer	line:91	type:[]jsKeyAction
+Contained	syntax/json.go	16;"	w	access:public	ctype:jsRule	line:16	type:bool
+Contains	syntax/json.go	13;"	w	access:public	ctype:jsRule	line:13	type:[]string
+Ctrl	key/interface.go	7;"	m	access:public	line:7	ntype:Keyer	signature:()	type:bool
+Ctrl	key/key.go	24;"	m	access:public	ctype:Key	line:24	signature:()	type:bool
+Cursor	buffer/buffer.go	36;"	m	access:public	ctype:Buffer	line:36	signature:()	type:cursor.Cursorer
+Cursor	buffer/interface.go	20;"	m	access:public	line:20	ntype:Bufferer	signature:()	type:cursor.Cursorer
+Cursor	cursor/cursor.go	6;"	t	access:public	line:6	type:struct
+Cursor	undo/change.go	15;"	m	access:public	ctype:Change	line:15	signature:()	type:[]int
+Cursor	undo/interface.go	23;"	m	access:public	line:23	ntype:Changer	signature:()	type:[]int
+Cursorer	cursor/interface.go	9;"	n	access:public	line:9	type:interface
+Debugf	logger/logger.go	39;"	f	access:public	line:39	signature:(format string, i ...interface{})
+Def	action/definitions.go	36;"	t	access:public	line:36	type:struct
+Definitions	action/definitions.go	41;"	v	access:public	line:41
+Delete	action/definitions.go	18;"	c	access:public	line:18
+DeleteLine	textstore/interface.go	22;"	m	access:public	line:22	ntype:TextStorer	signature:(line int)	type:string, error
+DeleteLine	textstore/store.go	51;"	m	access:public	ctype:Store	line:51	signature:(line int)	type:string, error
+DeleteLine	undo/interface.go	5;"	c	access:public	line:5
+Deleteto	action/definitions.go	19;"	c	access:public	line:19
+Detect	filetype/ftdetecter.go	66;"	m	access:public	ctype:FTDetecter	line:66	signature:(path string)	type:string, error
+Detect	filetype/interface.go	6;"	m	access:public	line:6	ntype:Detecter	signature:(path string)	type:string, error
+Detecter	filetype/interface.go	4;"	n	access:public	line:4	type:interface
+Dirty	undo/change.go	18;"	m	access:public	ctype:Change	line:18	signature:()	type:bool
+Dirty	undo/interface.go	24;"	m	access:public	line:24	ntype:Changer	signature:()	type:bool
+Display	syntax/json.go	17;"	w	access:public	ctype:jsRule	line:17	type:bool
+Down	action/definitions.go	10;"	c	access:public	line:10
+Down	buffer/interface.go	26;"	m	access:public	line:26	ntype:Bufferer	signature:(int)
+Down	buffer/move.go	75;"	m	access:public	ctype:Buffer	line:75	signature:(cnt int)
+Down	cursor/cursor.go	46;"	m	access:public	ctype:Cursor	line:46	signature:(cnt int)	type:bool
+Down	cursor/interface.go	17;"	m	access:public	line:17	ntype:Cursorer	signature:(cnt int)	type:bool
+Editor	editor/editor.go	16;"	t	access:public	line:16	type:struct
+Editorer	editor/interface.go	9;"	n	access:public	line:9	type:interface
+End	syntax/json.go	12;"	w	access:public	ctype:jsRule	line:12	type:string
+End	textobject/object.go	81;"	w	access:public	ctype:jsObject	line:81	type:string
+EndActions	layer/interface.go	35;"	m	access:public	line:35	ntype:Layerer	signature:()	type:[]action.Actioner
+EndActions	layer/layer.go	43;"	m	access:public	ctype:Layer	line:43	signature:()	type:[]action.Actioner
+ErrorErr	logger/logger.go	28;"	f	access:public	line:28	signature:(err error)
+Errorf	logger/logger.go	33;"	f	access:public	line:33	signature:(format string, i ...interface{})
+Exec	editor/editor.go	48;"	m	access:public	ctype:Editor	line:48	signature:(tr action.Transactioner)	type:error
+Exec	editor/interface.go	14;"	m	access:public	line:14	ntype:Editorer	signature:(action.Transactioner)	type:error
+Ext	filetype/ftdetecter.go	25;"	w	access:public	ctype:ftEntry	line:25	type:string
+FT	filetype/ftdetecter.go	24;"	w	access:public	ctype:ftEntry	line:24	type:string
+FTDetecter	filetype/ftdetecter.go	16;"	t	access:public	line:16	type:struct
+Factory	buffer/interface.go	10;"	t	access:public	line:10	type:func(txt textstore.TextStorer, cur cursor.Cursorer) Bufferer
+Factory	cursor/interface.go	6;"	t	access:public	line:6	type:func(txt textstore.TextStorer) Cursorer
+Factory	syntax/interface.go	10;"	t	access:public	line:10	type:func() Matcherer
+Factory	textstore/interface.go	11;"	t	access:public	line:11	type:func(undo.Factory) TextStorer
+Factory	undo/interface.go	11;"	t	access:public	line:11	type:func() ChangeSetter
+Filename	buffer/buffer.go	21;"	m	access:public	ctype:Buffer	line:21	signature:()	type:string
+Filename	buffer/interface.go	15;"	m	access:public	line:15	ntype:Bufferer	signature:()	type:string
+Filetype	buffer/buffer.go	27;"	m	access:public	ctype:Buffer	line:27	signature:()	type:string
+Filetype	buffer/interface.go	17;"	m	access:public	line:17	ntype:Bufferer	signature:()	type:string
+FindAfter	textobject/interface.go	7;"	m	access:public	line:7	ntype:TextObjecter	signature:(string, int)	type:[][]int
+FindAfter	textobject/object.go	29;"	m	access:public	ctype:Object	line:29	signature:(s string, col int)	type:[][]int
+FindAll	textobject/interface.go	6;"	m	access:public	line:6	ntype:TextObjecter	signature:(string)	type:[][]int
+FindAll	textobject/object.go	21;"	m	access:public	ctype:Object	line:21	signature:(s string)	type:[][]int
+FindBefore	textobject/interface.go	8;"	m	access:public	line:8	ntype:TextObjecter	signature:(string, int)	type:[][]int
+FindBefore	textobject/object.go	40;"	m	access:public	ctype:Object	line:40	signature:(s string, col int)	type:[][]int
+Flush	textstore/interface.go	57;"	m	access:public	line:57	ntype:LineWriter	signature:()
+Flush	textstore/linewriter.go	23;"	m	access:public	ctype:Writer	line:23	signature:()
+Fold	syntax/json.go	21;"	w	access:public	ctype:jsRule	line:21	type:bool
+Get	cursor/cursor.go	41;"	m	access:public	ctype:Cursor	line:41	signature:()	type:int, int
+Get	cursor/interface.go	16;"	m	access:public	line:16	ntype:Cursorer	signature:()	type:int, int
+GetStackTrace	logger/strace.go	11;"	f	access:public	line:11	signature:(max int)	type:string
+GotoLine	cursor/cursor.go	26;"	m	access:public	ctype:Cursor	line:26	signature:(ln int)	type:bool
+GotoLine	cursor/interface.go	13;"	m	access:public	line:13	ntype:Cursorer	signature:(ln int)	type:bool
+Group	syntax/interface.go	31;"	m	access:public	line:31	ntype:Ruler	signature:()	type:string
+Group	syntax/json.go	9;"	w	access:public	ctype:jsRule	line:9	type:string
+Group	syntax/rule.go	26;"	m	access:public	ctype:Rule	line:26	signature:()	type:string
+ID	buffer/buffer.go	18;"	m	access:public	ctype:Buffer	line:18	signature:()	type:string
+ID	buffer/interface.go	14;"	m	access:public	line:14	ntype:Bufferer	signature:()	type:string
+Indent	action/definitions.go	20;"	c	access:public	line:20
+Insert	action/definitions.go	21;"	c	access:public	line:21
+Insert	textstore/interface.go	64;"	m	access:public	line:64	ntype:LineWriter	signature:(p []byte)	type:int, error
+Insert	textstore/linewriter.go	90;"	m	access:public	ctype:Writer	line:90	signature:(p []byte)	type:int, error
+InsertAt	textstore/interface.go	71;"	m	access:public	line:71	ntype:LineWriter	signature:(p []byte, offset int64)	type:int, error
+InsertAt	textstore/line.go	93;"	m	access:public	ctype:Line	line:93	signature:(p []byte, offset int64)	type:int, error
+InsertAt	textstore/linewriter.go	166;"	m	access:public	ctype:Writer	line:166	signature:(p []byte, offset int64)	type:int, error
+InsertRuneAt	textstore/interface.go	69;"	m	access:public	line:69	ntype:LineWriter	signature:(r rune, offset int64)	type:int, error
+InsertRuneAt	textstore/line.go	53;"	m	access:public	ctype:Line	line:53	signature:(r rune, offset int)	type:error
+InsertRuneAt	textstore/linewriter.go	137;"	m	access:public	ctype:Writer	line:137	signature:(r rune, offset int64)	type:int, error
+IsEqual	key/interface.go	10;"	m	access:public	line:10	ntype:Keyer	signature:(o Keyer)	type:bool
+IsEqual	key/key.go	30;"	m	access:public	ctype:Key	line:30	signature:(o Keyer)	type:bool
+IsEqual	syntax/interface.go	22;"	m	access:public	line:22	ntype:Resulter	signature:(Resulter)	type:bool
+IsEqual	syntax/result.go	12;"	m	access:public	ctype:Result	line:12	signature:(Resulter)	type:bool
+Key	key/key.go	8;"	t	access:public	line:8	type:struct
+Keyer	key/interface.go	4;"	n	access:public	line:4	type:interface
+Keys	layer/layer.go	129;"	w	access:public	ctype:jsKeyAction	line:129	type:[]string
+KeywordRule	syntax/rule.go	12;"	c	access:public	line:12
+Keywords	syntax/json.go	14;"	w	access:public	ctype:jsRule	line:14	type:[]string
+Layer	layer/interface.go	15;"	m	access:public	line:15	ntype:Collectioner	signature:(name string)	type:Layerer, error
+Layer	layer/layer.go	17;"	t	access:public	line:17	type:struct
+Layer	layer/layers.go	58;"	m	access:public	ctype:Layers	line:58	signature:(name string)	type:Layerer, error
+Layerer	layer/interface.go	29;"	n	access:public	line:29	type:interface
+Layers	layer/layers.go	12;"	t	access:public	line:12	type:struct
+Len	syntax/result.go	30;"	m	access:public	ctype:resultList	line:30	signature:()	type:int
+Len	textstore/interface.go	18;"	m	access:public	line:18	ntype:TextStorer	signature:()	type:int
+Len	textstore/interface.go	41;"	m	access:public	line:41	ntype:LineReader	signature:()	type:int
+Len	textstore/interface.go	58;"	m	access:public	line:58	ntype:LineWriter	signature:()	type:int
+Len	textstore/line.go	19;"	m	access:public	ctype:Line	line:19	signature:()	type:int
+Len	textstore/linereader.go	25;"	m	access:public	ctype:Reader	line:25	signature:()	type:int
+Len	textstore/linewriter.go	105;"	m	access:public	ctype:Writer	line:105	signature:()	type:int
+Len	textstore/store.go	129;"	m	access:public	ctype:Store	line:129	signature:()	type:int
+Less	syntax/result.go	32;"	m	access:public	ctype:resultList	line:32	signature:(i, j int)	type:bool
+Line	cursor/cursor.go	20;"	m	access:public	ctype:Cursor	line:20	signature:()	type:int
+Line	cursor/interface.go	11;"	m	access:public	line:11	ntype:Cursorer	signature:()	type:int
+Line	syntax/interface.go	24;"	m	access:public	line:24	ntype:Resulter	signature:()	type:int
+Line	syntax/result.go	20;"	m	access:public	ctype:Result	line:20	signature:()	type:int
+Line	textstore/line.go	9;"	t	access:public	line:9	type:struct
+Line	undo/change.go	24;"	m	access:public	ctype:Change	line:24	signature:()	type:int
+Line	undo/interface.go	26;"	m	access:public	line:26	ntype:Changer	signature:()	type:int
+LineAt	textstore/interface.go	26;"	m	access:public	line:26	ntype:TextStorer	signature:(line int)	type:LineReader, error
+LineAt	textstore/store.go	154;"	m	access:public	ctype:Store	line:154	signature:(line int)	type:LineReader, error
+LineDelim	textstore/interface.go	29;"	m	access:public	line:29	ntype:TextStorer	signature:()	type:string
+LineDelim	textstore/store.go	175;"	m	access:public	ctype:Store	line:175	signature:()	type:string
+LineLen	textstore/interface.go	17;"	m	access:public	line:17	ntype:TextStorer	signature:(line int)	type:int
+LineLen	textstore/store.go	111;"	m	access:public	ctype:Store	line:111	signature:(line int)	type:int
+LineRangeString	textstore/interface.go	20;"	m	access:public	line:20	ntype:TextStorer	signature:(line, cnt int)	type:[]string, error
+LineRangeString	textstore/store.go	90;"	m	access:public	ctype:Store	line:90	signature:(line, cnt int)	type:[]string, error
+LineReader	textstore/interface.go	35;"	e	access:public	line:35	ntype:Liner
+LineReader	textstore/interface.go	40;"	n	access:public	line:40	type:interface
+LineString	textstore/interface.go	19;"	m	access:public	line:19	ntype:TextStorer	signature:(pos int)	type:string, error
+LineString	textstore/store.go	82;"	m	access:public	ctype:Store	line:82	signature:(line int)	type:string, error
+LineWriter	textstore/interface.go	36;"	e	access:public	line:36	ntype:Liner
+LineWriter	textstore/interface.go	56;"	n	access:public	line:56	type:interface
+LineWriterAt	textstore/interface.go	27;"	m	access:public	line:27	ntype:TextStorer	signature:(line int)	type:LineWriter, error
+LineWriterAt	textstore/store.go	162;"	m	access:public	ctype:Store	line:162	signature:(line int)	type:LineWriter, error
+Liner	textstore/interface.go	34;"	n	access:public	line:34	type:interface
+Load	filetype/ftdetecter.go	30;"	m	access:public	ctype:FTDetecter	line:30	signature:(path string)	type:error
+Load	filetype/interface.go	5;"	m	access:public	line:5	ntype:Detecter	signature:(fts string)	type:error
+Load	layer/interface.go	39;"	m	access:public	line:39	ntype:Layerer	signature:(io.Reader)	type:error
+Load	layer/layer.go	56;"	m	access:public	ctype:Layer	line:56	signature:(r io.Reader)	type:error
+LoadDir	layer/layers.go	17;"	m	access:public	ctype:Layers	line:17	signature:(dir string)	type:error
+LoadDir	textobject/interface.go	13;"	m	access:public	line:13	ntype:Objecter	signature:(path string)	type:error
+LoadDir	textobject/objects.go	17;"	m	access:public	ctype:Objects	line:17	signature:(dir string)	type:error
+LoadFile	syntax/interface.go	15;"	m	access:public	line:15	ntype:Matcherer	signature:(path string)	type:error
+LoadFile	syntax/matcher.go	19;"	m	access:public	ctype:Matcher	line:19	signature:(path string)	type:error
+LoadLayers	layer/interface.go	12;"	m	access:public	line:12	ntype:Collectioner	signature:(dir string)	type:error
+Match	layer/interface.go	25;"	c	access:public	line:25
+Match	syntax/interface.go	33;"	m	access:public	line:33	ntype:Ruler	signature:(io.Reader, int)	type:Resulter
+Match	syntax/json.go	15;"	w	access:public	ctype:jsRule	line:15	type:string
+Match	syntax/rule.go	36;"	m	access:public	ctype:Rule	line:36	signature:(s io.Reader, ln int)	type:Resulter
+MatchActions	layer/interface.go	38;"	m	access:public	line:38	ntype:Layerer	signature:()	type:[]action.Actioner
+MatchActions	layer/layer.go	53;"	m	access:public	ctype:Layer	line:53	signature:()	type:[]action.Actioner
+MatchActions	layer/layer.go	90;"	w	access:public	ctype:jsLayer	line:90	type:[]jsAction
+MatchRule	syntax/rule.go	10;"	c	access:public	line:10
+Matcher	syntax/matcher.go	14;"	t	access:public	line:14	type:struct
+Matcherer	syntax/interface.go	14;"	n	access:public	line:14	type:interface
+Message	logger/logger.go	48;"	f	access:public	line:48	signature:(s string)
+Messagef	logger/logger.go	53;"	f	access:public	line:53	signature:(format string, i ...interface{})
+Move	action/definitions.go	5;"	c	access:public	line:5
+Move	buffer/interface.go	21;"	m	access:public	line:21	ntype:Bufferer	signature:(cnt int, obj textobject.TextObjecter)	type:error
+Move	buffer/move.go	10;"	m	access:public	ctype:Buffer	line:10	signature:(cnt int, obj textobject.TextObjecter)	type:error
+MoveEnd	action/definitions.go	6;"	c	access:public	line:6
+MoveEnd	buffer/interface.go	22;"	m	access:public	line:22	ntype:Bufferer	signature:(cnt int, obj textobject.TextObjecter)	type:error
+MoveEnd	buffer/move.go	25;"	m	access:public	ctype:Buffer	line:25	signature:(cnt int, obj textobject.TextObjecter)	type:error
+MovePrev	action/definitions.go	7;"	c	access:public	line:7
+MovePrev	buffer/interface.go	23;"	m	access:public	line:23	ntype:Bufferer	signature:(cnt int, obj textobject.TextObjecter)	type:error
+MovePrev	buffer/move.go	40;"	m	access:public	ctype:Buffer	line:40	signature:(cnt int, obj textobject.TextObjecter)	type:error
+MovePrevEnd	action/definitions.go	8;"	c	access:public	line:8
+MovePrevEnd	buffer/interface.go	24;"	m	access:public	line:24	ntype:Bufferer	signature:(cnt int, obj textobject.TextObjecter)	type:error
+MovePrevEnd	buffer/move.go	55;"	m	access:public	ctype:Buffer	line:55	signature:(cnt int, obj textobject.TextObjecter)	type:error
+MoveValid	cursor/cursor.go	66;"	m	access:public	ctype:Cursor	line:66	signature:(line, col int)	type:bool
+MoveValid	cursor/interface.go	21;"	m	access:public	line:21	ntype:Cursorer	signature:(line, col int)	type:bool
+Multiline	textobject/object.go	82;"	w	access:public	ctype:jsObject	line:82	type:bool
+Name	action/action.go	9;"	m	access:public	ctype:Action	line:9	signature:()	type:string
+Name	action/definitions.go	37;"	w	access:public	ctype:Def	line:37	type:string
+Name	action/interface.go	5;"	m	access:public	line:5	ntype:Actioner	signature:()	type:string
+Name	layer/interface.go	30;"	m	access:public	line:30	ntype:Layerer	signature:()	type:string
+Name	layer/layer.go	24;"	m	access:public	ctype:Layer	line:24	signature:()	type:string
+Name	layer/layer.go	85;"	w	access:public	ctype:jsLayer	line:85	type:string
+Name	textobject/interface.go	5;"	m	access:public	line:5	ntype:TextObjecter	signature:()	type:string
+Name	textobject/object.go	18;"	m	access:public	ctype:Object	line:18	signature:()	type:string
+Name	textobject/object.go	78;"	w	access:public	ctype:jsObject	line:78	type:string
+New	action/action.go	18;"	f	access:public	line:18	signature:(name, target, param string)	type:Actioner
+New	buffer/buffer.go	39;"	f	access:public	line:39	signature:(txt textstore.TextStorer, cur cursor.Cursorer)	type:Bufferer
+New	cursor/cursor.go	106;"	f	access:public	line:106	signature:(txt textstore.TextStorer)	type:Cursorer
+New	editor/editor.go	123;"	f	access:public	line:123	signature:(bf buffer.Factory, cf cursor.Factory, tf textstore.Factory, sf syntax.Factory, ftd filetype.Detecter, objs textobject.Objecter)	type:Editorer
+New	syntax/matcher.go	73;"	f	access:public	line:73	signature:()	type:Matcherer
+New	textstore/store.go	244;"	f	access:public	line:244	signature:(fac undo.Factory)	type:TextStorer
+New	undo/changeset.go	31;"	f	access:public	line:31	signature:()	type:ChangeSetter
+NewFTDetecter	filetype/ftdetecter.go	88;"	f	access:public	line:88	signature:()	type:Detecter
+NewKey	key/key.go	44;"	f	access:public	line:44	signature:(a, c, s bool, r rune, sp string)	type:Keyer
+NewLine	textstore/interface.go	21;"	m	access:public	line:21	ntype:TextStorer	signature:(s string, line int)	type:int, error
+NewLine	textstore/line.go	14;"	f	access:public	ctype:Line	line:14	signature:(s string)	type:*Line
+NewLine	textstore/store.go	38;"	m	access:public	ctype:Store	line:38	signature:(st string, line int)	type:int, error
+NewObjects	textobject/objects.go	67;"	f	access:public	line:67	signature:()	type:Objecter
+NewParser	layer/interface.go	33;"	m	access:public	line:33	ntype:Layerer	signature:()	type:Parserer
+NewParser	layer/layer.go	35;"	m	access:public	ctype:Layer	line:35	signature:()	type:Parserer
+NewReader	textstore/linereader.go	168;"	f	access:public	ctype:Reader	line:168	signature:(l *Line)	type:*Reader
+NewWriter	textstore/linewriter.go	202;"	f	access:public	ctype:Writer	line:202	signature:(l *Line, line int, store *Store)	type:*Writer
+Next	action/definitions.go	12;"	c	access:public	line:12
+Next	buffer/interface.go	28;"	m	access:public	line:28	ntype:Bufferer	signature:(int)
+Next	buffer/move.go	85;"	m	access:public	ctype:Buffer	line:85	signature:(cnt int)
+Next	cursor/cursor.go	61;"	m	access:public	ctype:Cursor	line:61	signature:(cnt int)	type:bool
+Next	cursor/interface.go	20;"	m	access:public	line:20	ntype:Cursorer	signature:(cnt int)	type:bool
+NoMatch	layer/interface.go	23;"	c	access:public	line:23	type:ParseStatus
+NoMatchActions	layer/interface.go	37;"	m	access:public	line:37	ntype:Layerer	signature:()	type:[]action.Actioner
+NoMatchActions	layer/layer.go	49;"	m	access:public	ctype:Layer	line:49	signature:()	type:[]action.Actioner
+NoMatchActions	layer/layer.go	88;"	w	access:public	ctype:jsLayer	line:88	type:[]jsAction
+NumLines	textstore/interface.go	16;"	m	access:public	line:16	ntype:TextStorer	signature:()	type:int
+NumLines	textstore/store.go	106;"	m	access:public	ctype:Store	line:106	signature:()	type:int
+Object	textobject/interface.go	14;"	m	access:public	line:14	ntype:Objecter	signature:(name string)	type:TextObjecter, error
+Object	textobject/object.go	10;"	t	access:public	line:10	type:struct
+Object	textobject/objects.go	47;"	m	access:public	ctype:Objects	line:47	signature:(name string)	type:TextObjecter, error
+Objecter	textobject/interface.go	12;"	n	access:public	line:12	type:interface
+Objects	textobject/objects.go	12;"	t	access:public	line:12	type:struct
+OnBeginActions	layer/layer.go	86;"	w	access:public	ctype:jsLayer	line:86	type:[]jsAction
+OnEndActions	layer/layer.go	87;"	w	access:public	ctype:jsLayer	line:87	type:[]jsAction
+Outdent	action/definitions.go	22;"	c	access:public	line:22
+Param	action/action.go	15;"	m	access:public	ctype:Action	line:15	signature:()	type:string
+Param	action/interface.go	7;"	m	access:public	line:7	ntype:Actioner	signature:()	type:string
+Param	layer/layer.go	121;"	w	access:public	ctype:jsAction	line:121	type:string
+Parse	layer/interface.go	44;"	m	access:public	line:44	ntype:Parserer	signature:(keys ...key.Keyer)	type:[]action.Actioner, ParseStatus
+Parse	layer/layer.go	67;"	m	access:public	ctype:Parser	line:67	signature:(keys ...key.Keyer)	type:[]action.Actioner, ParseStatus
+Parse	syntax/interface.go	17;"	m	access:public	line:17	ntype:Matcherer	signature:(textstore.TextStorer)	type:[]Resulter
+Parse	syntax/matcher.go	52;"	m	access:public	ctype:Matcher	line:52	signature:(ts textstore.TextStorer)	type:[]Resulter
+ParseStatus	layer/interface.go	19;"	t	access:public	line:19	type:int
+Parser	layer/layer.go	61;"	t	access:public	line:61	type:struct
+Parserer	layer/interface.go	43;"	n	access:public	line:43	type:interface
+PartialMatch	layer/interface.go	24;"	c	access:public	line:24
+PartialMatchActions	layer/interface.go	36;"	m	access:public	line:36	ntype:Layerer	signature:()	type:[]action.Actioner
+PartialMatchActions	layer/layer.go	46;"	m	access:public	ctype:Layer	line:46	signature:()	type:[]action.Actioner
+PartialMatchActions	layer/layer.go	89;"	w	access:public	ctype:jsLayer	line:89	type:[]jsAction
+Paste	action/definitions.go	23;"	c	access:public	line:23
+Pattern	filetype/ftdetecter.go	23;"	w	access:public	ctype:ftEntry	line:23	type:string
+Prev	action/definitions.go	11;"	c	access:public	line:11
+Prev	buffer/interface.go	27;"	m	access:public	line:27	ntype:Bufferer	signature:(int)
+Prev	buffer/move.go	80;"	m	access:public	ctype:Buffer	line:80	signature:(cnt int)
+Prev	cursor/cursor.go	56;"	m	access:public	ctype:Cursor	line:56	signature:(cnt int)	type:bool
+Prev	cursor/interface.go	19;"	m	access:public	line:19	ntype:Cursorer	signature:(cnt int)	type:bool
+Priority	syntax/interface.go	26;"	m	access:public	line:26	ntype:Resulter	signature:()	type:int
+Priority	syntax/result.go	26;"	m	access:public	ctype:Result	line:26	signature:()	type:int
+Range	syntax/interface.go	25;"	m	access:public	line:25	ntype:Resulter	signature:()	type:[][]int
+Range	syntax/result.go	23;"	m	access:public	ctype:Result	line:23	signature:()	type:[][]int
+Read	textstore/interface.go	43;"	m	access:public	line:43	ntype:LineReader	signature:(b []byte)	type:int, error
+Read	textstore/linereader.go	38;"	m	access:public	ctype:Reader	line:38	signature:(b []byte)	type:int, error
+ReadAt	textstore/interface.go	44;"	m	access:public	line:44	ntype:LineReader	signature:(b []byte, off int64)	type:int, error
+ReadAt	textstore/linereader.go	49;"	m	access:public	ctype:Reader	line:49	signature:(b []byte, off int64)	type:int, error
+ReadByte	textstore/interface.go	46;"	m	access:public	line:46	ntype:LineReader	signature:()	type:byte, error
+ReadByte	textstore/linereader.go	77;"	m	access:public	ctype:Reader	line:77	signature:()	type:byte, error
+ReadRune	textstore/interface.go	48;"	m	access:public	line:48	ntype:LineReader	signature:()	type:rune, int, error
+ReadRune	textstore/linereader.go	98;"	m	access:public	ctype:Reader	line:98	signature:()	type:rune, int, error
+ReadRuneAt	textstore/interface.go	25;"	m	access:public	line:25	ntype:TextStorer	signature:(line, col int)	type:rune, int, error
+ReadRuneAt	textstore/interface.go	45;"	m	access:public	line:45	ntype:LineReader	signature:(offset int64)	type:rune, int, error
+ReadRuneAt	textstore/linereader.go	65;"	m	access:public	ctype:Reader	line:65	signature:(offset int64)	type:rune, int, error
+ReadRuneAt	textstore/store.go	139;"	m	access:public	ctype:Store	line:139	signature:(line, col int)	type:rune, int, error
+Reader	textstore/linereader.go	13;"	t	access:public	line:13	type:struct
+RecordMacro	action/definitions.go	29;"	c	access:public	line:29
+Redo	action/definitions.go	24;"	c	access:public	line:24
+Redo	textstore/store.go	239;"	m	access:public	ctype:Store	line:239	signature:()	type:error
+RegionRule	syntax/rule.go	11;"	c	access:public	line:11
+Remove	editor/editor.go	35;"	m	access:public	ctype:Editor	line:35	signature:(id string)
+Remove	editor/interface.go	12;"	m	access:public	line:12	ntype:Editorer	signature:(id string)
+Remove	layer/interface.go	14;"	m	access:public	line:14	ntype:Collectioner	signature:(name string)
+Remove	layer/interface.go	32;"	m	access:public	line:32	ntype:Layerer	signature:(keys []key.Keyer)
+Remove	layer/layer.go	32;"	m	access:public	ctype:Layer	line:32	signature:(keys []key.Keyer)
+Remove	layer/layers.go	53;"	m	access:public	ctype:Layers	line:53	signature:(name string)
+Remove	textobject/interface.go	16;"	m	access:public	line:16	ntype:Objecter	signature:(name string)
+Remove	textobject/objects.go	62;"	m	access:public	ctype:Objects	line:62	signature:(name string)
+RemoveLine	undo/changeset.go	14;"	m	access:public	ctype:ChangeSet	line:14	signature:(ln int)
+RemoveLine	undo/interface.go	16;"	m	access:public	line:16	ntype:ChangeSetter	signature:(ln int)
+Replace	textstore/interface.go	63;"	m	access:public	line:63	ntype:LineWriter	signature:(p []byte, cnt int64)	type:int, error
+Replace	textstore/linewriter.go	73;"	m	access:public	ctype:Writer	line:73	signature:(p []byte, cnt int64)	type:int, error
+ReplaceAt	textstore/interface.go	72;"	m	access:public	line:72	ntype:LineWriter	signature:(p []byte, offset, cnt int64)	type:int, error
+ReplaceAt	textstore/line.go	115;"	m	access:public	ctype:Line	line:115	signature:(p []byte, offset, cnt int64)	type:int, error
+ReplaceAt	textstore/linewriter.go	185;"	m	access:public	ctype:Writer	line:185	signature:(p []byte, offset, cnt int64)	type:int, error
+Reset	textstore/interface.go	15;"	m	access:public	line:15	ntype:TextStorer	signature:(s string)
+Reset	textstore/interface.go	61;"	m	access:public	line:61	ntype:LineWriter	signature:(s string)
+Reset	textstore/line.go	28;"	m	access:public	ctype:Line	line:28	signature:(s string)
+Reset	textstore/linewriter.go	30;"	m	access:public	ctype:Writer	line:30	signature:(s string)
+Reset	textstore/store.go	29;"	m	access:public	ctype:Store	line:29	signature:(st string)
+ResetLine	textstore/interface.go	23;"	m	access:public	line:23	ntype:TextStorer	signature:(s string, line int)	type:string, error
+ResetLine	textstore/store.go	69;"	m	access:public	ctype:Store	line:69	signature:(st string, line int)	type:string, error
+Result	syntax/result.go	4;"	t	access:public	line:4	type:struct
+Resulter	syntax/interface.go	21;"	n	access:public	line:21	type:interface
+Rule	syntax/rule.go	16;"	t	access:public	line:16	type:struct
+Ruler	syntax/interface.go	30;"	n	access:public	line:30	type:interface
+RunCommand	action/definitions.go	26;"	c	access:public	line:26
+RunMacro	action/definitions.go	25;"	c	access:public	line:25
+Rune	key/interface.go	8;"	m	access:public	line:8	ntype:Keyer	signature:()	type:rune
+Rune	key/key.go	27;"	m	access:public	ctype:Key	line:27	signature:()	type:rune
+Same	syntax/json.go	18;"	w	access:public	ctype:jsRule	line:18	type:string
+SameKeys	layer/layer.go	145;"	f	access:public	line:145	signature:(a, b []key.Keyer)	type:ParseStatus
+Scroll	action/definitions.go	27;"	c	access:public	line:27
+Seek	textstore/interface.go	50;"	m	access:public	line:50	ntype:LineReader	signature:(offset int64, whence int)	type:int64, error
+Seek	textstore/interface.go	60;"	m	access:public	line:60	ntype:LineWriter	signature:(offset int64, whence int)	type:int64, error
+Seek	textstore/linereader.go	127;"	m	access:public	ctype:Reader	line:127	signature:(offset int64, whence int)	type:int64, error
+Seek	textstore/linewriter.go	35;"	m	access:public	ctype:Writer	line:35	signature:(offset int64, whence int)	type:int64, error
+SetFilename	buffer/buffer.go	24;"	m	access:public	ctype:Buffer	line:24	signature:(n string)
+SetFilename	buffer/interface.go	16;"	m	access:public	line:16	ntype:Bufferer	signature:(n string)
+SetFiletype	buffer/buffer.go	30;"	m	access:public	ctype:Buffer	line:30	signature:(ft string)
+SetFiletype	buffer/interface.go	18;"	m	access:public	line:18	ntype:Bufferer	signature:(ft string)
+SetLineDelim	textstore/interface.go	28;"	m	access:public	line:28	ntype:TextStorer	signature:(str string)
+SetLineDelim	textstore/store.go	170;"	m	access:public	ctype:Store	line:170	signature:(str string)
+SetMark	action/definitions.go	28;"	c	access:public	line:28
+Simple	textobject/object.go	79;"	w	access:public	ctype:jsObject	line:79	type:bool
+Size	textstore/interface.go	42;"	m	access:public	line:42	ntype:LineReader	signature:()	type:int64
+Size	textstore/linereader.go	36;"	m	access:public	ctype:Reader	line:36	signature:()	type:int64
+Skip	syntax/json.go	19;"	w	access:public	ctype:jsRule	line:19	type:string
+Special	key/interface.go	5;"	m	access:public	line:5	ntype:Keyer	signature:()	type:bool
+Special	key/key.go	15;"	m	access:public	ctype:Key	line:15	signature:()	type:bool
+SpecialKey	key/interface.go	9;"	m	access:public	line:9	ntype:Keyer	signature:()	type:string
+SpecialKey	key/key.go	18;"	m	access:public	ctype:Key	line:18	signature:()	type:string
+Start	syntax/json.go	11;"	w	access:public	ctype:jsRule	line:11	type:string
+Start	textobject/object.go	80;"	w	access:public	ctype:jsObject	line:80	type:string
+StopRecMacro	action/definitions.go	30;"	c	access:public	line:30
+Store	textstore/store.go	12;"	t	access:public	line:12	type:struct
+StrToKey	key/key.go	49;"	f	access:public	line:49	signature:(s string)	type:Keyer
+String	textstore/interface.go	24;"	m	access:public	line:24	ntype:TextStorer	signature:()	type:string
+String	textstore/interface.go	59;"	m	access:public	line:59	ntype:LineWriter	signature:()	type:string
+String	textstore/line.go	23;"	m	access:public	ctype:Line	line:23	signature:()	type:string
+String	textstore/linereader.go	19;"	m	access:public	ctype:Reader	line:19	signature:()	type:string
+String	textstore/linewriter.go	109;"	m	access:public	ctype:Writer	line:109	signature:()	type:string
+String	textstore/store.go	119;"	m	access:public	ctype:Store	line:119	signature:()	type:string
+Swap	syntax/result.go	31;"	m	access:public	ctype:resultList	line:31	signature:(i, j int)
+Target	action/action.go	12;"	m	access:public	ctype:Action	line:12	signature:()	type:string
+Target	action/interface.go	6;"	m	access:public	line:6	ntype:Actioner	signature:()	type:string
+Target	layer/layer.go	120;"	w	access:public	ctype:jsAction	line:120	type:string
+TextObjecter	textobject/interface.go	4;"	n	access:public	line:4	type:interface
+TextStore	buffer/buffer.go	33;"	m	access:public	ctype:Buffer	line:33	signature:()	type:textstore.TextStorer
+TextStore	buffer/interface.go	19;"	m	access:public	line:19	ntype:Bufferer	signature:()	type:textstore.TextStorer
+TextStorer	textstore/interface.go	14;"	n	access:public	line:14	type:interface
+Token	syntax/interface.go	23;"	m	access:public	line:23	ntype:Resulter	signature:()	type:string
+Token	syntax/result.go	17;"	m	access:public	ctype:Result	line:17	signature:()	type:string
+Top	cursor/cursor.go	31;"	m	access:public	ctype:Cursor	line:31	signature:()	type:bool
+Top	cursor/interface.go	14;"	m	access:public	line:14	ntype:Cursorer	signature:()	type:bool
+Transaction	action/action.go	23;"	t	access:public	line:23	type:struct
+Transactioner	action/interface.go	11;"	n	access:public	line:11	type:interface
+Transparent	syntax/json.go	20;"	w	access:public	ctype:jsRule	line:20	type:bool
+Type	syntax/interface.go	32;"	m	access:public	line:32	ntype:Ruler	signature:()	type:string
+Type	syntax/json.go	10;"	w	access:public	ctype:jsRule	line:10	type:string
+Type	syntax/rule.go	31;"	m	access:public	ctype:Rule	line:31	signature:()	type:string
+Type	undo/change.go	21;"	m	access:public	ctype:Change	line:21	signature:()	type:int
+Type	undo/interface.go	25;"	m	access:public	line:25	ntype:Changer	signature:()	type:int
+Undo	action/definitions.go	31;"	c	access:public	line:31
+Undo	textstore/store.go	185;"	m	access:public	ctype:Store	line:185	signature:()	type:error
+Undo	undo/change.go	27;"	m	access:public	ctype:Change	line:27	signature:(after string)	type:string
+Undo	undo/interface.go	27;"	m	access:public	line:27	ntype:Changer	signature:(after string)	type:string
+UnreadByte	textstore/interface.go	47;"	m	access:public	line:47	ntype:LineReader	signature:()	type:error
+UnreadByte	textstore/linereader.go	88;"	m	access:public	ctype:Reader	line:88	signature:()	type:error
+UnreadRune	textstore/interface.go	49;"	m	access:public	line:49	ntype:LineReader	signature:()	type:error
+UnreadRune	textstore/linereader.go	114;"	m	access:public	ctype:Reader	line:114	signature:()	type:error
+Up	action/definitions.go	9;"	c	access:public	line:9
+Up	buffer/interface.go	25;"	m	access:public	line:25	ntype:Bufferer	signature:(int)
+Up	buffer/move.go	70;"	m	access:public	ctype:Buffer	line:70	signature:(cnt int)
+Up	cursor/cursor.go	51;"	m	access:public	ctype:Cursor	line:51	signature:(cnt int)	type:bool
+Up	cursor/interface.go	18;"	m	access:public	line:18	ntype:Cursorer	signature:(cnt int)	type:bool
+Write	textstore/interface.go	62;"	m	access:public	line:62	ntype:LineWriter	signature:(p []byte)	type:int, error
+Write	textstore/linewriter.go	57;"	m	access:public	ctype:Writer	line:57	signature:(p []byte)	type:int, error
+WriteAt	textstore/interface.go	70;"	m	access:public	line:70	ntype:LineWriter	signature:(p []byte, offset int64)	type:int, error
+WriteAt	textstore/line.go	70;"	m	access:public	ctype:Line	line:70	signature:(p []byte, offset int64)	type:int, error
+WriteAt	textstore/linewriter.go	144;"	m	access:public	ctype:Writer	line:144	signature:(p []byte, offset int64)	type:int, error
+WriteByte	textstore/interface.go	65;"	m	access:public	line:65	ntype:LineWriter	signature:(b byte)	type:error
+WriteByte	textstore/linewriter.go	114;"	m	access:public	ctype:Writer	line:114	signature:(b byte)	type:error
+WriteRune	textstore/interface.go	66;"	m	access:public	line:66	ntype:LineWriter	signature:(r rune)	type:int, error
+WriteRune	textstore/linewriter.go	120;"	m	access:public	ctype:Writer	line:120	signature:(r rune)	type:int, error
+WriteRuneAt	textstore/interface.go	68;"	m	access:public	line:68	ntype:LineWriter	signature:(r rune, offset int64)	type:int, error
+WriteRuneAt	textstore/line.go	34;"	m	access:public	ctype:Line	line:34	signature:(r rune, offset int)	type:error
+WriteRuneAt	textstore/linewriter.go	130;"	m	access:public	ctype:Writer	line:130	signature:(r rune, offset int64)	type:int, error
+WriteString	textstore/interface.go	67;"	m	access:public	line:67	ntype:LineWriter	signature:(s string)	type:int, error
+WriteString	textstore/linewriter.go	125;"	m	access:public	ctype:Writer	line:125	signature:(s string)	type:int, error
+WriteTo	textstore/interface.go	51;"	m	access:public	line:51	ntype:LineReader	signature:(w io.Writer)	type:int64, error
+WriteTo	textstore/linereader.go	148;"	m	access:public	ctype:Reader	line:148	signature:(w io.Writer)	type:int64, error
+Writer	textstore/linewriter.go	13;"	t	access:public	line:13	type:struct
+Yank	action/definitions.go	32;"	c	access:public	line:32
+a	key/key.go	9;"	w	access:private	ctype:Key	line:9	type:bool
+a	layer/layer.go	13;"	w	access:private	ctype:keyAction	line:13	type:[]action.Actioner
+action	action/action.go	1;"	p	line:1
+action	action/definitions.go	1;"	p	line:1
+action	action/interface.go	1;"	p	line:1
+acts	action/action.go	24;"	w	access:private	ctype:Transaction	line:24	type:[]Actioner
+addredo	textstore/store.go	24;"	m	access:private	ctype:Store	line:24	signature:(cs ...undo.ChangeSetter)
+addundo	textstore/store.go	20;"	m	access:private	ctype:Store	line:20	signature:(cs ...undo.ChangeSetter)
+altKeys	key/alt.go	3;"	v	access:private	line:3
+asAction	layer/layer.go	124;"	m	access:private	ctype:jsAction	line:124	signature:()	type:action.Actioner
+asKeyAction	layer/layer.go	133;"	m	access:private	ctype:jsKeyAction	line:133	signature:()	type:keyAction
+asLayer	layer/layer.go	94;"	m	access:private	ctype:jsLayer	line:94	signature:()	type:Layerer
+asRuler	syntax/json.go	24;"	m	access:private	ctype:jsRule	line:24	signature:()	type:Ruler, error
+ba	layer/layer.go	19;"	w	access:private	ctype:Layer	line:19	type:[]action.Actioner
+bfac	editor/editor.go	18;"	w	access:private	ctype:Editor	line:18	type:buffer.Factory
+buf	action/action.go	25;"	w	access:private	ctype:Transaction	line:25	type:string
+buffer	buffer/buffer.go	1;"	p	line:1
+buffer	buffer/interface.go	1;"	p	line:1
+buffer	buffer/move.go	1;"	p	line:1
+bufio	textstore/store.go	4;"	i	line:4
+bufs	editor/editor.go	17;"	w	access:private	ctype:Editor	line:17	type:[]buffer.Bufferer
+c	key/key.go	9;"	w	access:private	ctype:Key	line:9	type:bool
+cfac	editor/editor.go	19;"	w	access:private	ctype:Editor	line:19	type:cursor.Factory
+changeSet	textstore/linewriter.go	19;"	w	access:private	ctype:Writer	line:19	type:undo.ChangeSetter
+changes	undo/changeset.go	7;"	w	access:private	ctype:ChangeSet	line:7	type:[]Changer
+col	cursor/cursor.go	8;"	w	access:private	ctype:Cursor	line:8	type:int
+contained	syntax/rule.go	20;"	w	access:private	ctype:Rule	line:20	type:bool
+contains	syntax/rule.go	19;"	w	access:private	ctype:Rule	line:19	type:[]string
+ctrlKeys	key/ctrl.go	3;"	v	access:private	line:3
+cur	buffer/buffer.go	13;"	w	access:private	ctype:Buffer	line:13	type:cursor.Cursorer
+cursor	cursor/cursor.go	1;"	p	line:1
+cursor	cursor/interface.go	1;"	p	line:1
+d	undo/change.go	8;"	w	access:private	ctype:Change	line:8	type:bool
+delim	textstore/store.go	14;"	w	access:private	ctype:Store	line:14	type:string
+display	syntax/rule.go	20;"	w	access:private	ctype:Rule	line:20	type:bool
+ea	layer/layer.go	19;"	w	access:private	ctype:Layer	line:19	type:[]action.Actioner
+editor	editor/editor.go	1;"	p	line:1
+editor	editor/interface.go	1;"	p	line:1
+enRx	syntax/rule.go	21;"	w	access:private	ctype:Rule	line:21	type:*regexp.Regexp
+encoding/json	filetype/ftdetecter.go	4;"	i	line:4
+encoding/json	layer/layer.go	4;"	i	line:4
+encoding/json	syntax/matcher.go	4;"	i	line:4
+encoding/json	textobject/object.go	4;"	i	line:4
+end	syntax/rule.go	18;"	w	access:private	ctype:Rule	line:18	type:string
+end	textobject/object.go	12;"	w	access:private	ctype:Object	line:12	type:string
+endRx	textobject/object.go	14;"	w	access:private	ctype:Object	line:14	type:*regexp.Regexp
+errors	textstore/linereader.go	4;"	i	line:4
+errors	textstore/linewriter.go	4;"	i	line:4
+exts	filetype/ftdetecter.go	17;"	w	access:private	ctype:FTDetecter	line:17	type:map[string]string
+filetype	filetype/ftdetecter.go	1;"	p	line:1
+filetype	filetype/interface.go	1;"	p	line:1
+fmt	buffer/move.go	4;"	i	line:4
+fmt	editor/editor.go	4;"	i	line:4
+fmt	filetype/ftdetecter.go	5;"	i	line:5
+fmt	layer/layers.go	4;"	i	line:4
+fmt	logger/logger.go	4;"	i	line:4
+fmt	logger/strace.go	4;"	i	line:4
+fmt	syntax/json.go	4;"	i	line:4
+fmt	syntax/matcher.go	5;"	i	line:5
+fmt	textobject/objects.go	4;"	i	line:4
+fmt	textstore/interface.go	4;"	i	line:4
+fmt	textstore/line.go	4;"	i	line:4
+fmt	textstore/linewriter.go	5;"	i	line:5
+fmt	textstore/store.go	5;"	i	line:5
+fmt.Stringer	textstore/interface.go	52;"	e	access:public	line:52	ntype:LineReader
+fn	buffer/buffer.go	11;"	w	access:private	ctype:Buffer	line:11	type:string
+fold	syntax/rule.go	20;"	w	access:private	ctype:Rule	line:20	type:bool
+ft	buffer/buffer.go	12;"	w	access:private	ctype:Buffer	line:12	type:string
+ftEntry	filetype/ftdetecter.go	22;"	t	access:private	line:22	type:struct
+ftd	editor/editor.go	21;"	w	access:private	ctype:Editor	line:21	type:filetype.Detecter
+github.com/dshills/layered/action	editor/editor.go	6;"	i	line:6
+github.com/dshills/layered/action	editor/interface.go	4;"	i	line:4
+github.com/dshills/layered/action	layer/interface.go	6;"	i	line:6
+github.com/dshills/layered/action	layer/layer.go	7;"	i	line:7
+github.com/dshills/layered/buffer	editor/editor.go	7;"	i	line:7
+github.com/dshills/layered/buffer	editor/interface.go	5;"	i	line:5
+github.com/dshills/layered/cursor	buffer/buffer.go	4;"	i	line:4
+github.com/dshills/layered/cursor	buffer/interface.go	4;"	i	line:4
+github.com/dshills/layered/cursor	editor/editor.go	8;"	i	line:8
+github.com/dshills/layered/filetype	editor/editor.go	9;"	i	line:9
+github.com/dshills/layered/key	layer/interface.go	7;"	i	line:7
+github.com/dshills/layered/key	layer/layer.go	8;"	i	line:8
+github.com/dshills/layered/logger	filetype/ftdetecter.go	12;"	i	line:12
+github.com/dshills/layered/syntax	editor/editor.go	10;"	i	line:10
+github.com/dshills/layered/textobject	buffer/interface.go	5;"	i	line:5
+github.com/dshills/layered/textobject	buffer/move.go	6;"	i	line:6
+github.com/dshills/layered/textobject	editor/editor.go	11;"	i	line:11
+github.com/dshills/layered/textstore	buffer/buffer.go	5;"	i	line:5
+github.com/dshills/layered/textstore	buffer/interface.go	6;"	i	line:6
+github.com/dshills/layered/textstore	cursor/cursor.go	3;"	i	line:3
+github.com/dshills/layered/textstore	cursor/interface.go	3;"	i	line:3
+github.com/dshills/layered/textstore	editor/editor.go	12;"	i	line:12
+github.com/dshills/layered/textstore	syntax/interface.go	6;"	i	line:6
+github.com/dshills/layered/textstore	syntax/matcher.go	10;"	i	line:10
+github.com/dshills/layered/undo	textstore/interface.go	7;"	i	line:7
+github.com/dshills/layered/undo	textstore/linewriter.go	9;"	i	line:9
+github.com/dshills/layered/undo	textstore/store.go	8;"	i	line:8
+github.com/sergi/go-diff/diffmatchpatch	undo/change.go	3;"	i	line:3
+github.com/sergi/go-diff/diffmatchpatch	undo/changeset.go	3;"	i	line:3
+grp	syntax/rule.go	17;"	w	access:private	ctype:Rule	line:17	type:string
+i	textstore/linereader.go	14;"	w	access:private	ctype:Reader	line:14	type:int64
+i	textstore/linewriter.go	17;"	w	access:private	ctype:Writer	line:17	type:int64
+id	buffer/buffer.go	10;"	w	access:private	ctype:Buffer	line:10	type:string
+io	layer/interface.go	4;"	i	line:4
+io	layer/layer.go	5;"	i	line:5
+io	syntax/interface.go	4;"	i	line:4
+io	syntax/rule.go	4;"	i	line:4
+io	textobject/object.go	5;"	i	line:5
+io	textstore/interface.go	5;"	i	line:5
+io	textstore/linereader.go	5;"	i	line:5
+io	textstore/linewriter.go	6;"	i	line:6
+io/ioutil	layer/layers.go	5;"	i	line:5
+io/ioutil	textobject/objects.go	5;"	i	line:5
+jsAction	layer/layer.go	118;"	t	access:private	line:118	type:struct
+jsKeyAction	layer/layer.go	128;"	t	access:private	line:128	type:struct
+jsLayer	layer/layer.go	84;"	t	access:private	line:84	type:struct
+jsObject	textobject/object.go	77;"	t	access:private	line:77	type:struct
+jsRule	syntax/json.go	8;"	t	access:private	line:8	type:struct
+k	layer/layer.go	12;"	w	access:private	ctype:keyAction	line:12	type:[]key.Keyer
+ka	layer/layer.go	20;"	w	access:private	ctype:Layer	line:20	type:[]keyAction
+key	key/alt.go	1;"	p	line:1
+key	key/ctrl.go	1;"	p	line:1
+key	key/interface.go	1;"	p	line:1
+key	key/key.go	1;"	p	line:1
+key	key/special.go	1;"	p	line:1
+keyAction	layer/layer.go	11;"	t	access:private	line:11	type:struct
+keywords	syntax/rule.go	19;"	w	access:private	ctype:Rule	line:19	type:[]string
+l	layer/layer.go	62;"	w	access:private	ctype:Parser	line:62	type:*Layer
+l	undo/change.go	10;"	w	access:private	ctype:Change	line:10	type:int
+layer	layer/interface.go	1;"	p	line:1
+layer	layer/layer.go	1;"	p	line:1
+layer	layer/layers.go	1;"	p	line:1
+layered	layered.go	1;"	p	line:1
+layered	layered.go	1;"	p	line:1
+line	cursor/cursor.go	7;"	w	access:private	ctype:Cursor	line:7	type:int
+line	textstore/linewriter.go	14;"	w	access:private	ctype:Writer	line:14	type:int
+lines	textstore/store.go	13;"	w	access:private	ctype:Store	line:13	type:[]*Line
+ln	syntax/result.go	6;"	w	access:private	ctype:Result	line:6	type:int
+ln	textstore/linereader.go	16;"	w	access:private	ctype:Reader	line:16	type:*Line
+ln	textstore/linewriter.go	15;"	w	access:private	ctype:Writer	line:15	type:*Line
+loadObj	textobject/object.go	50;"	f	access:private	line:50	signature:(r io.Reader)	type:TextObjecter, error
+log	logger/logger.go	5;"	i	line:5
+logLevel	logger/logger.go	8;"	v	access:private	line:8
+logger	logger/logger.go	1;"	p	line:1
+logger	logger/strace.go	1;"	p	line:1
+ls	layer/layers.go	13;"	w	access:private	ctype:Layers	line:13	type:[]Layerer
+m	filetype/ftdetecter.go	18;"	w	access:private	ctype:FTDetecter	line:18	type:sync.RWMutex
+ma	layer/layer.go	19;"	w	access:private	ctype:Layer	line:19	type:[]action.Actioner
+mat	syntax/rule.go	18;"	w	access:private	ctype:Rule	line:18	type:string
+movePast	cursor/cursor.go	10;"	w	access:private	ctype:Cursor	line:10	type:bool
+multiline	textobject/object.go	13;"	w	access:private	ctype:Object	line:13	type:bool
+n	action/action.go	5;"	w	access:private	ctype:Action	line:5	type:string
+n	layer/layer.go	18;"	w	access:private	ctype:Layer	line:18	type:string
+n	textobject/object.go	11;"	w	access:private	ctype:Object	line:11	type:string
+nma	layer/layer.go	19;"	w	access:private	ctype:Layer	line:19	type:[]action.Actioner
+objs	editor/editor.go	23;"	w	access:private	ctype:Editor	line:23	type:textobject.Objecter
+objs	textobject/objects.go	13;"	w	access:private	ctype:Objects	line:13	type:[]TextObjecter
+os	filetype/ftdetecter.go	6;"	i	line:6
+os	layer/layers.go	6;"	i	line:6
+os	syntax/matcher.go	6;"	i	line:6
+os	textobject/objects.go	6;"	i	line:6
+p	action/action.go	5;"	w	access:private	ctype:Action	line:5	type:string
+p	undo/change.go	11;"	w	access:private	ctype:Change	line:11	type:[]diffmatchpatch.Patch
+partial	layer/layer.go	63;"	w	access:private	ctype:Parser	line:63	type:[]key.Keyer
+path/filepath	filetype/ftdetecter.go	7;"	i	line:7
+path/filepath	layer/layers.go	7;"	i	line:7
+path/filepath	logger/strace.go	5;"	i	line:5
+path/filepath	textobject/objects.go	7;"	i	line:7
+patterns	filetype/ftdetecter.go	19;"	w	access:private	ctype:FTDetecter	line:19	type:[]ftEntry
+pma	layer/layer.go	19;"	w	access:private	ctype:Layer	line:19	type:[]action.Actioner
+pos	undo/change.go	7;"	w	access:private	ctype:Change	line:7	type:[]int
+pr	syntax/result.go	8;"	w	access:private	ctype:Result	line:8	type:int
+pr	textstore/linereader.go	15;"	w	access:private	ctype:Reader	line:15	type:int
+priority	syntax/rule.go	22;"	w	access:private	ctype:Rule	line:22	type:int
+r	key/key.go	10;"	w	access:private	ctype:Key	line:10	type:rune
+redo	textstore/store.go	17;"	w	access:private	ctype:Store	line:17	type:[]undo.ChangeSetter
+regEx	filetype/ftdetecter.go	26;"	w	access:private	ctype:ftEntry	line:26	type:*regexp.Regexp
+regexp	filetype/ftdetecter.go	8;"	i	line:8
+regexp	syntax/json.go	5;"	i	line:5
+regexp	syntax/rule.go	5;"	i	line:5
+regexp	textobject/object.go	6;"	i	line:6
+resultList	syntax/result.go	28;"	t	access:private	line:28	type:[]Resulter
+rg	syntax/result.go	7;"	w	access:private	ctype:Result	line:7	type:[][]int
+rules	syntax/matcher.go	15;"	w	access:private	ctype:Matcher	line:15	type:[]Ruler
+runtime	logger/strace.go	6;"	i	line:6
+s	key/key.go	9;"	w	access:private	ctype:Key	line:9	type:bool
+sfac	editor/editor.go	22;"	w	access:private	ctype:Editor	line:22	type:syntax.Factory
+simple	textobject/object.go	13;"	w	access:private	ctype:Object	line:13	type:bool
+sk	syntax/rule.go	18;"	w	access:private	ctype:Rule	line:18	type:string
+sm	syntax/rule.go	18;"	w	access:private	ctype:Rule	line:18	type:string
+sort	syntax/matcher.go	7;"	i	line:7
+sp	key/key.go	11;"	w	access:private	ctype:Key	line:11	type:string
+specialKeys	key/special.go	3;"	v	access:private	line:3
+st	syntax/rule.go	18;"	w	access:private	ctype:Rule	line:18	type:string
+st	textobject/object.go	12;"	w	access:private	ctype:Object	line:12	type:string
+stRx	syntax/rule.go	21;"	w	access:private	ctype:Rule	line:21	type:*regexp.Regexp
+startRx	textobject/object.go	14;"	w	access:private	ctype:Object	line:14	type:*regexp.Regexp
+store	textstore/linewriter.go	18;"	w	access:private	ctype:Writer	line:18	type:*Store
+strings	filetype/ftdetecter.go	9;"	i	line:9
+strings	key/key.go	4;"	i	line:4
+strings	layer/layers.go	8;"	i	line:8
+strings	logger/strace.go	7;"	i	line:7
+strings	syntax/matcher.go	8;"	i	line:8
+strings	textobject/objects.go	8;"	i	line:8
+strings	textstore/line.go	5;"	i	line:5
+strings	textstore/linewriter.go	7;"	i	line:7
+strings	textstore/store.go	6;"	i	line:6
+sync	filetype/ftdetecter.go	10;"	i	line:10
+syntax	syntax/interface.go	1;"	p	line:1
+syntax	syntax/json.go	1;"	p	line:1
+syntax	syntax/matcher.go	1;"	p	line:1
+syntax	syntax/result.go	1;"	p	line:1
+syntax	syntax/rule.go	1;"	p	line:1
+t	action/action.go	5;"	w	access:private	ctype:Action	line:5	type:string
+t	undo/change.go	9;"	w	access:private	ctype:Change	line:9	type:int
+targetCol	cursor/cursor.go	9;"	w	access:private	ctype:Cursor	line:9	type:int
+text	textstore/line.go	10;"	w	access:private	ctype:Line	line:10	type:string
+text	textstore/linewriter.go	16;"	w	access:private	ctype:Writer	line:16	type:[]rune
+textobject	textobject/interface.go	1;"	p	line:1
+textobject	textobject/object.go	1;"	p	line:1
+textobject	textobject/objects.go	1;"	p	line:1
+textstore	textstore/interface.go	1;"	p	line:1
+textstore	textstore/line.go	1;"	p	line:1
+textstore	textstore/linereader.go	1;"	p	line:1
+textstore	textstore/linewriter.go	1;"	p	line:1
+textstore	textstore/store.go	1;"	p	line:1
+tok	syntax/result.go	5;"	w	access:private	ctype:Result	line:5	type:string
+trans	syntax/rule.go	20;"	w	access:private	ctype:Rule	line:20	type:bool
+tsfac	editor/editor.go	20;"	w	access:private	ctype:Editor	line:20	type:textstore.Factory
+txt	buffer/buffer.go	14;"	w	access:private	ctype:Buffer	line:14	type:textstore.TextStorer
+txt	cursor/cursor.go	11;"	w	access:private	ctype:Cursor	line:11	type:textstore.TextStorer
+typ	syntax/rule.go	17;"	w	access:private	ctype:Rule	line:17	type:string
+undo	textstore/store.go	16;"	w	access:private	ctype:Store	line:16	type:[]undo.ChangeSetter
+undo	undo/change.go	1;"	p	line:1
+undo	undo/changeset.go	1;"	p	line:1
+undo	undo/interface.go	1;"	p	line:1
+undoFac	textstore/store.go	15;"	w	access:private	ctype:Store	line:15	type:undo.Factory
+unicode/utf8	textstore/linereader.go	6;"	i	line:6

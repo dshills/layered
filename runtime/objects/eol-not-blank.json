@@ -1,0 +1,8 @@
+{
+	"name": "eol-not-blank",
+	"start": "([^\\s\\t])[\\s\\t]*$",
+	"simple": true,
+	"first_match": true,
+	"keys": "_"
+}
+

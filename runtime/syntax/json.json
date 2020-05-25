@@ -1,0 +1,200 @@
+[
+	{
+		"group": "Noise.jsonNoise",
+		"type": "match",
+		"match": "(:|,)"
+	},
+	{
+		"group": "jsonKeywordMatch",
+		"type": "match",
+		"match": "\"([^\"]|\\\\\")+\"[[:blank:]\n\n]*:",
+		"contains": [
+			"jsonKeyword"
+		]
+	},
+	{
+		"group": "label.jsonKeyword",
+		"type": "region",
+		"start": "\"",
+		"end": "\"[[:blank:]\n\n]*:",
+		"matchgroup": [
+			"jsonQuote"
+		],
+		"conceal_ends": true,
+		"contained": true
+	},
+	{
+		"group": "label.jsonKeyword",
+		"type": "region",
+		"start": "\"",
+		"end": "\"[[:blank:]\n\n]*:",
+		"matchgroup": [
+			"jsonQuote"
+		],
+		"contained": true
+	},
+	{
+		"group": "jsonStringMatch",
+		"type": "match",
+		"match": "\"([^\"]|\\\\\")+\"[[:blank:]\n\n]*[,}]",
+		"contains": [
+			"jsonString"
+		]
+	},
+	{
+		"group": "constant.string.jsonString",
+		"type": "region",
+		"same": "\"",
+		"skip": "\\\\\\\\|\\\\\"",
+		"match": "oneline",
+		"contains": [
+			"jsonEscape"
+		],
+		"matchgroup": [
+			"jsonQuote"
+		],
+		"conceal_ends": true,
+		"contained": true
+	},
+	{
+		"group": "constant.string.jsonString",
+		"type": "region",
+		"same": "\"",
+		"skip": "\\\\\\\\|\\\\\"",
+		"match": "oneline",
+		"contains": [
+			"jsonEscape"
+		],
+		"matchgroup": [
+			"jsonQuote"
+		],
+		"contained": true
+	},
+	{
+		"group": "error.jsonStringSQError",
+		"type": "region",
+		"same": "'",
+		"skip": "\\\\\\\\|\\\\\"",
+		"match": "oneline"
+	},
+	{
+		"group": "special.jsonEscape",
+		"type": "match",
+		"match": "\\\\[\"\\\\/bfnrt]",
+		"contained": true
+	},
+	{
+		"group": "special.jsonEscape",
+		"type": "match",
+		"match": "\\\\u[[:xdigit:]]{4}",
+		"contained": true
+	},
+	{
+		"group": "constant.number.jsonNumber",
+		"type": "match",
+		"match": "-?\\A(0|[1-9]\\d*)(.\\d+)?([eE][-+]?\\d+)?\\z[[:blank:]\n\n]*[,}]"
+	},
+	{
+		"group": "error.jsonNoQuotesError",
+		"type": "match",
+		"match": "\\A[[:alpha:]][[:alnum:]]*\\z"
+	},
+	{
+		"group": "error.jsonTripleQuotesError",
+		"type": "match",
+		"match": "\"\"\""
+	},
+	{
+		"group": "error.jsonNumError",
+		"type": "match",
+		"match": "-?\\A0\\d.\\d*\\z"
+	},
+	{
+		"group": "error.jsonNumError",
+		"type": "match",
+		"match": ":[[:blank:]\n\n]*z.\\d+"
+	},
+	{
+		"group": "error.jsonCommentError",
+		"type": "match",
+		"match": "//.*"
+	},
+	{
+		"group": "error.jsonCommentError",
+		"type": "match",
+		"match": "(/\\*)|(\\*/)"
+	},
+	{
+		"group": "error.jsonSemicolonError",
+		"type": "match",
+		"match": ";"
+	},
+	{
+		"group": "error.jsonTrailingCommaError",
+		"type": "match",
+		"match": ",s\n*[}]"
+	},
+	{
+		"group": "error.jsonMissingCommaError",
+		"type": "match",
+		"match": "(\"||\\d)zs\n+\""
+	},
+	{
+		"group": "error.jsonMissingCommaError",
+		"type": "match",
+		"match": "/(|{)s\n+\"/\n\"arrays/objects\nas\nvalues"
+	},
+	{
+		"group": "error.jsonMissingCommaError",
+		"type": "match",
+		"match": "/}s\n+{/\n\"objects\nas\nelements\nin\nan\narray"
+	},
+	{
+		"group": "error.jsonMissingCommaError",
+		"type": "match",
+		"match": "/(true|false)s\n+\"/\n\"true/false\nas\nvalue"
+	},
+	{
+		"group": "operator.jsonPadding",
+		"type": "match",
+		"match": "^[[:blank:]\n\n]*[_$[:alpha:]][_$[:alnum:]]*[[:blank:]\n\n]*\\("
+	},
+	{
+		"group": "operator.jsonPadding",
+		"type": "match",
+		"match": "\\);[[:blank:]\n\n]*$"
+	},
+	{
+		"group": "constant.boolean.jsonBoolean",
+		"type": "match",
+		"match": "(true|false)(s\n+\")"
+	},
+	{
+		"group": "function.jsonNull",
+		"type": "keyword",
+		"keywords": [
+			"null"
+		]
+	},
+	{
+		"group": "jsonFold",
+		"type": "region",
+		"start": "{",
+		"end": "}(s\n+(\"|{))",
+		"matchgroup": [
+			"jsonBraces"
+		],
+		"transparent": true,
+		"fold": true
+	},
+	{
+		"group": "jsonFold",
+		"type": "region",
+		"end": "](s\n+\")",
+		"matchgroup": [
+			"jsonBraces"
+		],
+		"transparent": true,
+		"fold": true
+	}
+]

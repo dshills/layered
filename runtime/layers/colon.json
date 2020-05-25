@@ -1,0 +1,8 @@
+{
+	"name": "colon",
+	"commands": [
+		{ "keys":  "<esc>" , "actions": [{ "action": "ChangeMode", "target": "normal" }]},
+		{ "keys":  "<cr>" , "actions": [{ "action": "RunCommand",  "params": "input"}, { "action": "ChangeMode", "target": "prev" }] }
+	]
+}
+

@@ -1,0 +1,8 @@
+	{
+		"name": "block-{}",
+		"start": "{",
+		"end": "}",
+		"multiline": true,
+		"keys": "{}B"
+	}
+

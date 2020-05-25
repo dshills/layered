@@ -1,0 +1,8 @@
+{
+	"name": "string-double",
+	"start": "\"",
+	"end": "\"",
+	"multiline": true,
+	"keys": "\""
+}
+

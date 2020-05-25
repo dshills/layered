@@ -1,0 +1,8 @@
+{
+	"name": "bol",
+	"start": "^.",
+	"simple": true,
+	"first_match": true,
+	"keys": "0"
+}
+

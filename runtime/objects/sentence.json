@@ -1,0 +1,8 @@
+{
+	"name": "sentence",
+	"start": "[^\\s\\t]([\\.|\\?|\\!])([\\s\\t]|$)",
+	"simple": true,
+	"multiline": true,
+	"keys": "s"
+}
+

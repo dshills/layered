@@ -1,0 +1,8 @@
+{
+	"name": "eol",
+	"start": ".$",
+	"simple": true,
+	"first_match": true,
+	"keys": "$"
+}
+
