@@ -6,7 +6,7 @@ import "github.com/sergi/go-diff/diffmatchpatch"
 type Change struct {
 	pos []int
 	d   bool
-	t   int
+	t   ChangeType
 	l   int
 	p   []diffmatchpatch.Patch
 }
@@ -18,7 +18,7 @@ func (c *Change) Cursor() []int { return c.pos }
 func (c *Change) Dirty() bool { return c.d }
 
 // Type will return the change type
-func (c *Change) Type() int { return c.t }
+func (c *Change) Type() ChangeType { return c.t }
 
 // Line will return the line the change was made
 func (c *Change) Line() int { return c.l }

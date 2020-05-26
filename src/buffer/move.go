@@ -6,6 +6,13 @@ import (
 	"github.com/dshills/layered/textobject"
 )
 
+const scrollDistance = 35
+
+// Position will return the current cursor position
+func (b *Buffer) Position() []int {
+	return []int{b.cur.Line(), b.cur.Column()}
+}
+
 // Move will move to the next cnt objects
 func (b *Buffer) Move(cnt int, obj textobject.TextObjecter) error {
 	col := b.cur.Column()
@@ -66,6 +73,12 @@ func (b *Buffer) MovePrevEnd(cnt int, obj textobject.TextObjecter) error {
 	return fmt.Errorf("Buffer.MovePrev: Not found")
 }
 
+// MoveTo will move to a line and column
+func (b *Buffer) MoveTo(line, col int) error {
+	b.cur.MoveValid(line, col)
+	return nil
+}
+
 // Up will move the cursor up cnt
 func (b *Buffer) Up(cnt int) {
 	b.cur.Up(cnt)
@@ -84,4 +97,29 @@ func (b *Buffer) Prev(cnt int) {
 // Next will move the cursor forward by cnt
 func (b *Buffer) Next(cnt int) {
 	b.cur.Next(cnt)
+}
+
+// ScrollDown will scroll the cursor down
+func (b *Buffer) ScrollDown() {
+	b.cur.MoveValid(b.cur.Line()+scrollDistance, b.cur.Column())
+}
+
+// ScrollUp  will scroll the cursor up
+func (b *Buffer) ScrollUp() {
+	b.cur.MoveValid(b.cur.Line()-scrollDistance, b.cur.Column())
+}
+
+// BeginSelect will save the current cursor position
+func (b *Buffer) BeginSelect() {
+	b.cur.StartTrack()
+}
+
+// EndSelect will save the current position
+func (b *Buffer) EndSelect() {
+	b.cur.EndTrack()
+}
+
+// Selection will return the cursor's selection
+func (b *Buffer) Selection() [][]int {
+	return b.cur.Tracked()
 }

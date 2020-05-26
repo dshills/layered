@@ -23,7 +23,7 @@ type Writer struct {
 func (w *Writer) Flush() {
 	w.changeSet.ChangeLine(w.line, w.ln.String(), string(w.text))
 	w.ln.Reset(string(w.text))
-	w.store.addundo(w.changeSet)
+	w.store.AddUndoSet(w.changeSet)
 }
 
 // Reset will replace the line content

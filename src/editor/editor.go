@@ -113,6 +113,18 @@ func (e *Editor) Exec(tr action.Transactioner) error {
 				return err
 			}
 			buf.Next(1)
+		case action.ScrollDown:
+			buf, err := e.Buffer(tr.Buffer())
+			if err != nil {
+				return err
+			}
+			buf.ScrollDown()
+		case action.ScrollUp:
+			buf, err := e.Buffer(tr.Buffer())
+			if err != nil {
+				return err
+			}
+			buf.ScrollUp()
 		}
 
 	}

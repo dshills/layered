@@ -10,11 +10,12 @@ const (
 	Down        = "down"
 	Prev        = "prev"
 	Next        = "next"
+	ScrollDown  = "scrolldown"
+	ScrollUp    = "scrollup"
 )
 
 // Action constants
 const (
-	Changelayer  = "changelayer"
 	Delete       = "delete"
 	Deleteto     = "deleteto"
 	Indent       = "indent"
@@ -24,7 +25,6 @@ const (
 	Redo         = "redo"
 	RunMacro     = "runmacro"
 	RunCommand   = "runcommand"
-	Scroll       = "scroll"
 	SetMark      = "setmark"
 	RecordMacro  = "recordmacro"
 	StopRecMacro = "stoprecmacro"
@@ -39,7 +39,6 @@ type Def struct {
 
 // Definitions is a list of action definitions
 var Definitions = []Def{
-	Def{Name: "changelayer"},
 	Def{Name: "delete"},
 	Def{Name: "deleteto"},
 	Def{Name: "indent"},

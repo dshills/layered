@@ -19,4 +19,7 @@ type Cursorer interface {
 	Prev(cnt int) bool
 	Next(cnt int) bool
 	MoveValid(line, col int) bool
+	StartTrack()
+	EndTrack()
+	Tracked() [][]int
 }

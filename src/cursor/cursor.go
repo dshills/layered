@@ -4,11 +4,13 @@ import "github.com/dshills/layered/textstore"
 
 // Cursor is a window cursor
 type Cursor struct {
-	line      int
-	col       int
-	targetCol int
-	movePast  bool
-	txt       textstore.TextStorer
+	line                          int
+	col                           int
+	targetCol                     int
+	movePast                      bool
+	txt                           textstore.TextStorer
+	trackLineStart, trackColStart int
+	trackLineEnd, trackColEnd     int
 }
 
 // AsRange returns line, col as an int array
@@ -100,6 +102,29 @@ func (c *Cursor) MoveValid(line, col int) bool {
 		changed = true
 	}
 	return changed
+}
+
+// StartTrack will save the current position
+func (c *Cursor) StartTrack() {
+	c.trackLineEnd = -1
+	c.trackColEnd = -1
+	c.trackLineStart = c.line
+	c.trackColStart = c.col
+}
+
+// EndTrack will save the ending position
+func (c *Cursor) EndTrack() {
+	c.trackLineEnd = c.line
+	c.trackColEnd = c.col
+}
+
+// Tracked will return the start and end position
+func (c *Cursor) Tracked() [][]int {
+	return [][]int{
+		[]int{c.trackLineStart, c.trackColStart},
+		[]int{c.trackLineEnd, c.trackColEnd},
+	}
+
 }
 
 // New will return a new cursor

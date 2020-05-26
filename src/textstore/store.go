@@ -10,19 +10,14 @@ import (
 
 // Store is an implementation of LineBuffer
 type Store struct {
-	lines   []*Line
-	delim   string
-	undoFac undo.Factory
-	undo    []undo.ChangeSetter
-	redo    []undo.ChangeSetter
-}
-
-func (s *Store) addundo(cs ...undo.ChangeSetter) {
-	s.undo = append(s.undo, cs...)
-}
-
-func (s *Store) addredo(cs ...undo.ChangeSetter) {
-	s.redo = append(s.redo, cs...)
+	lines     []*Line
+	delim     string
+	undoFac   undo.Factory
+	undo      []undo.ChangeSetter
+	redo      []undo.ChangeSetter
+	hold      []undo.ChangeSetter
+	grpUndo   bool
+	isUndoing bool
 }
 
 // Reset will set the Store to s
@@ -43,7 +38,7 @@ func (s *Store) NewLine(st string, line int) (int, error) {
 	cs := s.undoFac()
 	cs.AddLine(line)
 	cs.ChangeLine(line+1, "", st)
-	s.addundo(cs)
+	s.AddUndoSet(cs)
 	return line, nil
 }
 
@@ -61,7 +56,7 @@ func (s *Store) DeleteLine(line int) (string, error) {
 	cs := s.undoFac()
 	cs.ChangeLine(line, original, "")
 	cs.RemoveLine(line)
-	s.addundo(cs)
+	s.AddUndoSet(cs)
 	return original, nil
 }
 
@@ -74,7 +69,7 @@ func (s *Store) ResetLine(st string, line int) (string, error) {
 	s.lines[line].Reset(st)
 	cs := s.undoFac()
 	cs.ChangeLine(line, original, st)
-	s.addundo(cs)
+	s.AddUndoSet(cs)
 	return original, nil
 }
 
@@ -176,71 +171,93 @@ func (s *Store) LineDelim() string {
 	return s.delim
 }
 
-// AddUndoEntry will add an entry to the undo stack
-//func (s *Store) AddUndoEntry(e undo.Entry) {
-//	s.undo = append(s.undo, e)
-//}
-
 // Undo will undo the last set of edits
 func (s *Store) Undo() error {
-	/*
-		if len(t.undo) == 0 {
-			return fmt.Errorf("No more undo entries")
+	if len(s.undo) == 0 {
+		return fmt.Errorf("No more undo entries")
+	}
+	s.isUndoing = true
+	defer func() {
+		s.isUndoing = false
+	}()
+	var x undo.ChangeSetter
+	x, s.undo = s.undo[len(s.undo)-1], s.undo[:len(s.undo)-1]
+	changes := x.Changes()
+
+	for i := len(changes) - 1; i >= 0; i-- {
+		change := changes[i]
+		switch change.Type() {
+		case undo.DeleteLine:
+			s.NewLine(change.Undo(""), change.Line())
+
+		case undo.AddLine:
+			s.DeleteLine(change.Line())
+
+		case undo.ChangeLine:
+			txt, _ := s.LineString(change.Line())
+			s.ResetLine(change.Undo(txt), change.Line())
 		}
-		var x Entry
-		x, t.undo = t.undo[len(t.undo)-1], t.undo[:len(t.undo)-1]
-
-		redoEntry := Entry{}
-
-		for i := len(x.Changes) - 1; i >= 0; i-- {
-
-			change := x.Changes[i]
-			switch change.Action {
-			case UADeleteLine:
-				txt := t.applyPatch(change.Patches, "")
-				redoEntry.Add(insertLineChange)
-				ln.NewLine(change.Line, txt)
-
-			case UAInsertLine:
-				curtxt, err := ln.LineString(change.Line)
-				if err != nil {
-					return fmt.Errorf("Undo.Apply: %v", err)
-				}
-				redoEntry.Add(NewChange(UAInsertLine, change.Line, pl...))
-				ln.DeleteLine(change.Line)
-
-			case UAChangeLine:
-				curtxt, err := ln.LineString(change.Line)
-				if err != nil {
-					return fmt.Errorf("Undo.Apply: %v", err)
-				}
-				snap := NewSnapshot(curtxt, NewChange(UAChangeLine, change.Line))
-				newtxt := t.applyPatch(change.Patches, curtxt)
-				ln.ResetLine(change.Line, newtxt)
-				redoEntry.Add(snap.Change(newtxt))
-			}
-		}
-		tr.Commit()
-		return nil
-
-		// ApplyPatch will apply a PatchList to changed
-		// returning the original string
-		// It will also return a new PatchList to reverse it
-		func (t *Tracker) applyPatch(p PatchList, changed string) string {
-			dmp := diffmatchpatch.New()
-			txt, _ := dmp.PatchApply(p, changed)
-			return txt
-		}
-	*/
+	}
 	return nil
 }
 
 // Redo will undo an undo
 func (s *Store) Redo() error {
+	if len(s.redo) == 0 {
+		return fmt.Errorf("No more redo entries")
+	}
+	var x undo.ChangeSetter
+	x, s.redo = s.redo[len(s.redo)-1], s.redo[:len(s.redo)-1]
+	changes := x.Changes()
+
+	for i := len(changes) - 1; i >= 0; i-- {
+		change := changes[i]
+		switch change.Type() {
+		case undo.DeleteLine:
+			s.NewLine(change.Undo(""), change.Line())
+
+		case undo.AddLine:
+			s.DeleteLine(change.Line())
+
+		case undo.ChangeLine:
+			txt, _ := s.LineString(change.Line())
+			s.ResetLine(change.Undo(txt), change.Line())
+		}
+	}
 	return nil
+}
+
+// StartGroupUndo will defer undo save until stopped
+// grouping all undos together
+func (s *Store) StartGroupUndo() {
+	s.hold = []undo.ChangeSetter{}
+	s.grpUndo = true
+}
+
+// StopGroupUndo will save undos as a simgle undo
+func (s *Store) StopGroupUndo() {
+	s.grpUndo = false
+	cs := undo.New()
+	for i := range s.hold {
+		cs.AddChanges(s.hold[i].Changes()...)
+	}
+	s.hold = []undo.ChangeSetter{}
+	s.AddUndoSet(cs)
+}
+
+// AddUndoSet will add an undo change set to the store
+func (s *Store) AddUndoSet(cs undo.ChangeSetter) {
+	switch {
+	case s.grpUndo:
+		s.hold = append(s.hold, cs)
+	case s.isUndoing:
+		s.redo = append(s.redo, cs)
+	default:
+		s.undo = append(s.undo, cs)
+	}
 }
 
 // New returns a new Store
 func New(fac undo.Factory) TextStorer {
-	return &Store{undoFac: fac}
+	return &Store{undoFac: fac, delim: "\n"}
 }

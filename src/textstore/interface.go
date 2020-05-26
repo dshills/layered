@@ -12,6 +12,11 @@ type Factory func(undo.Factory) TextStorer
 
 // TextStorer is a generalized text storage interface
 type TextStorer interface {
+	Undo() error
+	Redo() error
+	StartGroupUndo()
+	StopGroupUndo()
+	AddUndoSet(undo.ChangeSetter)
 	Reset(s string)
 	NumLines() int
 	LineLen(line int) int
@@ -27,6 +32,15 @@ type TextStorer interface {
 	LineWriterAt(line int) (LineWriter, error)
 	SetLineDelim(str string)
 	LineDelim() string
+}
+
+// Undoer is generalized undo functionality
+type Undoer interface {
+	StartGroupUndo()
+	StopGroupUndo()
+	AddUndoSet(undo.ChangeSetter)
+	Undo() error
+	Redo() error
 }
 
 // Liner is a generalized text storage interface

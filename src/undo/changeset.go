@@ -7,6 +7,11 @@ type ChangeSet struct {
 	changes []Changer
 }
 
+// AddChanges will add changes to the change set
+func (cs *ChangeSet) AddChanges(c ...Changer) {
+	cs.changes = append(cs.changes, c...)
+}
+
 // Changes returns the list of changes
 func (cs *ChangeSet) Changes() []Changer { return cs.changes }
 
