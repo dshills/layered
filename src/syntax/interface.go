@@ -7,11 +7,12 @@ import (
 )
 
 // Factory is a function that returns new syntax matchers
-type Factory func() Matcherer
+type Factory func(rt string) Matcherer
 
 // Matcherer is a collection of syntax rules
 // representing a set of language syntax rules
 type Matcherer interface {
+	LoadFileType(ft string) error
 	LoadFile(path string) error
 	Add(Ruler)
 	Parse(textstore.TextStorer) []Resulter

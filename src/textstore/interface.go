@@ -12,26 +12,45 @@ type Factory func(undo.Factory) TextStorer
 
 // TextStorer is a generalized text storage interface
 type TextStorer interface {
-	Undo() error
-	Redo() error
-	StartGroupUndo()
-	StopGroupUndo()
-	AddUndoSet(undo.ChangeSetter)
-	Reset(s string)
+	Undoer
+	StoreLengther
+	StoreReader
+	StoreWriter
+	StoreSubscriber
+	LineAt(line int) (LineReader, error)
+	LineWriterAt(line int) (LineWriter, error)
+}
+
+// StoreSubscriber is subscriber functionality
+type StoreSubscriber interface {
+	Subscribe(id string, up chan bool)
+	Unsubscribe(id string)
+}
+
+// StoreLengther is length functionality
+type StoreLengther interface {
 	NumLines() int
 	LineLen(line int) int
 	Len() int
+}
+
+// StoreReader is reader functionality
+type StoreReader interface {
 	LineString(pos int) (string, error)
 	LineRangeString(line, cnt int) ([]string, error)
+	ReadRuneAt(line, col int) (rune, int, error)
+	LineDelim() string
+	String() string // adds delimeters
+}
+
+// StoreWriter is writer functionality
+type StoreWriter interface {
+	Reset(s string)
+	ReadFrom(r io.Reader) (int64, error)
 	NewLine(s string, line int) (int, error)
 	DeleteLine(line int) (string, error)
 	ResetLine(s string, line int) (string, error)
-	String() string // adds delimeters
-	ReadRuneAt(line, col int) (rune, int, error)
-	LineAt(line int) (LineReader, error)
-	LineWriterAt(line int) (LineWriter, error)
 	SetLineDelim(str string)
-	LineDelim() string
 }
 
 // Undoer is generalized undo functionality

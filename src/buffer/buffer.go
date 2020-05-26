@@ -2,16 +2,21 @@ package buffer
 
 import (
 	"github.com/dshills/layered/cursor"
+	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textstore"
+	"github.com/google/uuid"
 )
 
 // Buffer is a text buffer
 type Buffer struct {
-	id  string
-	fn  string
-	ft  string
-	cur cursor.Cursorer
-	txt textstore.TextStorer
+	id      string
+	fn      string
+	ft      string
+	cur     cursor.Cursorer
+	txt     textstore.TextStorer
+	mat     syntax.Matcherer
+	dirty   bool
+	updates chan bool
 }
 
 // ID will return the identifier for the buffer
@@ -35,7 +40,27 @@ func (b *Buffer) TextStore() textstore.TextStorer { return b.txt }
 // Cursor will return the buffer's cursor
 func (b *Buffer) Cursor() cursor.Cursorer { return b.cur }
 
+// Dirty will return true if the buffer is unsaved
+func (b *Buffer) Dirty() bool { return b.dirty }
+
+func (b *Buffer) listenUpdates() {
+	for {
+		b.dirty = <-b.updates
+	}
+}
+
 // New will return a new Buffer
-func New(txt textstore.TextStorer, cur cursor.Cursorer) Bufferer {
-	return &Buffer{txt: txt, cur: cur}
+func New(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer) Bufferer {
+	up := make(chan bool)
+	id := uuid.New().String()
+	b := &Buffer{
+		txt:     txt,
+		cur:     cur,
+		mat:     m,
+		updates: up,
+		id:      id,
+	}
+	txt.Subscribe(b.id, b.updates)
+	go b.listenUpdates()
+	return b
 }

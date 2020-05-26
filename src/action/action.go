@@ -3,6 +3,9 @@ package action
 // Action is an editor action
 type Action struct {
 	n, t, p string
+	ln, col int
+	obj     string
+	cnt     int
 }
 
 // Name returns the action name
@@ -14,9 +17,33 @@ func (a *Action) Target() string { return a.t }
 // Param is a required parameter
 func (a *Action) Param() string { return a.p }
 
+// Line will return the line -1 represents not set
+func (a *Action) Line() int { return a.ln }
+
+// Column returns the column -1 represents not set
+func (a *Action) Column() int { return a.col }
+
+// SetLine will set the line associated with the action
+func (a *Action) SetLine(l int) { a.ln = l }
+
+// SetColumn will set the column associated with the action
+func (a *Action) SetColumn(c int) { a.col = c }
+
+// Object returns the object associated with the action
+func (a *Action) Object() string { return a.obj }
+
+// SetObject will set the object for the action
+func (a *Action) SetObject(obj string) { a.obj = obj }
+
+// Count will return the action count
+func (a *Action) Count() int { return a.cnt }
+
+// SetCount will set the action count
+func (a *Action) SetCount(c int) { a.cnt = c }
+
 // New will return a new Actioner
 func New(name, target, param string) Actioner {
-	return &Action{n: name, t: target, p: param}
+	return &Action{n: name, t: target, p: param, ln: -1, col: -1, cnt: 1}
 }
 
 // Transaction is a group of actions with a buffer identifier

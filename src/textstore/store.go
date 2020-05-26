@@ -3,10 +3,16 @@ package textstore
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/dshills/layered/undo"
 )
+
+type subscription struct {
+	id string
+	ch chan bool
+}
 
 // Store is an implementation of LineBuffer
 type Store struct {
@@ -18,15 +24,23 @@ type Store struct {
 	hold      []undo.ChangeSetter
 	grpUndo   bool
 	isUndoing bool
+	subs      []subscription
 }
 
 // Reset will set the Store to s
 func (s *Store) Reset(st string) {
+	r := strings.NewReader(st)
+	s.ReadFrom(r)
+}
+
+// ReadFrom will read from an io.Reader
+func (s *Store) ReadFrom(r io.Reader) (int64, error) {
+	scanner := bufio.NewScanner(r)
 	s.lines = []*Line{}
-	scanner := bufio.NewScanner(strings.NewReader(st))
 	for scanner.Scan() {
 		s.lines = append(s.lines, NewLine(scanner.Text()))
 	}
+	return int64(s.Len()), scanner.Err()
 }
 
 // NewLine creates a new line after line
@@ -230,12 +244,18 @@ func (s *Store) Redo() error {
 // StartGroupUndo will defer undo save until stopped
 // grouping all undos together
 func (s *Store) StartGroupUndo() {
+	if s.grpUndo {
+		return
+	}
 	s.hold = []undo.ChangeSetter{}
 	s.grpUndo = true
 }
 
 // StopGroupUndo will save undos as a simgle undo
 func (s *Store) StopGroupUndo() {
+	if !s.grpUndo {
+		return
+	}
 	s.grpUndo = false
 	cs := undo.New()
 	for i := range s.hold {
@@ -252,8 +272,33 @@ func (s *Store) AddUndoSet(cs undo.ChangeSetter) {
 		s.hold = append(s.hold, cs)
 	case s.isUndoing:
 		s.redo = append(s.redo, cs)
+		s.notifyChange()
 	default:
 		s.undo = append(s.undo, cs)
+		s.notifyChange()
+	}
+}
+
+func (s *Store) notifyChange() {
+	for i := range s.subs {
+		s.subs[i].ch <- true
+	}
+}
+
+// Subscribe will subscribe to updates
+func (s *Store) Subscribe(id string, up chan bool) {
+	s.subs = append(s.subs, subscription{id: id, ch: up})
+}
+
+// Unsubscribe will remove a subscription
+func (s *Store) Unsubscribe(id string) {
+	for i := range s.subs {
+		if s.subs[i].id == id {
+			// does not maintain order
+			s.subs[i] = s.subs[len(s.subs)-1]      // Copy last element to index i.
+			s.subs[len(s.subs)-1] = subscription{} // Erase last element (write zero value).
+			s.subs = s.subs[:len(s.subs)-1]        // Truncate slice.
+		}
 	}
 }
 

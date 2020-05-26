@@ -2,12 +2,13 @@ package buffer
 
 import (
 	"github.com/dshills/layered/cursor"
+	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textobject"
 	"github.com/dshills/layered/textstore"
 )
 
 // Factory is a function that returns new bufferers
-type Factory func(txt textstore.TextStorer, cur cursor.Cursorer) Bufferer
+type Factory func(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer) Bufferer
 
 // Bufferer is a text buffer
 type Bufferer interface {
@@ -26,6 +27,10 @@ type Filer interface {
 	SetFilename(n string)
 	Filetype() string
 	SetFiletype(ft string)
+	SaveBuffer(path string) error
+	OpenFile(path string) error
+	RenameFile(path string) error
+	Dirty() bool
 }
 
 // Mover is cursor movement functions
@@ -46,13 +51,15 @@ type Mover interface {
 
 // TextEditor is text editing functions
 type TextEditor interface {
-	DeleteObject(line, col int, obj textobject.TextObjecter) error
-	NewLineAbove(line int, st string) error
-	NewLineBelow(line int, st string) error
-	DeleteChar(line, col int) error
-	DeleteCharBack(line, col int) error
+	Reset(string)
+	ReplaceObject(line, col int, obj textobject.TextObjecter, s string, cnt int) error
+	DeleteChar(line, col, cnt int) error
+	DeleteCharBack(line, col, cnt int) error
+	DeleteLine(line, cnt int) error
+	DeleteObject(line, col int, obj textobject.TextObjecter, cnt int) error
 	InsertString(line, col int, st string) error
-	DeleteLine(line int) error
+	NewLineAbove(line int, st string, cnt int) error
+	NewLineBelow(line int, st string, cnt int) error
 	Indent(ln, cnt int) error
 	Outdent(ln, cnt int) error
 }

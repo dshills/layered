@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -12,11 +13,19 @@ import (
 
 // Matcher is syntax matcher
 type Matcher struct {
-	rules []Ruler
+	runtime string
+	rules   []Ruler
+}
+
+// LoadFileType will load a syntax file by file type
+func (m *Matcher) LoadFileType(ft string) error {
+	ft = strings.ToLower(ft) + ".json"
+	return m.LoadFile(filepath.Join(m.runtime, ft))
 }
 
 // LoadFile will load a syntax file
 func (m *Matcher) LoadFile(path string) error {
+	m.rules = []Ruler{}
 	f, err := os.Open(path)
 	if err != nil {
 		return err
@@ -70,6 +79,6 @@ func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter {
 }
 
 // New returns a new syntax matcher
-func New() Matcherer {
-	return &Matcher{}
+func New(rt string) Matcherer {
+	return &Matcher{runtime: rt}
 }

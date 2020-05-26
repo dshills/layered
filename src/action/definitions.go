@@ -2,25 +2,39 @@ package action
 
 // Movement
 const (
+	Down        = "down"
 	Move        = "move"
 	MoveEnd     = "moveend"
 	MovePrev    = "moveprev"
 	MovePrevEnd = "moveprevend"
-	Up          = "up"
-	Down        = "down"
-	Prev        = "prev"
 	Next        = "next"
+	Prev        = "prev"
 	ScrollDown  = "scrolldown"
 	ScrollUp    = "scrollup"
+	Up          = "up"
 )
 
-// Action constants
+// Edit
 const (
-	Delete       = "delete"
-	Deleteto     = "deleteto"
-	Indent       = "indent"
+	DeleteChar      = "deletechar"
+	DeleteCharBack  = "deletecharback"
+	DeleteLine      = "deleteline"
+	DeleteObject    = "deleteobject"
+	Indent          = "indent"
+	InsertLine      = "insertline"
+	InsertLineAbove = "insertlineabove"
+	InsertString    = "insertstring"
+	Outdent         = "outdent"
+)
+
+// Other
+const (
+	NewBuffer    = "newbuffer"
+	SaveBuffer   = "savebuffer"
+	CloseBuffer  = "closebuffer"
+	OpenFile     = "openfile"
+	RenameFile   = "renamefile"
 	Insert       = "insert"
-	Outdent      = "outdent"
 	Paste        = "paste"
 	Redo         = "redo"
 	RunMacro     = "runmacro"
