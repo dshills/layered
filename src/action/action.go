@@ -49,11 +49,16 @@ func New(name, target, param string) Actioner {
 // Transaction is a group of actions with a buffer identifier
 type Transaction struct {
 	acts []Actioner
-	buf  string
+	id   string
 }
 
 // Buffer will return the buffer id
-func (t *Transaction) Buffer() string { return t.buf }
+func (t *Transaction) Buffer() string { return t.id }
 
 // Actions returns the set of actions
 func (t *Transaction) Actions() []Actioner { return t.acts }
+
+// NewTransaction will return an we transactioner
+func NewTransaction(id string, actions ...Actioner) Transactioner {
+	return &Transaction{id: id, acts: actions}
+}

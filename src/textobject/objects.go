@@ -6,11 +6,14 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 // Objects is a collection of objects
 type Objects struct {
-	objs []TextObjecter
+	runtimes []string
+	objs     map[string]TextObjecter
+	m        sync.RWMutex
 }
 
 // LoadDir will load a collection of text objects
@@ -45,25 +48,52 @@ func (o *Objects) LoadDir(dir string) error {
 
 // Object returns an object by name
 func (o *Objects) Object(name string) (TextObjecter, error) {
-	for i := range o.objs {
-		if o.objs[i].Name() == name {
-			return o.objs[i], nil
-		}
+	o.m.RLock()
+	defer o.m.RUnlock()
+	obj, ok := o.objs[name]
+	if !ok {
+		return nil, fmt.Errorf("Objects.Object: Not found")
 	}
-	return nil, fmt.Errorf("Objects.Object: Not found")
+	return obj, nil
 }
 
 // Add will add an object to the collection
 func (o *Objects) Add(objs ...TextObjecter) {
-	o.objs = append(o.objs, objs...)
+	o.m.Lock()
+	defer o.m.Unlock()
+	for i := range objs {
+		o.objs[objs[i].Name()] = objs[i]
+	}
 }
 
 // Remove will remove an object from the collection
 func (o *Objects) Remove(name string) {
+	o.m.Lock()
+	defer o.m.Unlock()
 
 }
 
-// NewObjects returns a text object collection
-func NewObjects() Objecter {
-	return &Objects{}
+// SetRuntimes will set the list of runtime directories
+func (o *Objects) SetRuntimes(rts ...string) {
+	o.runtimes = rts
+	for i := len(rts) - 1; i >= 0; i-- {
+		p := filepath.Join(rts[i], "objects")
+		o.LoadDir(p)
+	}
+}
+
+// AddRuntimes will add to the list of runtimes
+func (o *Objects) AddRuntimes(rts ...string) {
+	o.runtimes = append(o.runtimes, rts...)
+	for i := len(rts) - 1; i >= 0; i-- {
+		p := filepath.Join(rts[i], "objects")
+		o.LoadDir(p)
+	}
+}
+
+// New returns a text object collection
+func New(rts ...string) Objecter {
+	objs := &Objects{}
+	objs.SetRuntimes(rts...)
+	return objs
 }

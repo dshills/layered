@@ -8,8 +8,6 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-
-	"github.com/dshills/layered/logger"
 )
 
 // FTDetecter determines file types
@@ -17,6 +15,7 @@ type FTDetecter struct {
 	exts     map[string]string
 	m        sync.RWMutex
 	patterns []ftEntry
+	runtimes []string
 }
 
 type ftEntry struct {
@@ -41,7 +40,7 @@ func (fd *FTDetecter) Load(path string) error {
 	fd.m.Lock()
 	defer fd.m.Unlock()
 
-	failCnt := 0
+	errs := []string{}
 	for _, en := range pats {
 		if en.Ext != "" {
 			splits := strings.Split(en.Ext, ",")
@@ -51,13 +50,13 @@ func (fd *FTDetecter) Load(path string) error {
 		} else {
 			en.regEx, err = regexp.Compile(en.Pattern)
 			if err != nil {
-				failCnt++
-				//logger.Errorf("FTDetecter %v %v", en.Pattern, err)
+				err = fmt.Errorf("%v", en.FT)
+				errs = append(errs, err.Error())
 			}
 		}
 	}
-	if failCnt > 0 {
-		logger.Errorf("FTDetecter %v patterns failed to compile", failCnt)
+	if len(errs) > 0 {
+		return fmt.Errorf(strings.Join(errs, ","))
 	}
 	return nil
 }
@@ -84,7 +83,40 @@ func (fd *FTDetecter) Detect(path string) (string, error) {
 	return "", fmt.Errorf("Not found")
 }
 
-// NewFTDetecter returns a new file type detecter
-func NewFTDetecter() Detecter {
-	return &FTDetecter{exts: make(map[string]string)}
+func (fd *FTDetecter) loadAll() error {
+	errs := []string{}
+	for i := len(fd.runtimes) - 1; i >= 0; i-- {
+		path := filepath.Join(fd.runtimes[i], "config", "ftdetect.json")
+		if err := fd.Load(path); err != nil {
+			errs = append(errs, err.Error())
+		}
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("FTDetecter.Load: %v", strings.Join(errs, ", "))
+	}
+	return nil
+}
+
+// AddDirectory will add a directory to the list of search directories
+func (fd *FTDetecter) AddDirectory(paths ...string) error {
+	fd.runtimes = append(fd.runtimes, paths...)
+	return fd.loadAll()
+}
+
+// RemoveDirectory will remove a directory from the runetime list
+func (fd *FTDetecter) RemoveDirectory(path string) {
+	dl := []string{}
+	for i := range fd.runtimes {
+		if fd.runtimes[i] != path {
+			dl = append(dl, fd.runtimes[i])
+		}
+	}
+	fd.runtimes = dl
+}
+
+// New returns a new file type detecter
+func New(rtpaths ...string) (Detecter, error) {
+	ft := &FTDetecter{exts: make(map[string]string)}
+	err := ft.AddDirectory(rtpaths...)
+	return ft, err
 }

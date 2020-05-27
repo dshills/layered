@@ -14,15 +14,17 @@ import (
 
 // Editor is an editor instance
 type Editor struct {
-	runtime string
-	bufs    []buffer.Bufferer
-	bufFac  buffer.Factory
-	curFac  cursor.Factory
-	txtFac  textstore.Factory
-	undoFac undo.Factory
-	synFac  syntax.Factory
-	ftd     filetype.Detecter
-	objs    textobject.Objecter
+	runtimes []string
+	bufs     []buffer.Bufferer
+	bufFac   buffer.Factory
+	curFac   cursor.Factory
+	txtFac   textstore.Factory
+	undoFac  undo.Factory
+	synFac   syntax.Factory
+	ftFac    filetype.Factory
+	objFac   textobject.Factory
+	objs     textobject.Objecter
+	ftd      filetype.Detecter
 }
 
 // Buffers returns the editors currrent buffers
@@ -57,7 +59,7 @@ func (e *Editor) bufferIdx(id string) (int, error) {
 
 func (e *Editor) newBuffer() {
 	ts := e.txtFac(e.undoFac)
-	e.bufs = append(e.bufs, e.bufFac(ts, e.curFac(ts), e.synFac(e.runtime)))
+	e.bufs = append(e.bufs, e.bufFac(ts, e.curFac(ts), e.synFac(e.runtimes...)))
 }
 
 func (e *Editor) removeBuffer(id string) error {
@@ -73,14 +75,10 @@ func (e *Editor) removeBuffer(id string) error {
 }
 
 // New will return a new editor
-func New(
-	uf undo.Factory,
-	tf textstore.Factory,
-	bf buffer.Factory,
-	cf cursor.Factory,
-	sf syntax.Factory,
-	ftd filetype.Detecter,
-	objs textobject.Objecter,
-) Editorer {
-	return &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, ftd: ftd, synFac: sf, objs: objs}
+func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rt ...string) (Editorer, error) {
+	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, ftFac: ftf, synFac: sf, objFac: of, runtimes: rt}
+	ed.objs = of()
+	var err error
+	ed.ftd, err = ftf(rt...)
+	return ed, err
 }

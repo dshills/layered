@@ -13,14 +13,28 @@ import (
 
 // Matcher is syntax matcher
 type Matcher struct {
-	runtime string
-	rules   []Ruler
+	runtimes []string
+	rules    []Ruler
 }
 
 // LoadFileType will load a syntax file by file type
 func (m *Matcher) LoadFileType(ft string) error {
 	ft = strings.ToLower(ft) + ".json"
-	return m.LoadFile(filepath.Join(m.runtime, ft))
+	for i := len(m.runtimes) - 1; i >= 0; i-- {
+		path := filepath.Join(m.runtimes[i], ft)
+		if m.fileExists(path) {
+			return m.LoadFile(path)
+		}
+	}
+	return fmt.Errorf("Matcher.LoadFileType: Not found %v", ft)
+}
+
+func (m *Matcher) fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
 
 // LoadFile will load a syntax file
@@ -79,6 +93,6 @@ func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter {
 }
 
 // New returns a new syntax matcher
-func New(rt string) Matcherer {
-	return &Matcher{runtime: rt}
+func New(rt ...string) Matcherer {
+	return &Matcher{runtimes: rt}
 }
