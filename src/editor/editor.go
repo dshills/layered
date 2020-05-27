@@ -45,7 +45,7 @@ func (e *Editor) Buffer(id string) (buffer.Bufferer, error) {
 			return e.bufs[i], nil
 		}
 	}
-	return nil, fmt.Errorf("Editor.Buffer: Not found")
+	return nil, fmt.Errorf("Editor.Buffer: %q Not found", id)
 }
 
 func (e *Editor) bufferIdx(id string) (int, error) {
@@ -57,9 +57,11 @@ func (e *Editor) bufferIdx(id string) (int, error) {
 	return 0, fmt.Errorf("Editor.Buffer: Not found")
 }
 
-func (e *Editor) newBuffer() {
+func (e *Editor) newBuffer() string {
 	ts := e.txtFac(e.undoFac)
-	e.bufs = append(e.bufs, e.bufFac(ts, e.curFac(ts), e.synFac(e.runtimes...)))
+	buf := e.bufFac(ts, e.curFac(ts), e.synFac(e.runtimes...), e.ftd)
+	e.bufs = append(e.bufs, buf)
+	return buf.ID()
 }
 
 func (e *Editor) removeBuffer(id string) error {

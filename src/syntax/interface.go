@@ -1,8 +1,6 @@
 package syntax
 
 import (
-	"io"
-
 	"github.com/dshills/layered/textstore"
 )
 
@@ -25,11 +23,16 @@ type Resulter interface {
 	Line() int
 	Range() [][]int
 	Priority() int
+	SetToken(string)
+	SetLine(int)
+	SetRanges([][]int)
+	SetPriority(int)
+	AddRanges([][]int)
 }
 
 // Ruler is a syntax matching rule
 type Ruler interface {
 	Group() string
 	Type() string
-	Match(io.Reader, int) Resulter
+	Match(textstore.TextStorer) []Resulter
 }

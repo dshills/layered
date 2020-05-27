@@ -10,7 +10,7 @@ import (
 // it uses the current name
 func (b *Buffer) SaveBuffer(path string) error {
 	if path == "" {
-		path = b.fn
+		path = b.filename
 	}
 	if path == "" {
 		return fmt.Errorf("Buffer.SaveBuffer: Missing file name")
@@ -23,7 +23,7 @@ func (b *Buffer) SaveBuffer(path string) error {
 	if err != nil {
 		return fmt.Errorf("Buffer.SaveBuffer: %v", err)
 	}
-	b.fn = path
+	b.SetFilename(path)
 	b.dirty = false
 	return nil
 }
@@ -41,13 +41,13 @@ func (b *Buffer) OpenFile(path string) error {
 	if err != nil {
 		return fmt.Errorf("Buffer.OpenFile: %v", err)
 	}
-	b.fn = path
+	b.SetFilename(path)
 	return err
 }
 
 // RenameFile will rename the file
 func (b *Buffer) RenameFile(path string) error {
-	if b.fn == "" {
+	if b.filename == "" {
 		return b.SaveBuffer(path)
 	}
 	if b.dirty {
@@ -55,7 +55,7 @@ func (b *Buffer) RenameFile(path string) error {
 			return fmt.Errorf("Buffer.RenameFile: %v", err)
 		}
 	}
-	if err := os.Rename(b.fn, path); err != nil {
+	if err := os.Rename(b.filename, path); err != nil {
 		return fmt.Errorf("Buffer.RenameFile: %v", err)
 	}
 	return nil

@@ -55,8 +55,23 @@ type Transaction struct {
 // Buffer will return the buffer id
 func (t *Transaction) Buffer() string { return t.id }
 
+// SetBuffer will set the transaction buffer
+func (t *Transaction) SetBuffer(id string) {
+	t.id = id
+}
+
 // Actions returns the set of actions
 func (t *Transaction) Actions() []Actioner { return t.acts }
+
+// Add will add actions to the transactions
+func (t *Transaction) Add(acts ...Actioner) {
+	t.acts = append(t.acts, acts...)
+}
+
+// Set will set actions to the transactions
+func (t *Transaction) Set(acts ...Actioner) {
+	t.acts = acts
+}
 
 // NewTransaction will return an we transactioner
 func NewTransaction(id string, actions ...Actioner) Transactioner {

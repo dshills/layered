@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/dshills/layered/textstore"
 )
@@ -21,7 +22,7 @@ type Matcher struct {
 func (m *Matcher) LoadFileType(ft string) error {
 	ft = strings.ToLower(ft) + ".json"
 	for i := len(m.runtimes) - 1; i >= 0; i-- {
-		path := filepath.Join(m.runtimes[i], ft)
+		path := filepath.Join(m.runtimes[i], "syntax", ft)
 		if m.fileExists(path) {
 			return m.LoadFile(path)
 		}
@@ -73,21 +74,16 @@ func (m *Matcher) Add(r Ruler) {
 
 // Parse will return a list of results for the text store
 func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter {
-	errs := []string{}
 	results := []Resulter{}
-	cnt := ts.NumLines()
-	for i := 0; i < cnt; i++ {
-		for ii := range m.rules {
-			reader, err := ts.LineAt(i)
-			if err != nil {
-				errs = append(errs, err.Error())
-				continue
-			}
-			go func(rule Ruler, ln int) {
-				results = append(results, rule.Match(reader, ln))
-			}(m.rules[ii], i)
-		}
+	wg := sync.WaitGroup{}
+	for ii := range m.rules {
+		wg.Add(1)
+		go func(rule Ruler, wg *sync.WaitGroup) {
+			results = append(results, rule.Match(ts)...)
+			wg.Done()
+		}(m.rules[ii], &wg)
 	}
+	wg.Wait()
 	sort.Sort(resultList(results))
 	return results
 }

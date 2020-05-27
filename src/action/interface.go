@@ -18,5 +18,8 @@ type Actioner interface {
 // Transactioner is group of actions for with a a buffer id
 type Transactioner interface {
 	Buffer() string
+	SetBuffer(string)
 	Actions() []Actioner
+	Add(acts ...Actioner)
+	Set(acts ...Actioner)
 }

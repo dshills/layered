@@ -25,15 +25,23 @@ const (
 	InsertLineAbove = "insertlineabove"
 	InsertString    = "insertstring"
 	Outdent         = "outdent"
+	Content         = "content"
+	Syntax          = "syntax"
+)
+
+// IO
+const (
+	NewBuffer   = "newbuffer"
+	SaveBuffer  = "savebuffer"
+	CloseBuffer = "closebuffer"
+	OpenFile    = "openfile"
+	RenameFile  = "renamefile"
+	SaveFileAs  = "savefileas"
+	BufferList  = "bufferlist"
 )
 
 // Other
 const (
-	NewBuffer    = "newbuffer"
-	SaveBuffer   = "savebuffer"
-	CloseBuffer  = "closebuffer"
-	OpenFile     = "openfile"
-	RenameFile   = "renamefile"
 	Insert       = "insert"
 	Paste        = "paste"
 	Redo         = "redo"

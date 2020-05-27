@@ -3,6 +3,7 @@ package syntax
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 type jsRule struct {
@@ -32,30 +33,46 @@ func (jr jsRule) asRuler() (Ruler, error) {
 		mat:       jr.Match,
 		contained: jr.Contained,
 		display:   jr.Display,
-		sm:        jr.Same,
+		same:      jr.Same,
 		sk:        jr.Skip,
 		trans:     jr.Transparent,
 		fold:      jr.Fold,
 	}
 	switch jr.Type {
 	case KeywordRule:
+		match := fmt.Sprintf("\\b(%s)\\b", strings.Join(jr.Keywords, "|"))
+		reg, err := regexp.Compile(match)
+		if err != nil {
+			return nil, fmt.Errorf("Rule %v %v %v", jr.Type, jr.Match, err)
+		}
+		r.stRx = reg
+
 	case MatchRule:
 		reg, err := regexp.Compile(jr.Match)
 		if err != nil {
 			return nil, fmt.Errorf("Rule %v %v %v", jr.Type, jr.Match, err)
 		}
 		r.stRx = reg
+
 	case RegionRule:
-		reg, err := regexp.Compile(jr.Start)
-		if err != nil {
-			return nil, fmt.Errorf("Rule %v %v %v", jr.Type, jr.Start, err)
+		if jr.Same != "" {
+			reg, err := regexp.Compile(jr.Same)
+			if err != nil {
+				return nil, fmt.Errorf("Rule %v %v %v", jr.Type, jr.Same, err)
+			}
+			r.stRx = reg
+		} else {
+			reg, err := regexp.Compile(jr.Start)
+			if err != nil {
+				return nil, fmt.Errorf("Rule %v %v %v", jr.Type, jr.Start, err)
+			}
+			r.stRx = reg
+			reg, err = regexp.Compile(jr.End)
+			if err != nil {
+				return nil, fmt.Errorf("Rule %v %v %v", jr.Type, jr.End, err)
+			}
+			r.enRx = reg
 		}
-		r.stRx = reg
-		reg, err = regexp.Compile(jr.End)
-		if err != nil {
-			return nil, fmt.Errorf("Rule %v %v %v", jr.Type, jr.End, err)
-		}
-		r.enRx = reg
 	}
 
 	return &r, nil

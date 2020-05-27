@@ -11,5 +11,5 @@ type Editorer interface {
 	Add(buffer.Bufferer)
 	Remove(id string)
 	Buffer(id string) (buffer.Bufferer, error)
-	Exec(action.Transactioner) error
+	Exec(action.Transactioner) (*Response, error)
 }
