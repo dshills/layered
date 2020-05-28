@@ -3,13 +3,14 @@ package buffer
 import (
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
+	"github.com/dshills/layered/register"
 	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textobject"
 	"github.com/dshills/layered/textstore"
 )
 
 // Factory is a function that returns new bufferers
-type Factory func(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter) Bufferer
+type Factory func(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter, reg register.Registerer) Bufferer
 
 // Bufferer is a text buffer
 type Bufferer interface {
@@ -21,6 +22,8 @@ type Bufferer interface {
 	TextEditor
 	Selector
 	SyntaxResults() []syntax.Resulter
+	SearchResults() []SearchResult
+	Search(string) ([]SearchResult, error)
 }
 
 // Filer is file functions
@@ -64,6 +67,8 @@ type TextEditor interface {
 	NewLineBelow(line int, st string, cnt int) error
 	Indent(ln, cnt int) error
 	Outdent(ln, cnt int) error
+	Undo() error
+	Redo() error
 }
 
 // Selector is selection functions

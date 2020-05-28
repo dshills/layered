@@ -231,3 +231,13 @@ func (b *Buffer) Outdent(line, cnt int) error {
 	}
 	return nil
 }
+
+// Undo will undo the last edit
+func (b *Buffer) Undo() error {
+	return b.txt.Undo()
+}
+
+// Redo will redo the last edit
+func (b *Buffer) Redo() error {
+	return b.txt.Redo()
+}

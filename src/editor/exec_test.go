@@ -1,13 +1,13 @@
 package editor
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/buffer"
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
+	"github.com/dshills/layered/register"
 	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textobject"
 	"github.com/dshills/layered/textstore"
@@ -21,7 +21,7 @@ var bufid string
 
 func TestExect(t *testing.T) {
 	var err error
-	ed, err = New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, rtpath)
+	ed, err = New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, rtpath)
 	if err != nil {
 		t.Error(err)
 	}
@@ -106,7 +106,17 @@ func TestSyntax(t *testing.T) {
 	if len(resp.Syntax) == 0 {
 		t.Errorf("Expected > 0 got 0")
 	}
-	for _, sr := range resp.Syntax {
-		fmt.Println(sr.Token())
+}
+
+func TestSearch(t *testing.T) {
+	trans := action.NewTransaction(bufid)
+	act := action.New(action.Search, "", "scan")
+	trans.Set(act)
+	resp, err := ed.Exec(trans)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(resp.Search) == 0 {
+		t.Errorf("Expected search results got none")
 	}
 }

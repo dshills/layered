@@ -6,6 +6,7 @@ import (
 	"github.com/dshills/layered/buffer"
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
+	"github.com/dshills/layered/register"
 	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textobject"
 	"github.com/dshills/layered/textstore"
@@ -23,8 +24,10 @@ type Editor struct {
 	synFac   syntax.Factory
 	ftFac    filetype.Factory
 	objFac   textobject.Factory
+	regFac   register.Factory
 	objs     textobject.Objecter
 	ftd      filetype.Detecter
+	reg      register.Registerer
 }
 
 // Buffers returns the editors currrent buffers
@@ -36,7 +39,17 @@ func (e *Editor) Add(buf buffer.Bufferer) {
 }
 
 // Remove will remove a buffer from the editor
-func (e *Editor) Remove(id string) {}
+func (e *Editor) Remove(id string) error {
+	i, err := e.bufferIdx(id)
+	if err != nil {
+		return err
+	}
+	// does not maintian order
+	e.bufs[i] = e.bufs[len(e.bufs)-1]        // Copy last element to index i.
+	e.bufs[len(e.bufs)-1] = &buffer.Buffer{} // Erase last element (write zero value).
+	e.bufs = e.bufs[:len(e.bufs)-1]          // Truncate slice.
+	return nil
+}
 
 // Buffer will return a buffer by id
 func (e *Editor) Buffer(id string) (buffer.Bufferer, error) {
@@ -59,26 +72,15 @@ func (e *Editor) bufferIdx(id string) (int, error) {
 
 func (e *Editor) newBuffer() string {
 	ts := e.txtFac(e.undoFac)
-	buf := e.bufFac(ts, e.curFac(ts), e.synFac(e.runtimes...), e.ftd)
+	buf := e.bufFac(ts, e.curFac(ts), e.synFac(e.runtimes...), e.ftd, e.reg)
 	e.bufs = append(e.bufs, buf)
 	return buf.ID()
 }
 
-func (e *Editor) removeBuffer(id string) error {
-	i, err := e.bufferIdx(id)
-	if err != nil {
-		return err
-	}
-	// does not maintian order
-	e.bufs[i] = e.bufs[len(e.bufs)-1]        // Copy last element to index i.
-	e.bufs[len(e.bufs)-1] = &buffer.Buffer{} // Erase last element (write zero value).
-	e.bufs = e.bufs[:len(e.bufs)-1]          // Truncate slice.
-	return nil
-}
-
 // New will return a new editor
-func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rt ...string) (Editorer, error) {
-	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, ftFac: ftf, synFac: sf, objFac: of, runtimes: rt}
+func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, rt ...string) (Editorer, error) {
+	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, ftFac: ftf, synFac: sf, objFac: of, regFac: rf, runtimes: rt}
+	ed.reg = rf()
 	ed.objs = of()
 	var err error
 	ed.ftd, err = ftf(rt...)

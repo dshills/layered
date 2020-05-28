@@ -26,7 +26,6 @@ const (
 	InsertString    = "insertstring"
 	Outdent         = "outdent"
 	Content         = "content"
-	Syntax          = "syntax"
 )
 
 // IO
@@ -42,16 +41,19 @@ const (
 
 // Other
 const (
-	Insert       = "insert"
-	Paste        = "paste"
-	Redo         = "redo"
-	RunMacro     = "runmacro"
-	RunCommand   = "runcommand"
-	SetMark      = "setmark"
-	RecordMacro  = "recordmacro"
-	StopRecMacro = "stoprecmacro"
-	Undo         = "undo"
-	Yank         = "yank"
+	Search        = "search"
+	SearchResults = "searchresults"
+	Syntax        = "syntax"
+	Insert        = "insert"
+	Redo          = "redo"
+	Undo          = "undo"
+	RunMacro      = "runmacro"
+	RunCommand    = "runcommand"
+	SetMark       = "setmark"
+	RecordMacro   = "recordmacro"
+	StopRecMacro  = "stoprecmacro"
+	Yank          = "yank"
+	Paste         = "paste"
 )
 
 // Def is a definition for an action

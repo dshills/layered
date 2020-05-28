@@ -1,8 +1,13 @@
 package buffer
 
 import (
+	"fmt"
+	"regexp"
+	"sync"
+
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
+	"github.com/dshills/layered/register"
 	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textstore"
 	"github.com/google/uuid"
@@ -20,6 +25,14 @@ type Buffer struct {
 	dirty         bool
 	updates       chan bool
 	syntaxResults []syntax.Resulter
+	searchResults []SearchResult
+	reg           register.Registerer
+}
+
+// SearchResult is the results for a line
+type SearchResult struct {
+	Line    int
+	Matches [][]int
 }
 
 // ID will return the identifier for the buffer
@@ -75,8 +88,39 @@ func (b *Buffer) SyntaxResults() []syntax.Resulter {
 	return b.syntaxResults
 }
 
+// SearchResults will return the current search results
+func (b *Buffer) SearchResults() []SearchResult {
+	return b.searchResults
+}
+
+// Search will search the current textstore
+func (b *Buffer) Search(s string) ([]SearchResult, error) {
+	rex, err := regexp.Compile(s)
+	if err != nil {
+		return nil, err
+	}
+	lns := b.txt.NumLines()
+	wg := sync.WaitGroup{}
+	for i := 0; i < lns; i++ {
+		wg.Add(1)
+		go func(wg *sync.WaitGroup, ln int) {
+			str, _ := b.txt.LineString(ln)
+			matches := rex.FindAllStringIndex(str, -1)
+			if len(matches) > 0 {
+				b.searchResults = append(b.searchResults, SearchResult{Line: ln, Matches: matches})
+			}
+			wg.Done()
+		}(&wg, i)
+	}
+	wg.Wait()
+	if len(b.searchResults) == 0 {
+		return nil, fmt.Errorf("Not found")
+	}
+	return b.searchResults, nil
+}
+
 // New will return a new Buffer
-func New(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter) Bufferer {
+func New(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter, reg register.Registerer) Bufferer {
 	up := make(chan bool)
 	id := uuid.New().String()
 	b := &Buffer{
@@ -86,6 +130,7 @@ func New(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd 
 		mat:     m,
 		updates: up,
 		id:      id,
+		reg:     reg,
 	}
 	txt.Subscribe(b.id, b.updates)
 	go b.listenUpdates()

@@ -9,7 +9,7 @@ import (
 type Editorer interface {
 	Buffers() []buffer.Bufferer
 	Add(buffer.Bufferer)
-	Remove(id string)
+	Remove(id string) error
 	Buffer(id string) (buffer.Bufferer, error)
 	Exec(action.Transactioner) (*Response, error)
 }

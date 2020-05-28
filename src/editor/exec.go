@@ -22,15 +22,36 @@ type Response struct {
 	Results      []KeyValue
 	Content      []string
 	Syntax       []syntax.Resulter
+	Search       []buffer.SearchResult
 }
 
 // Exec will execute a transaction in the editor
 func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 	acts := tr.Actions()
 	resp = &Response{Buffer: tr.Buffer()}
-	for i := range acts {
-		switch acts[i].Name() {
 
+	for _, act := range acts {
+		switch act.Name() {
+
+		// Search
+		case action.Search:
+			buf, err := e.Buffer(tr.Buffer())
+			if err != nil {
+				return nil, err
+			}
+			res, err := buf.Search(act.Param())
+			if err != nil {
+				return nil, err
+			}
+			resp.Search = res
+		case action.SearchResults:
+			buf, err := e.Buffer(tr.Buffer())
+			if err != nil {
+				return nil, err
+			}
+			resp.Search = buf.SearchResults()
+
+		// Syntax
 		case action.Syntax:
 			buf, err := e.Buffer(tr.Buffer())
 			if err != nil {
@@ -51,7 +72,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return nil, err
 			}
-			if err := buf.SaveBuffer(acts[i].Param()); err != nil {
+			if err := buf.SaveBuffer(act.Param()); err != nil {
 				return nil, err
 			}
 		case action.CloseBuffer:
@@ -62,7 +83,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if buf.Dirty() {
 				return nil, fmt.Errorf("CloseBuffer: Buffer is dirty")
 			}
-			e.removeBuffer(tr.Buffer())
+			e.Remove(tr.Buffer())
 		case action.OpenFile:
 			id := tr.Buffer()
 			if id == "" {
@@ -73,7 +94,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return nil, err
 			}
-			if err := buf.OpenFile(acts[i].Param()); err != nil {
+			if err := buf.OpenFile(act.Param()); err != nil {
 				return nil, err
 			}
 		case action.RenameFile:
@@ -81,7 +102,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return nil, err
 			}
-			if err := buf.RenameFile(acts[i].Param()); err != nil {
+			if err := buf.RenameFile(act.Param()); err != nil {
 				return nil, err
 			}
 		case action.SaveFileAs:
@@ -89,13 +110,13 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return nil, err
 			}
-			buf.SetFilename(acts[i].Param())
+			buf.SetFilename(act.Param())
 			if err := buf.SaveBuffer(""); err != nil {
 				return nil, err
 			}
 		// Move
 		case action.Move:
-			obj, err := e.objs.Object(acts[i].Object())
+			obj, err := e.objs.Object(act.Object())
 			if err != nil {
 				return nil, err
 			}
@@ -105,7 +126,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			}
 			buf.Move(1, obj)
 		case action.MoveEnd:
-			obj, err := e.objs.Object(acts[i].Object())
+			obj, err := e.objs.Object(act.Object())
 			if err != nil {
 				return nil, err
 			}
@@ -115,7 +136,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			}
 			buf.MoveEnd(1, obj)
 		case action.MovePrev:
-			obj, err := e.objs.Object(acts[i].Object())
+			obj, err := e.objs.Object(act.Object())
 			if err != nil {
 				return nil, err
 			}
@@ -125,7 +146,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			}
 			buf.MovePrev(1, obj)
 		case action.MovePrevEnd:
-			obj, err := e.objs.Object(acts[i].Object())
+			obj, err := e.objs.Object(act.Object())
 			if err != nil {
 				return nil, err
 			}
@@ -180,7 +201,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 				return nil, err
 			}
 			buf.TextStore().StartGroupUndo()
-			err = buf.DeleteChar(acts[i].Line(), acts[i].Column(), acts[i].Count())
+			err = buf.DeleteChar(act.Line(), act.Column(), act.Count())
 			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
@@ -191,7 +212,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 				return nil, err
 			}
 			buf.TextStore().StartGroupUndo()
-			err = buf.DeleteCharBack(acts[i].Line(), acts[i].Column(), acts[i].Count())
+			err = buf.DeleteCharBack(act.Line(), act.Column(), act.Count())
 			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
@@ -202,13 +223,13 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 				return nil, err
 			}
 			buf.TextStore().StartGroupUndo()
-			err = buf.DeleteLine(acts[i].Line(), acts[i].Count())
+			err = buf.DeleteLine(act.Line(), act.Count())
 			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
 			}
 		case action.DeleteObject:
-			obj, err := e.objs.Object(acts[i].Object())
+			obj, err := e.objs.Object(act.Object())
 			if err != nil {
 				return nil, err
 			}
@@ -217,7 +238,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 				return nil, err
 			}
 			buf.TextStore().StartGroupUndo()
-			err = buf.DeleteObject(acts[i].Line(), acts[i].Column(), obj, acts[i].Count())
+			err = buf.DeleteObject(act.Line(), act.Column(), obj, act.Count())
 			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
@@ -228,7 +249,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 				return nil, err
 			}
 			buf.TextStore().StartGroupUndo()
-			err = buf.NewLineBelow(acts[i].Line(), acts[i].Param(), acts[i].Count())
+			err = buf.NewLineBelow(act.Line(), act.Param(), act.Count())
 			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
@@ -239,7 +260,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 				return nil, err
 			}
 			buf.TextStore().StartGroupUndo()
-			err = buf.NewLineAbove(acts[i].Line(), acts[i].Param(), acts[i].Count())
+			err = buf.NewLineAbove(act.Line(), act.Param(), act.Count())
 			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
@@ -249,7 +270,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return nil, err
 			}
-			if err := buf.InsertString(acts[i].Line(), acts[i].Column(), acts[i].Param()); err != nil {
+			if err := buf.InsertString(act.Line(), act.Column(), act.Param()); err != nil {
 				return nil, err
 			}
 		case action.Indent:
@@ -257,7 +278,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return nil, err
 			}
-			if err := buf.Indent(acts[i].Line(), acts[i].Count()); err != nil {
+			if err := buf.Indent(act.Line(), act.Count()); err != nil {
 				return nil, err
 			}
 		case action.Outdent:
@@ -265,7 +286,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return nil, err
 			}
-			if err := buf.Outdent(acts[i].Line(), acts[i].Count()); err != nil {
+			if err := buf.Outdent(act.Line(), act.Count()); err != nil {
 				return nil, err
 			}
 		case action.Content:
@@ -274,7 +295,7 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return
 			}
-			resp.Content, err = buf.TextStore().LineRangeString(acts[i].Line(), acts[i].Count())
+			resp.Content, err = buf.TextStore().LineRangeString(act.Line(), act.Count())
 			return
 		}
 
