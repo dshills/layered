@@ -1,5 +1,10 @@
 package action
 
+import (
+	"fmt"
+	"strings"
+)
+
 // Action is an editor action
 type Action struct {
 	n, t, p string
@@ -41,6 +46,43 @@ func (a *Action) Count() int { return a.cnt }
 // SetCount will set the action count
 func (a *Action) SetCount(c int) { a.cnt = c }
 
+// Valid will return true if it is a valid action
+func (a *Action) Valid(bufid string) error {
+	errs := []string{}
+	found := false
+	for _, d := range Definitions {
+		if d.Name == a.Name() {
+			found = true
+			if a.Param() == "" && !d.NoParam {
+				errs = append(errs, "Missing Param")
+			}
+			if bufid == "" && !d.NoBuffer {
+				errs = append(errs, "Missing buffer id")
+			}
+		}
+	}
+	if !found {
+		errs = append(errs, "Action not found")
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("Action: %v Invalid %v", a.Name(), strings.Join(errs, ", "))
+	}
+	return nil
+}
+
+// NeedBuffer will return true if the action requires a buffer
+func (a *Action) NeedBuffer() bool {
+	for _, d := range Definitions {
+		if d.Name == a.Name() {
+			if d.NoBuffer {
+				return false
+			}
+			return true
+		}
+	}
+	return false
+}
+
 // New will return a new Actioner
 func New(name, target, param string) Actioner {
 	return &Action{n: name, t: target, p: param, ln: -1, col: -1, cnt: 1}
@@ -71,6 +113,30 @@ func (t *Transaction) Add(acts ...Actioner) {
 // Set will set actions to the transactions
 func (t *Transaction) Set(acts ...Actioner) {
 	t.acts = acts
+}
+
+// Valid will return true if a valid transaction
+func (t *Transaction) Valid() error {
+	errs := []string{}
+	for i := range t.acts {
+		if err := t.acts[i].Valid(t.id); err != nil {
+			errs = append(errs, err.Error())
+		}
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("Invalid transaction %v", strings.Join(errs, ", "))
+	}
+	return nil
+}
+
+// NeedBuffer will return true if the action list requires a buffer
+func (t *Transaction) NeedBuffer() bool {
+	for i := range t.acts {
+		if t.acts[i].NeedBuffer() {
+			return true
+		}
+	}
+	return false
 }
 
 // NewTransaction will return an we transactioner

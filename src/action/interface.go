@@ -13,6 +13,8 @@ type Actioner interface {
 	SetObject(string)
 	Count() int
 	SetCount(int)
+	Valid(bufid string) error
+	NeedBuffer() bool
 }
 
 // Transactioner is group of actions for with a a buffer id
@@ -22,4 +24,6 @@ type Transactioner interface {
 	Actions() []Actioner
 	Add(acts ...Actioner)
 	Set(acts ...Actioner)
+	Valid() error
+	NeedBuffer() bool
 }
