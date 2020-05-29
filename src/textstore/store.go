@@ -3,6 +3,7 @@ package textstore
 import (
 	"bufio"
 	"fmt"
+	"hash/fnv"
 	"io"
 	"strings"
 
@@ -11,7 +12,7 @@ import (
 
 type subscription struct {
 	id string
-	ch chan bool
+	ch chan uint64
 }
 
 // Store is an implementation of LineBuffer
@@ -25,20 +26,31 @@ type Store struct {
 	grpUndo   bool
 	isUndoing bool
 	subs      []subscription
+	txthash   uint64
 }
 
 // Reset will set the Store to s
-func (s *Store) Reset(st string) {
+func (s *Store) Reset(st string) uint64 {
 	r := strings.NewReader(st)
 	s.ReadFrom(r)
+	return s.txthash
 }
 
 // ReadFrom will read from an io.Reader
 func (s *Store) ReadFrom(r io.Reader) (int64, error) {
+	nw := false
+	if len(s.lines) == 0 {
+		nw = true
+	}
 	scanner := bufio.NewScanner(r)
 	s.lines = []*Line{}
 	for scanner.Scan() {
 		s.lines = append(s.lines, NewLine(scanner.Text()))
+	}
+	if nw {
+		s.hash()
+	} else {
+		s.notifyChange()
 	}
 	return int64(s.Len()), scanner.Err()
 }
@@ -58,6 +70,7 @@ func (s *Store) NewLine(st string, line int) (int, error) {
 
 // DeleteLine will remove a line
 func (s *Store) DeleteLine(line int) (string, error) {
+	nl := s.NumLines()
 	if line < 0 || line >= len(s.lines) {
 		return "", fmt.Errorf("NewLine: Invalid line %v", line)
 	}
@@ -71,6 +84,7 @@ func (s *Store) DeleteLine(line int) (string, error) {
 	cs.ChangeLine(line, original, "")
 	cs.RemoveLine(line)
 	s.AddUndoSet(cs)
+	fmt.Printf("Store.DeleteLine #lines %v => %v\n", nl, s.NumLines())
 	return original, nil
 }
 
@@ -202,12 +216,15 @@ func (s *Store) Undo() error {
 		change := changes[i]
 		switch change.Type() {
 		case undo.DeleteLine:
+			fmt.Printf("Undoing delete line %v\n", change.Line())
 			s.NewLine(change.Undo(""), change.Line())
 
 		case undo.AddLine:
+			fmt.Printf("Undoing add line %v\n", change.Line())
 			s.DeleteLine(change.Line())
 
 		case undo.ChangeLine:
+			fmt.Printf("Undoing change line %v\n", change.Line())
 			txt, _ := s.LineString(change.Line())
 			s.ResetLine(change.Undo(txt), change.Line())
 		}
@@ -267,26 +284,29 @@ func (s *Store) StopGroupUndo() {
 
 // AddUndoSet will add an undo change set to the store
 func (s *Store) AddUndoSet(cs undo.ChangeSetter) {
+	s.notifyChange()
 	switch {
 	case s.grpUndo:
 		s.hold = append(s.hold, cs)
 	case s.isUndoing:
 		s.redo = append(s.redo, cs)
-		s.notifyChange()
 	default:
 		s.undo = append(s.undo, cs)
-		s.notifyChange()
 	}
 }
 
 func (s *Store) notifyChange() {
-	for i := range s.subs {
-		s.subs[i].ch <- true
-	}
+	go func() {
+		if s.hash() {
+			for i := range s.subs {
+				s.subs[i].ch <- s.Hash64()
+			}
+		}
+	}()
 }
 
 // Subscribe will subscribe to updates
-func (s *Store) Subscribe(id string, up chan bool) {
+func (s *Store) Subscribe(id string, up chan uint64) {
 	s.subs = append(s.subs, subscription{id: id, ch: up})
 }
 
@@ -300,6 +320,23 @@ func (s *Store) Unsubscribe(id string) {
 			s.subs = s.subs[:len(s.subs)-1]        // Truncate slice.
 		}
 	}
+}
+
+func (s *Store) hash() bool {
+	h := fnv.New64a()
+	h.Write([]byte(s.String()))
+	nh := h.Sum64()
+	fmt.Printf("Creating hash %v\n", nh)
+	if s.txthash != nh {
+		s.txthash = nh
+		return true
+	}
+	return false
+}
+
+// Hash64 will return a 64bit hash
+func (s *Store) Hash64() uint64 {
+	return s.txthash
 }
 
 // New returns a new Store

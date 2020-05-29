@@ -23,10 +23,11 @@ type Buffer struct {
 	mat           syntax.Matcherer
 	ftd           filetype.Detecter
 	dirty         bool
-	updates       chan bool
+	updates       chan uint64
 	syntaxResults []syntax.Resulter
 	searchResults []SearchResult
 	reg           register.Registerer
+	txthash       uint64
 }
 
 // SearchResult is the results for a line
@@ -72,8 +73,10 @@ func (b *Buffer) Dirty() bool { return b.dirty }
 
 func (b *Buffer) listenUpdates() {
 	for {
-		up := <-b.updates
-		if up {
+		h := <-b.updates
+		if h != b.txthash {
+			b.dirty = true
+			b.txthash = h
 			b.matchSyntax()
 		}
 	}
@@ -121,7 +124,7 @@ func (b *Buffer) Search(s string) ([]SearchResult, error) {
 
 // New will return a new Buffer
 func New(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter, reg register.Registerer) Bufferer {
-	up := make(chan bool)
+	up := make(chan uint64)
 	id := uuid.New().String()
 	b := &Buffer{
 		ftd:     ftd,

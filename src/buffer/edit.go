@@ -8,7 +8,7 @@ import (
 
 // Reset will reset the buffer content
 func (b *Buffer) Reset(st string) {
-	b.txt.Reset(st)
+	b.txthash = b.txt.Reset(st)
 }
 
 // ReplaceObject will replace an object with s
@@ -240,4 +240,14 @@ func (b *Buffer) Undo() error {
 // Redo will redo the last edit
 func (b *Buffer) Redo() error {
 	return b.txt.Redo()
+}
+
+// StartGroupUndo will group edits into a single undo
+func (b *Buffer) StartGroupUndo() {
+	b.txt.StartGroupUndo()
+}
+
+// StopGroupUndo will stop grouping undos
+func (b *Buffer) StopGroupUndo() {
+	b.txt.StopGroupUndo()
 }

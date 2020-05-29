@@ -138,23 +138,17 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 
 		// Edit
 		case action.DeleteChar:
-			buf.TextStore().StartGroupUndo()
 			err = buf.DeleteChar(act.Line(), act.Column(), act.Count())
-			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
 			}
 		case action.DeleteCharBack:
-			buf.TextStore().StartGroupUndo()
 			err = buf.DeleteCharBack(act.Line(), act.Column(), act.Count())
-			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
 			}
 		case action.DeleteLine:
-			buf.TextStore().StartGroupUndo()
 			err = buf.DeleteLine(act.Line(), act.Count())
-			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
 			}
@@ -163,23 +157,17 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			if err != nil {
 				return nil, err
 			}
-			buf.TextStore().StartGroupUndo()
 			err = buf.DeleteObject(act.Line(), act.Column(), obj, act.Count())
-			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
 			}
 		case action.InsertLine:
-			buf.TextStore().StartGroupUndo()
 			err = buf.NewLineBelow(act.Line(), act.Param(), act.Count())
-			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
 			}
 		case action.InsertLineAbove:
-			buf.TextStore().StartGroupUndo()
 			err = buf.NewLineAbove(act.Line(), act.Param(), act.Count())
-			buf.TextStore().StopGroupUndo()
 			if err != nil {
 				return nil, err
 			}
@@ -198,6 +186,16 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 		case action.Content:
 			resp.Content, err = buf.TextStore().LineRangeString(act.Line(), act.Count())
 			return
+
+		// Undo / redo
+		case action.Undo:
+			err = buf.Undo()
+		case action.Redo:
+			err = buf.Redo()
+		case action.StartGroupUndo:
+			buf.StartGroupUndo()
+		case action.StopGroupUndo:
+			buf.StopGroupUndo()
 		}
 
 	}

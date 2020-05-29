@@ -41,7 +41,9 @@ func (b *Buffer) OpenFile(path string) error {
 	if err != nil {
 		return fmt.Errorf("Buffer.OpenFile: %v", err)
 	}
+	b.txthash = b.txt.Hash64()
 	b.SetFilename(path)
+	b.dirty = false
 	return err
 }
 

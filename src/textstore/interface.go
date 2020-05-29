@@ -14,16 +14,17 @@ type Factory func(undo.Factory) TextStorer
 type TextStorer interface {
 	Undoer
 	StoreLengther
-	StoreReader
-	StoreWriter
+	StReader
+	StWriter
 	StoreSubscriber
 	LineAt(line int) (LineReader, error)
 	LineWriterAt(line int) (LineWriter, error)
+	Hash64() uint64
 }
 
 // StoreSubscriber is subscriber functionality
 type StoreSubscriber interface {
-	Subscribe(id string, up chan bool)
+	Subscribe(id string, up chan uint64)
 	Unsubscribe(id string)
 }
 
@@ -34,8 +35,8 @@ type StoreLengther interface {
 	Len() int
 }
 
-// StoreReader is reader functionality
-type StoreReader interface {
+// StReader is reader functionality
+type StReader interface {
 	LineString(pos int) (string, error)
 	LineRangeString(line, cnt int) ([]string, error)
 	ReadRuneAt(line, col int) (rune, int, error)
@@ -43,9 +44,9 @@ type StoreReader interface {
 	String() string // adds delimeters
 }
 
-// StoreWriter is writer functionality
-type StoreWriter interface {
-	Reset(s string)
+// StWriter is writer functionality
+type StWriter interface {
+	Reset(s string) uint64
 	ReadFrom(r io.Reader) (int64, error)
 	NewLine(s string, line int) (int, error)
 	DeleteLine(line int) (string, error)

@@ -69,6 +69,8 @@ type TextEditor interface {
 	Outdent(ln, cnt int) error
 	Undo() error
 	Redo() error
+	StartGroupUndo()
+	StopGroupUndo()
 }
 
 // Selector is selection functions

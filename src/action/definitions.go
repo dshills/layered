@@ -54,8 +54,10 @@ const (
 
 // Undo
 const (
-	Redo = "redo"
-	Undo = "undo"
+	Redo           = "redo"
+	Undo           = "undo"
+	StartGroupUndo = "startgroupundo"
+	StopGroupUndo  = "stopgroupundo"
 )
 
 // Macro
@@ -74,51 +76,54 @@ const (
 
 // Def is a definition for an action
 type Def struct {
-	Name     string
-	NoBuffer bool
-	NoParam  bool
+	Name      string
+	ReqBuffer bool
+	ReqParam  bool
+	ReqTarget bool
 }
 
 // Definitions is a list of action definitions
 var Definitions = []Def{
-	Def{Name: Down, NoParam: true},
-	Def{Name: Move, NoParam: true},
-	Def{Name: MoveEnd, NoParam: true},
-	Def{Name: MovePrev, NoParam: true},
-	Def{Name: MovePrevEnd, NoParam: true},
-	Def{Name: Next, NoParam: true},
-	Def{Name: Prev, NoParam: true},
-	Def{Name: ScrollDown, NoParam: true},
-	Def{Name: ScrollUp, NoParam: true},
-	Def{Name: Up, NoParam: true},
-	Def{Name: DeleteChar, NoParam: true},
-	Def{Name: DeleteCharBack, NoParam: true},
-	Def{Name: DeleteLine, NoParam: true},
-	Def{Name: DeleteObject, NoParam: true},
-	Def{Name: Indent, NoParam: true},
+	Def{Name: Down, ReqBuffer: true},
+	Def{Name: Move, ReqBuffer: true},
+	Def{Name: MoveEnd, ReqBuffer: true},
+	Def{Name: MovePrev, ReqBuffer: true},
+	Def{Name: MovePrevEnd, ReqBuffer: true},
+	Def{Name: Next, ReqBuffer: true},
+	Def{Name: Prev, ReqBuffer: true},
+	Def{Name: ScrollDown, ReqBuffer: true},
+	Def{Name: ScrollUp, ReqBuffer: true},
+	Def{Name: Up, ReqBuffer: true},
+	Def{Name: DeleteChar, ReqBuffer: true},
+	Def{Name: DeleteCharBack, ReqBuffer: true},
+	Def{Name: DeleteLine, ReqBuffer: true},
+	Def{Name: DeleteObject, ReqBuffer: true},
+	Def{Name: Indent, ReqBuffer: true},
 	Def{Name: InsertLine},
 	Def{Name: InsertLineAbove},
-	Def{Name: InsertString},
-	Def{Name: Outdent, NoParam: true},
-	Def{Name: Content, NoParam: true},
-	Def{Name: Insert, NoParam: true},
-	Def{Name: NewBuffer, NoBuffer: true, NoParam: true},
+	Def{Name: InsertString, ReqParam: true},
+	Def{Name: Outdent, ReqBuffer: true},
+	Def{Name: Content, ReqBuffer: true},
+	Def{Name: Insert, ReqBuffer: true},
+	Def{Name: NewBuffer},
 	Def{Name: SaveBuffer},
-	Def{Name: CloseBuffer, NoParam: true},
-	Def{Name: OpenFile, NoBuffer: true},
-	Def{Name: RenameFile},
-	Def{Name: SaveFileAs},
-	Def{Name: BufferList, NoBuffer: true, NoParam: true},
-	Def{Name: Search},
-	Def{Name: SearchResults, NoParam: true},
-	Def{Name: Yank, NoParam: true},
-	Def{Name: Paste, NoParam: true},
-	Def{Name: Redo, NoParam: true},
-	Def{Name: Undo, NoParam: true},
-	Def{Name: RecordMacro, NoParam: true},
-	Def{Name: StopRecMacro, NoParam: true},
-	Def{Name: Syntax, NoParam: true},
-	Def{Name: RunMacro, NoParam: true},
-	Def{Name: RunCommand, NoParam: true},
-	Def{Name: SetMark, NoParam: true},
+	Def{Name: CloseBuffer, ReqBuffer: true},
+	Def{Name: OpenFile, ReqParam: true},
+	Def{Name: RenameFile, ReqParam: true},
+	Def{Name: SaveFileAs, ReqParam: true},
+	Def{Name: BufferList},
+	Def{Name: Search, ReqBuffer: true, ReqParam: true},
+	Def{Name: SearchResults, ReqBuffer: true},
+	Def{Name: Yank, ReqBuffer: true},
+	Def{Name: Paste, ReqBuffer: true},
+	Def{Name: Redo, ReqBuffer: true},
+	Def{Name: Undo, ReqBuffer: true},
+	Def{Name: StopGroupUndo, ReqBuffer: true},
+	Def{Name: StartGroupUndo, ReqBuffer: true},
+	Def{Name: RecordMacro, ReqBuffer: true},
+	Def{Name: StopRecMacro, ReqBuffer: true},
+	Def{Name: Syntax, ReqBuffer: true},
+	Def{Name: RunMacro, ReqBuffer: true},
+	Def{Name: RunCommand, ReqBuffer: true},
+	Def{Name: SetMark, ReqBuffer: true},
 }

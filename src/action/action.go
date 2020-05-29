@@ -53,10 +53,13 @@ func (a *Action) Valid(bufid string) error {
 	for _, d := range Definitions {
 		if d.Name == a.Name() {
 			found = true
-			if a.Param() == "" && !d.NoParam {
+			if a.Param() == "" && d.ReqParam {
 				errs = append(errs, "Missing Param")
 			}
-			if bufid == "" && !d.NoBuffer {
+			if a.Target() == "" && d.ReqTarget {
+				errs = append(errs, "Missing Target")
+			}
+			if bufid == "" && d.ReqBuffer {
 				errs = append(errs, "Missing buffer id")
 			}
 		}
@@ -74,10 +77,10 @@ func (a *Action) Valid(bufid string) error {
 func (a *Action) NeedBuffer() bool {
 	for _, d := range Definitions {
 		if d.Name == a.Name() {
-			if d.NoBuffer {
-				return false
+			if d.ReqBuffer {
+				return true
 			}
-			return true
+			return false
 		}
 	}
 	return false

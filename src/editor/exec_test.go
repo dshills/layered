@@ -47,6 +47,27 @@ func TestReset(t *testing.T) {
 	}
 }
 
+func TestDeleteLine(t *testing.T) {
+	trans := action.NewTransaction(bufid)
+	act := action.New(action.DeleteLine, "", "")
+	act.SetLine(1)
+	trans.Set(act)
+	_, err := ed.Exec(trans)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUndo(t *testing.T) {
+	trans := action.NewTransaction(bufid)
+	act := action.New(action.Undo, "", "")
+	trans.Set(act)
+	_, err := ed.Exec(trans)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 /*
 func TestSaveFileAs(t *testing.T) {
 	ed, err := New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, rtpath)
