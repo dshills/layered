@@ -38,7 +38,7 @@ Buffers returns the editors currrent buffers
 #### func (*Editor) Exec
 
 ```go
-func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error)
+func (e *Editor) Exec(bufid string, actions ...action.Action) (resp *Response, err error)
 ```
 Exec will execute a transaction in the editor
 
@@ -57,7 +57,7 @@ type Editorer interface {
 	Add(buffer.Bufferer)
 	Remove(id string) error
 	Buffer(id string) (buffer.Bufferer, error)
-	Exec(action.Transactioner) (*Response, error)
+	Exec(bufid string, actions ...action.Action) (*Response, error)
 }
 ```
 

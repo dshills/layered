@@ -10,13 +10,13 @@ import (
 
 type keyAction struct {
 	k []key.Keyer
-	a []action.Actioner
+	a []action.Action
 }
 
 // Layer is a keyboard action map
 type Layer struct {
 	n                    string
-	ba, ea, pma, nma, ma []action.Actioner
+	ba, ea, pma, nma, ma []action.Action
 	ka                   []keyAction
 }
 
@@ -24,7 +24,7 @@ type Layer struct {
 func (l *Layer) Name() string { return l.n }
 
 // Add will map keys to actions
-func (l *Layer) Add(keys []key.Keyer, actions []action.Actioner) {
+func (l *Layer) Add(keys []key.Keyer, actions []action.Action) {
 	l.ka = append(l.ka, keyAction{k: keys, a: actions})
 }
 
@@ -37,20 +37,20 @@ func (l *Layer) NewParser() Parserer {
 }
 
 // BeginActions returns actions that occur when switching to the layer
-func (l *Layer) BeginActions() []action.Actioner { return l.ba }
+func (l *Layer) BeginActions() []action.Action { return l.ba }
 
 // EndActions returns action that occur when switching away from layer
-func (l *Layer) EndActions() []action.Actioner { return l.ea }
+func (l *Layer) EndActions() []action.Action { return l.ea }
 
 // PartialMatchActions returns actions that occur when a partial match is made
-func (l *Layer) PartialMatchActions() []action.Actioner { return l.pma }
+func (l *Layer) PartialMatchActions() []action.Action { return l.pma }
 
 // NoMatchActions returns actions the occur when a match is not made
-func (l *Layer) NoMatchActions() []action.Actioner { return l.nma }
+func (l *Layer) NoMatchActions() []action.Action { return l.nma }
 
 // MatchActions returns actions that occur when a match is made
 // they are in addition to key mapped actions
-func (l *Layer) MatchActions() []action.Actioner { return l.ma }
+func (l *Layer) MatchActions() []action.Action { return l.ma }
 
 // Load will load a layer from a reader
 func (l *Layer) Load(r io.Reader) error {
@@ -64,7 +64,7 @@ type Parser struct {
 }
 
 // Parse will take key strokes and will return actions when matches
-func (p *Parser) Parse(keys ...key.Keyer) (actions []action.Actioner, status ParseStatus) {
+func (p *Parser) Parse(keys ...key.Keyer) (actions []action.Action, status ParseStatus) {
 	p.partial = append(p.partial, keys...)
 	for i := range p.l.ka {
 		switch SameKeys(p.partial, p.l.ka[i].k) {
@@ -121,11 +121,12 @@ type jsAction struct {
 	Param  string `json:"param"`
 }
 
-func (a jsAction) asAction() action.Actioner {
-	act := action.New(a.Action)
-	act.SetTarget(a.Target)
-	act.SetParam(a.Param)
-	return act
+func (a jsAction) asAction() action.Action {
+	return action.Action{
+		Name:   a.Action,
+		Target: a.Target,
+		Param:  a.Param,
+	}
 }
 
 type jsKeyAction struct {

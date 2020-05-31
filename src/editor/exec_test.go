@@ -25,9 +25,7 @@ func TestExect(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	trans := action.NewTransaction("")
-	trans.Set(action.New(action.NewBuffer))
-	resp, err := ed.Exec(trans)
+	resp, err := ed.Exec("", action.Action{Name: action.NewBuffer})
 	if err != nil {
 		t.Error(err)
 	}
@@ -38,62 +36,33 @@ func TestExect(t *testing.T) {
 }
 
 func TestReset(t *testing.T) {
-	trans := action.NewTransaction(bufid)
-	act := action.New(action.OpenFile)
-	act.SetParam("/Users/dshills/Development/projects/goed-core/testdata/scanner.go")
-	trans.Add(act)
-	_, err := ed.Exec(trans)
+	act := action.Action{
+		Name:  action.OpenFile,
+		Param: "/Users/dshills/Development/projects/goed-core/testdata/scanner.go",
+	}
+	_, err := ed.Exec(bufid, act)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestDeleteLine(t *testing.T) {
-	trans := action.NewTransaction(bufid)
-	act := action.New(action.DeleteLine)
-	act.SetLine(1)
-	trans.Set(act)
-	_, err := ed.Exec(trans)
+	act := action.Action{Name: action.DeleteLine, Line: 1}
+	_, err := ed.Exec(bufid, act)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestUndo(t *testing.T) {
-	trans := action.NewTransaction(bufid)
-	act := action.New(action.Undo)
-	trans.Set(act)
-	_, err := ed.Exec(trans)
+	_, err := ed.Exec(bufid, action.Action{Name: action.Undo})
 	if err != nil {
 		t.Fatal(err)
 	}
 }
-
-/*
-func TestSaveFileAs(t *testing.T) {
-	ed, err := New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, rtpath)
-	if err != nil {
-		t.Error(err)
-	}
-	trans := action.NewTransaction("")
-	trans.Set(action.New(action.OpenFile, "", "/Users/dshills/Development/projects/goed-core/testdata/scanner.go"))
-	resp, err := ed.Exec(trans)
-	if err != nil {
-		t.Fatal(err)
-	}
-	trans.SetBuffer(resp.Buffer)
-	trans.Set(action.New(action.SaveFileAs, "", "./scan.go"))
-	_, err = ed.Exec(trans)
-	if err != nil {
-		t.Error(err)
-	}
-}
-*/
 
 func TestBufferList(t *testing.T) {
-	trans := action.NewTransaction("")
-	trans.Set(action.New(action.BufferList))
-	resp, err := ed.Exec(trans)
+	resp, err := ed.Exec(bufid, action.Action{Name: action.BufferList})
 	if err != nil {
 		t.Error(err)
 	}
@@ -103,12 +72,8 @@ func TestBufferList(t *testing.T) {
 }
 
 func TestContent(t *testing.T) {
-	trans := action.NewTransaction(bufid)
-	act := action.New(action.Content)
-	act.SetLine(45)
-	act.SetCount(30)
-	trans.Set(act)
-	resp, err := ed.Exec(trans)
+	act := action.Action{Name: action.Content, Line: 45, Count: 30}
+	resp, err := ed.Exec(bufid, act)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -118,10 +83,7 @@ func TestContent(t *testing.T) {
 }
 
 func TestSyntax(t *testing.T) {
-	trans := action.NewTransaction(bufid)
-	act := action.New(action.Syntax)
-	trans.Set(act)
-	resp, err := ed.Exec(trans)
+	resp, err := ed.Exec(bufid, action.Action{Name: action.Syntax})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -131,11 +93,8 @@ func TestSyntax(t *testing.T) {
 }
 
 func TestSearch(t *testing.T) {
-	trans := action.NewTransaction(bufid)
-	act := action.New(action.Search)
-	act.SetParam("scan")
-	trans.Set(act)
-	resp, err := ed.Exec(trans)
+	act := action.Action{Name: action.Search, Param: "scan"}
+	resp, err := ed.Exec(bufid, act)
 	if err != nil {
 		t.Fatal(err)
 	}

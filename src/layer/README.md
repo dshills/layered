@@ -30,21 +30,21 @@ Layer is a keyboard action map
 #### func (*Layer) Add
 
 ```go
-func (l *Layer) Add(keys []key.Keyer, actions []action.Actioner)
+func (l *Layer) Add(keys []key.Keyer, actions []action.Action)
 ```
 Add will map keys to actions
 
 #### func (*Layer) BeginActions
 
 ```go
-func (l *Layer) BeginActions() []action.Actioner
+func (l *Layer) BeginActions() []action.Action
 ```
 BeginActions returns actions that occur when switching to the layer
 
 #### func (*Layer) EndActions
 
 ```go
-func (l *Layer) EndActions() []action.Actioner
+func (l *Layer) EndActions() []action.Action
 ```
 EndActions returns action that occur when switching away from layer
 
@@ -58,7 +58,7 @@ Load will load a layer from a reader
 #### func (*Layer) MatchActions
 
 ```go
-func (l *Layer) MatchActions() []action.Actioner
+func (l *Layer) MatchActions() []action.Action
 ```
 MatchActions returns actions that occur when a match is made they are in
 addition to key mapped actions
@@ -80,14 +80,14 @@ NewParser returns a new key parser
 #### func (*Layer) NoMatchActions
 
 ```go
-func (l *Layer) NoMatchActions() []action.Actioner
+func (l *Layer) NoMatchActions() []action.Action
 ```
 NoMatchActions returns actions the occur when a match is not made
 
 #### func (*Layer) PartialMatchActions
 
 ```go
-func (l *Layer) PartialMatchActions() []action.Actioner
+func (l *Layer) PartialMatchActions() []action.Action
 ```
 PartialMatchActions returns actions that occur when a partial match is made
 
@@ -103,14 +103,14 @@ Remove will remove a key mapping
 ```go
 type Layerer interface {
 	Name() string
-	Add(keys []key.Keyer, actions []action.Actioner)
+	Add(keys []key.Keyer, actions []action.Action)
 	Remove(keys []key.Keyer)
 	NewParser() Parserer
-	BeginActions() []action.Actioner
-	EndActions() []action.Actioner
-	PartialMatchActions() []action.Actioner
-	NoMatchActions() []action.Actioner
-	MatchActions() []action.Actioner
+	BeginActions() []action.Action
+	EndActions() []action.Action
+	PartialMatchActions() []action.Action
+	NoMatchActions() []action.Action
+	MatchActions() []action.Action
 	Load(io.Reader) error
 }
 ```
@@ -190,7 +190,7 @@ Parser is a key stroke parser specific to a layer
 #### func (*Parser) Parse
 
 ```go
-func (p *Parser) Parse(keys ...key.Keyer) (actions []action.Actioner, status ParseStatus)
+func (p *Parser) Parse(keys ...key.Keyer) (actions []action.Action, status ParseStatus)
 ```
 Parse will take key strokes and will return actions when matches
 
@@ -198,7 +198,7 @@ Parse will take key strokes and will return actions when matches
 
 ```go
 type Parserer interface {
-	Parse(keys ...key.Keyer) ([]action.Actioner, ParseStatus)
+	Parse(keys ...key.Keyer) ([]action.Action, ParseStatus)
 }
 ```
 

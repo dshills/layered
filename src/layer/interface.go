@@ -28,18 +28,18 @@ const (
 // Layerer is a layer
 type Layerer interface {
 	Name() string
-	Add(keys []key.Keyer, actions []action.Actioner)
+	Add(keys []key.Keyer, actions []action.Action)
 	Remove(keys []key.Keyer)
 	NewParser() Parserer
-	BeginActions() []action.Actioner
-	EndActions() []action.Actioner
-	PartialMatchActions() []action.Actioner
-	NoMatchActions() []action.Actioner
-	MatchActions() []action.Actioner
+	BeginActions() []action.Action
+	EndActions() []action.Action
+	PartialMatchActions() []action.Action
+	NoMatchActions() []action.Action
+	MatchActions() []action.Action
 	Load(io.Reader) error
 }
 
 // Parserer will parse key strokes into actions
 type Parserer interface {
-	Parse(keys ...key.Keyer) ([]action.Actioner, ParseStatus)
+	Parse(keys ...key.Keyer) ([]action.Action, ParseStatus)
 }

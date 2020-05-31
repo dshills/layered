@@ -147,38 +147,14 @@ Definitions is a list of action definitions
 
 ```go
 type Action struct {
+	Name, Target, Param string
+	Line, Column        int
+	Object              string
+	Count               int
 }
 ```
 
 Action is an editor action
-
-#### func (*Action) Column
-
-```go
-func (a *Action) Column() int
-```
-Column returns the column -1 represents not set
-
-#### func (*Action) Count
-
-```go
-func (a *Action) Count() int
-```
-Count will return the action count
-
-#### func (*Action) Line
-
-```go
-func (a *Action) Line() int
-```
-Line will return the line -1 represents not set
-
-#### func (*Action) Name
-
-```go
-func (a *Action) Name() string
-```
-Name returns the action name
 
 #### func (*Action) NeedBuffer
 
@@ -187,106 +163,12 @@ func (a *Action) NeedBuffer() bool
 ```
 NeedBuffer will return true if the action requires a buffer
 
-#### func (*Action) Object
-
-```go
-func (a *Action) Object() string
-```
-Object returns the object associated with the action
-
-#### func (*Action) Param
-
-```go
-func (a *Action) Param() string
-```
-Param is a required parameter
-
-#### func (*Action) SetColumn
-
-```go
-func (a *Action) SetColumn(c int)
-```
-SetColumn will set the column associated with the action
-
-#### func (*Action) SetCount
-
-```go
-func (a *Action) SetCount(c int)
-```
-SetCount will set the action count
-
-#### func (*Action) SetLine
-
-```go
-func (a *Action) SetLine(l int)
-```
-SetLine will set the line associated with the action
-
-#### func (*Action) SetObject
-
-```go
-func (a *Action) SetObject(obj string)
-```
-SetObject will set the object for the action
-
-#### func (*Action) SetParam
-
-```go
-func (a *Action) SetParam(p string)
-```
-SetParam will set the param
-
-#### func (*Action) SetTarget
-
-```go
-func (a *Action) SetTarget(t string)
-```
-SetTarget will set the target
-
-#### func (*Action) Target
-
-```go
-func (a *Action) Target() string
-```
-Target is the target of the action
-
 #### func (*Action) Valid
 
 ```go
 func (a *Action) Valid(bufid string) error
 ```
 Valid will return true if it is a valid action
-
-#### type Actioner
-
-```go
-type Actioner interface {
-	Name() string
-	Target() string
-	SetTarget(string)
-	Param() string
-	SetParam(string)
-	Column() int
-	SetColumn(int)
-	Line() int
-	SetLine(int)
-	Object() string
-	SetObject(string)
-	Count() int
-	SetCount(int)
-	Valid(bufid string) error
-	NeedBuffer() bool
-}
-```
-
-Actioner represents an editor action
-
-#### func  New
-
-```go
-func New(act string) Actioner
-```
-New will return a new Actioner
 
 #### type Def
 
@@ -300,84 +182,3 @@ type Def struct {
 ```
 
 Def is a definition for an action
-
-#### type Transaction
-
-```go
-type Transaction struct {
-}
-```
-
-Transaction is a group of actions with a buffer identifier
-
-#### func (*Transaction) Actions
-
-```go
-func (t *Transaction) Actions() []Actioner
-```
-Actions returns the set of actions
-
-#### func (*Transaction) Add
-
-```go
-func (t *Transaction) Add(acts ...Actioner)
-```
-Add will add actions to the transactions
-
-#### func (*Transaction) Buffer
-
-```go
-func (t *Transaction) Buffer() string
-```
-Buffer will return the buffer id
-
-#### func (*Transaction) NeedBuffer
-
-```go
-func (t *Transaction) NeedBuffer() bool
-```
-NeedBuffer will return true if the action list requires a buffer
-
-#### func (*Transaction) Set
-
-```go
-func (t *Transaction) Set(acts ...Actioner)
-```
-Set will set actions to the transactions
-
-#### func (*Transaction) SetBuffer
-
-```go
-func (t *Transaction) SetBuffer(id string)
-```
-SetBuffer will set the transaction buffer
-
-#### func (*Transaction) Valid
-
-```go
-func (t *Transaction) Valid() error
-```
-Valid will return true if a valid transaction
-
-#### type Transactioner
-
-```go
-type Transactioner interface {
-	Buffer() string
-	SetBuffer(string)
-	Actions() []Actioner
-	Add(acts ...Actioner)
-	Set(acts ...Actioner)
-	Valid() error
-	NeedBuffer() bool
-}
-```
-
-Transactioner is group of actions for with a a buffer id
-
-#### func  NewTransaction
-
-```go
-func NewTransaction(id string, actions ...Actioner) Transactioner
-```
-NewTransaction will return an we transactioner

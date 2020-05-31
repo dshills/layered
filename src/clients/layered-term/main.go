@@ -66,21 +66,19 @@ func main() {
 	}
 
 	logger.Message("Loading file")
-	trans := action.NewTransaction("")
-	act := action.New(action.OpenFile)
-	act.SetParam("/Users/dshills/Development/projects/goed-core/testdata/scanner.go")
-	trans.Set(act)
-	resp, err := ed.Exec(trans)
+	act := action.Action{
+		Name:  action.OpenFile,
+		Param: "/Users/dshills/Development/projects/goed-core/testdata/scanner.go",
+	}
+	resp, err := ed.Exec("", act)
 	if err != nil {
 		logger.ErrorErr(err)
 		os.Exit(1)
 	}
-	trans.SetBuffer(resp.Buffer)
 	bufid := resp.Buffer
 
-	act = action.New(action.BufferList)
-	trans.Set(act)
-	resp, err = ed.Exec(trans)
+	act = action.Action{Name: action.BufferList}
+	resp, err = ed.Exec(bufid, act)
 	if err != nil {
 		logger.ErrorErr(err)
 	}
@@ -88,11 +86,8 @@ func main() {
 		logger.Debugf("%+v", resp.Results[i])
 	}
 
-	act = action.New(action.Content)
-	act.SetLine(0)
-	act.SetCount(25)
-	trans.Set(act)
-	resp, err = ed.Exec(trans)
+	act = action.Action{Name: action.Content, Line: 0, Count: 25}
+	resp, err = ed.Exec(bufid, act)
 	if err != nil {
 		logger.ErrorErr(err)
 	}

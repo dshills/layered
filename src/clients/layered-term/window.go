@@ -30,12 +30,12 @@ func (w *window) draw() error {
 	logger.Debugf("Drawing Window line %v count %v - %v", w.startline, w.count, w.bufid)
 	w.writer.TermWriter().ResetStyle()
 	w.writer.ContentFgd = palette.NewColor(255, 255, 255)
-	trans := action.NewTransaction(w.bufid)
-	act := action.New(action.Content)
-	act.SetLine(w.startline)
-	act.SetCount(w.count)
-	trans.Set(act)
-	resp, err := w.ed.Exec(trans)
+	act := action.Action{
+		Name:  action.Content,
+		Line:  w.startline,
+		Count: w.count,
+	}
+	resp, err := w.ed.Exec(w.bufid, act)
 	if err != nil {
 		return err
 	}
