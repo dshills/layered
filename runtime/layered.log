@@ -1,0 +1,9 @@
+2020/05/31 07:29:10 [MESSAGE] Starting layered
+2020/05/31 07:29:10 [MESSAGE] Creating editor
+2020/05/31 07:29:10 [MESSAGE] Loading colors
+2020/05/31 07:29:10 [MESSAGE] Loading palette
+2020/05/31 07:29:10 [MESSAGE] Creating screen
+2020/05/31 07:29:10 [MESSAGE] Loading file
+2020/05/31 07:29:10 [DEBUG] {Key:f58791eb-ba6b-415a-8c0f-a6010f53af60 Value:/Users/dshills/Development/projects/goed-core/testdata/scanner.go}
+2020/05/31 07:29:10 [DEBUG] Content len 25
+2020/05/31 07:29:10 [DEBUG] Drawing Window line 0 count 68 - f58791eb-ba6b-415a-8c0f-a6010f53af60

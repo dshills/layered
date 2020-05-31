@@ -185,6 +185,9 @@ func (e *Editor) Exec(tr action.Transactioner) (resp *Response, err error) {
 			}
 		case action.Content:
 			resp.Content, err = buf.TextStore().LineRangeString(act.Line(), act.Count())
+			resp.Syntax = buf.SyntaxResults()
+			resp.Line = buf.Cursor().Line()
+			resp.Column = buf.Cursor().Column()
 			return
 
 		// Undo / redo

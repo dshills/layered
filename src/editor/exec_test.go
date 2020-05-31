@@ -26,7 +26,7 @@ func TestExect(t *testing.T) {
 		t.Error(err)
 	}
 	trans := action.NewTransaction("")
-	trans.Set(action.New(action.NewBuffer, "", ""))
+	trans.Set(action.New(action.NewBuffer))
 	resp, err := ed.Exec(trans)
 	if err != nil {
 		t.Error(err)
@@ -39,7 +39,8 @@ func TestExect(t *testing.T) {
 
 func TestReset(t *testing.T) {
 	trans := action.NewTransaction(bufid)
-	act := action.New(action.OpenFile, bufid, "/Users/dshills/Development/projects/goed-core/testdata/scanner.go")
+	act := action.New(action.OpenFile)
+	act.SetParam("/Users/dshills/Development/projects/goed-core/testdata/scanner.go")
 	trans.Add(act)
 	_, err := ed.Exec(trans)
 	if err != nil {
@@ -49,7 +50,7 @@ func TestReset(t *testing.T) {
 
 func TestDeleteLine(t *testing.T) {
 	trans := action.NewTransaction(bufid)
-	act := action.New(action.DeleteLine, "", "")
+	act := action.New(action.DeleteLine)
 	act.SetLine(1)
 	trans.Set(act)
 	_, err := ed.Exec(trans)
@@ -60,7 +61,7 @@ func TestDeleteLine(t *testing.T) {
 
 func TestUndo(t *testing.T) {
 	trans := action.NewTransaction(bufid)
-	act := action.New(action.Undo, "", "")
+	act := action.New(action.Undo)
 	trans.Set(act)
 	_, err := ed.Exec(trans)
 	if err != nil {
@@ -91,7 +92,7 @@ func TestSaveFileAs(t *testing.T) {
 
 func TestBufferList(t *testing.T) {
 	trans := action.NewTransaction("")
-	trans.Set(action.New(action.BufferList, "", ""))
+	trans.Set(action.New(action.BufferList))
 	resp, err := ed.Exec(trans)
 	if err != nil {
 		t.Error(err)
@@ -103,7 +104,7 @@ func TestBufferList(t *testing.T) {
 
 func TestContent(t *testing.T) {
 	trans := action.NewTransaction(bufid)
-	act := action.New(action.Content, "", "")
+	act := action.New(action.Content)
 	act.SetLine(45)
 	act.SetCount(30)
 	trans.Set(act)
@@ -118,7 +119,7 @@ func TestContent(t *testing.T) {
 
 func TestSyntax(t *testing.T) {
 	trans := action.NewTransaction(bufid)
-	act := action.New(action.Syntax, "", "")
+	act := action.New(action.Syntax)
 	trans.Set(act)
 	resp, err := ed.Exec(trans)
 	if err != nil {
@@ -131,7 +132,8 @@ func TestSyntax(t *testing.T) {
 
 func TestSearch(t *testing.T) {
 	trans := action.NewTransaction(bufid)
-	act := action.New(action.Search, "", "scan")
+	act := action.New(action.Search)
+	act.SetParam("scan")
 	trans.Set(act)
 	resp, err := ed.Exec(trans)
 	if err != nil {

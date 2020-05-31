@@ -7,20 +7,26 @@ import (
 
 // Action is an editor action
 type Action struct {
-	n, t, p string
-	ln, col int
-	obj     string
-	cnt     int
+	act, target, param string
+	ln, col            int
+	obj                string
+	cnt                int
 }
 
 // Name returns the action name
-func (a *Action) Name() string { return a.n }
+func (a *Action) Name() string { return a.act }
 
 // Target is the target of the action
-func (a *Action) Target() string { return a.t }
+func (a *Action) Target() string { return a.target }
+
+// SetTarget will set the target
+func (a *Action) SetTarget(t string) { a.target = t }
 
 // Param is a required parameter
-func (a *Action) Param() string { return a.p }
+func (a *Action) Param() string { return a.param }
+
+// SetParam will set the param
+func (a *Action) SetParam(p string) { a.param = p }
 
 // Line will return the line -1 represents not set
 func (a *Action) Line() int { return a.ln }
@@ -87,8 +93,8 @@ func (a *Action) NeedBuffer() bool {
 }
 
 // New will return a new Actioner
-func New(name, target, param string) Actioner {
-	return &Action{n: name, t: target, p: param, ln: -1, col: -1, cnt: 1}
+func New(act string) Actioner {
+	return &Action{act: act, ln: -1, col: -1, cnt: 1}
 }
 
 // Transaction is a group of actions with a buffer identifier

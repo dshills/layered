@@ -122,7 +122,10 @@ type jsAction struct {
 }
 
 func (a jsAction) asAction() action.Actioner {
-	return action.New(a.Action, a.Target, a.Param)
+	act := action.New(a.Action)
+	act.SetTarget(a.Target)
+	act.SetParam(a.Param)
+	return act
 }
 
 type jsKeyAction struct {

@@ -46,4 +46,4 @@ type resultList []Resulter
 
 func (rl resultList) Len() int           { return len(rl) }
 func (rl resultList) Swap(i, j int)      { rl[i], rl[j] = rl[j], rl[i] }
-func (rl resultList) Less(i, j int) bool { return rl[i].Priority() < rl[j].Priority() }
+func (rl resultList) Less(i, j int) bool { return rl[i].Priority() > rl[j].Priority() }

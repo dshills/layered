@@ -22,8 +22,9 @@ type jsRule struct {
 	Fold        bool     `json:"fold,omitempty"`
 }
 
-func (jr jsRule) asRuler() (Ruler, error) {
+func (jr jsRule) asRuler(rank int) (Ruler, error) {
 	r := Rule{
+		priority:  rank,
 		grp:       jr.Group,
 		typ:       jr.Type,
 		st:        jr.Start,

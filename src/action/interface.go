@@ -4,11 +4,13 @@ package action
 type Actioner interface {
 	Name() string
 	Target() string
+	SetTarget(string)
 	Param() string
-	Line() int
+	SetParam(string)
 	Column() int
-	SetLine(int)
 	SetColumn(int)
+	Line() int
+	SetLine(int)
 	Object() string
 	SetObject(string)
 	Count() int

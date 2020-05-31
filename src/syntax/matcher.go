@@ -53,7 +53,7 @@ func (m *Matcher) LoadFile(path string) error {
 	errs := []string{}
 	rules := []Ruler{}
 	for i := range jrs {
-		r, err := jrs[i].asRuler()
+		r, err := jrs[i].asRuler(i)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue
