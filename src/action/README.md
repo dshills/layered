@@ -87,10 +87,11 @@ Macro
 
 ```go
 const (
-	Syntax     = "syntax"
-	RunMacro   = "runmacro"
-	RunCommand = "runcommand"
-	SetMark    = "setmark"
+	Syntax      = "syntax"
+	RunMacro    = "runmacro"
+	RunCommand  = "runcommand"
+	SetMark     = "setmark"
+	ChangeLayer = "changelayer"
 )
 ```
 Other
@@ -139,6 +140,7 @@ var Definitions = []Def{
 	Def{Name: RunMacro, ReqBuffer: true},
 	Def{Name: RunCommand, ReqBuffer: true},
 	Def{Name: SetMark, ReqBuffer: true},
+	Def{Name: ChangeLayer},
 }
 ```
 Definitions is a list of action definitions

@@ -1,6 +1,7 @@
 package layer
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,7 +11,8 @@ import (
 
 // Layers is a set of layers
 type Layers struct {
-	ls []Layerer
+	ls  []Layerer
+	def Layerer
 }
 
 // LoadDir wil load layers from a directory
@@ -29,17 +31,24 @@ func (l *Layers) LoadDir(dir string) error {
 				errs = append(errs, err.Error())
 				continue
 			}
-			lay := Layer{}
-			if err := lay.Load(f); err != nil {
+			defer f.Close()
+			js := jsLayer{}
+			if err := json.NewDecoder(f).Decode(&js); err != nil {
 				errs = append(errs, err.Error())
 				continue
 			}
-			f.Close()
-			l.Add(&lay)
+			lay := js.asLayer()
+			l.Add(lay)
+			if lay.IsDefault() {
+				l.def = lay
+			}
 		}
 	}
 	if len(errs) > 0 {
-		return fmt.Errorf("LoadAllModes: %v", strings.Join(errs, ", "))
+		return fmt.Errorf("Layer.LoadDir: %v", strings.Join(errs, ", "))
+	}
+	if l.def == nil {
+		return fmt.Errorf("Layers.LoadDir: No default layer defined")
 	}
 	return nil
 }
@@ -51,13 +60,27 @@ func (l *Layers) Add(a Layerer) {
 
 // Remove will remove a layer
 func (l *Layers) Remove(name string) {
+	name = strings.ToLower(name)
+	for i, lay := range l.ls {
+		if strings.ToLower(lay.Name()) == name {
+			// Order not perserved
+			l.ls[i] = l.ls[len(l.ls)-1]
+			l.ls = l.ls[:len(l.ls)-1]
+			return
+		}
+	}
+}
 
+// Default will return the default layer
+func (l *Layers) Default() Layerer {
+	return l.def
 }
 
 // Layer will return a layer by name
 func (l *Layers) Layer(name string) (Layerer, error) {
+	name = strings.ToLower(name)
 	for i := range l.ls {
-		if l.ls[i].Name() == name {
+		if strings.ToLower(l.ls[i].Name()) == name {
 			return l.ls[i], nil
 		}
 	}

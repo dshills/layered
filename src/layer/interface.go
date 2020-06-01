@@ -1,17 +1,16 @@
 package layer
 
 import (
-	"io"
-
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
 )
 
 // Collectioner is a collection of layers
 type Collectioner interface {
-	LoadLayers(dir string) error
-	Add(Layerer)
+	LoadDir(dir string) error
+	Add(a Layerer)
 	Remove(name string)
+	Default() Layerer
 	Layer(name string) (Layerer, error)
 }
 
@@ -25,18 +24,32 @@ const (
 	Match
 )
 
+func (s ParseStatus) String() string {
+	switch s {
+	case NoMatch:
+		return "No match"
+	case PartialMatch:
+		return "Partial match"
+	case Match:
+		return "Match"
+	}
+	return "Unknown status"
+}
+
 // Layerer is a layer
 type Layerer interface {
+	Match(keys []key.Keyer) ([]action.Action, ParseStatus)
 	Name() string
 	Add(keys []key.Keyer, actions []action.Action)
 	Remove(keys []key.Keyer)
-	NewParser() Parserer
 	BeginActions() []action.Action
 	EndActions() []action.Action
 	PartialMatchActions() []action.Action
 	NoMatchActions() []action.Action
-	MatchActions() []action.Action
-	Load(io.Reader) error
+	IsDefault() bool
+	PartialAsParam() bool
+	PartialIncludeTrigger() bool
+	PartialTrigger() key.Keyer
 }
 
 // Parserer will parse key strokes into actions

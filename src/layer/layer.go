@@ -1,88 +1,109 @@
 package layer
 
 import (
-	"encoding/json"
-	"io"
-
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
 )
 
-type keyAction struct {
-	k []key.Keyer
-	a []action.Action
+type keyAct struct {
+	keys    []key.Keyer
+	actions []action.Action
 }
 
-// Layer is a keyboard action map
+func (ka keyAct) match(keys []key.Keyer) ParseStatus {
+	if len(keys) > len(ka.keys) {
+		return NoMatch
+	}
+	for i, k := range keys {
+		if !ka.keys[i].IsEqual(k) {
+			return NoMatch
+		}
+	}
+	if len(keys) == len(ka.keys) {
+		return Match
+	}
+	return PartialMatch
+}
+
+// Layer is a mapping of key strokes to actions
 type Layer struct {
-	n                    string
-	ba, ea, pma, nma, ma []action.Action
-	ka                   []keyAction
+	name           string
+	keyActs        []keyAct
+	isDefault      bool
+	partialAsParam bool
+	papTrigger     key.Keyer
+	includePap     bool
+	noMatchActions []action.Action
+	partialActions []action.Action
+	beginActions   []action.Action
+	endActions     []action.Action
 }
 
-// Name returns the layer's name
-func (l *Layer) Name() string { return l.n }
+// PartialAsParam returns true if the keys should be used as an action parameter
+// requires a trigger key
+func (l *Layer) PartialAsParam() bool { return l.partialAsParam }
 
-// Add will map keys to actions
-func (l *Layer) Add(keys []key.Keyer, actions []action.Action) {
-	l.ka = append(l.ka, keyAction{k: keys, a: actions})
-}
+// PartialIncludeTrigger will add the trigger to the param
+func (l *Layer) PartialIncludeTrigger() bool { return l.includePap }
 
-// Remove will remove a key mapping
-func (l *Layer) Remove(keys []key.Keyer) {}
+// PartialTrigger will trigger a match using previous partial keys as a parameter
+func (l *Layer) PartialTrigger() key.Keyer { return l.papTrigger }
 
-// NewParser returns a new key parser
-func (l *Layer) NewParser() Parserer {
-	return &Parser{l: l}
-}
-
-// BeginActions returns actions that occur when switching to the layer
-func (l *Layer) BeginActions() []action.Action { return l.ba }
-
-// EndActions returns action that occur when switching away from layer
-func (l *Layer) EndActions() []action.Action { return l.ea }
-
-// PartialMatchActions returns actions that occur when a partial match is made
-func (l *Layer) PartialMatchActions() []action.Action { return l.pma }
-
-// NoMatchActions returns actions the occur when a match is not made
-func (l *Layer) NoMatchActions() []action.Action { return l.nma }
-
-// MatchActions returns actions that occur when a match is made
-// they are in addition to key mapped actions
-func (l *Layer) MatchActions() []action.Action { return l.ma }
-
-// Load will load a layer from a reader
-func (l *Layer) Load(r io.Reader) error {
-	return json.NewDecoder(r).Decode(l)
-}
-
-// Parser is a key stroke parser specific to a layer
-type Parser struct {
-	l       *Layer
-	partial []key.Keyer
-}
-
-// Parse will take key strokes and will return actions when matches
-func (p *Parser) Parse(keys ...key.Keyer) (actions []action.Action, status ParseStatus) {
-	p.partial = append(p.partial, keys...)
-	for i := range p.l.ka {
-		switch SameKeys(p.partial, p.l.ka[i].k) {
-		case NoMatch:
-		case PartialMatch:
-			return p.l.pma, PartialMatch
+// Match will attempt to map keys to actions
+func (l *Layer) Match(keys []key.Keyer) ([]action.Action, ParseStatus) {
+	hasPartial := false
+	for i := range l.keyActs {
+		switch l.keyActs[i].match(keys) {
 		case Match:
-			status = Match
-			actions = append(actions, p.l.ka[i].a...)
-			actions = append(actions, p.l.MatchActions()...)
+			return l.keyActs[i].actions, Match
+		case PartialMatch:
+			hasPartial = true
+		}
+	}
+	if hasPartial {
+		return nil, PartialMatch
+	}
+	return nil, NoMatch
+}
+
+// Name returns the layer name
+func (l *Layer) Name() string { return l.name }
+
+// Add will add a keys / actions map
+func (l *Layer) Add(keys []key.Keyer, actions []action.Action) {
+	l.keyActs = append(l.keyActs, keyAct{keys: keys, actions: actions})
+}
+
+// Remove will remove a mapping
+func (l *Layer) Remove(keys []key.Keyer) {
+	for i := range l.keyActs {
+		if l.keyActs[i].match(keys) == Match {
+			// Order not perserved
+			l.keyActs[i] = l.keyActs[len(l.keyActs)-1]
+			l.keyActs = l.keyActs[:len(l.keyActs)-1]
 			return
 		}
 	}
-	return p.l.nma, NoMatch
 }
+
+// BeginActions will return the actions that are returned when switching to layer
+func (l *Layer) BeginActions() []action.Action { return l.beginActions }
+
+// EndActions will return the actions that are returned when leaving layer
+func (l *Layer) EndActions() []action.Action { return l.endActions }
+
+// PartialMatchActions returns the partial match actions
+func (l *Layer) PartialMatchActions() []action.Action { return l.partialActions }
+
+// NoMatchActions returns actions when keys do not match
+func (l *Layer) NoMatchActions() []action.Action { return l.noMatchActions }
+
+// IsDefault returns true if it is the default layer
+func (l *Layer) IsDefault() bool { return l.isDefault }
 
 type jsLayer struct {
 	Name                string        `json:"name"`
+	Default             bool          `json:"default"`
 	OnBeginActions      []jsAction    `json:"on_begin_actions"`
 	OnEndActions        []jsAction    `json:"on_end_actions"`
 	NoMatchActions      []jsAction    `json:"no_match_actions"`
@@ -92,24 +113,21 @@ type jsLayer struct {
 }
 
 func (l *jsLayer) asLayer() Layerer {
-	lay := Layer{n: l.Name}
+	lay := Layer{name: l.Name, isDefault: l.Default}
 	for _, act := range l.OnBeginActions {
-		lay.ba = append(lay.ba, act.asAction())
+		lay.beginActions = append(lay.beginActions, act.asAction())
 	}
 	for _, act := range l.OnEndActions {
-		lay.ea = append(lay.ea, act.asAction())
+		lay.endActions = append(lay.endActions, act.asAction())
 	}
 	for _, act := range l.NoMatchActions {
-		lay.nma = append(lay.nma, act.asAction())
+		lay.noMatchActions = append(lay.noMatchActions, act.asAction())
 	}
 	for _, act := range l.PartialMatchActions {
-		lay.pma = append(lay.pma, act.asAction())
-	}
-	for _, act := range l.MatchActions {
-		lay.ma = append(lay.ma, act.asAction())
+		lay.partialActions = append(lay.partialActions, act.asAction())
 	}
 	for _, kact := range l.Commands {
-		lay.ka = append(lay.ka, kact.asKeyAction())
+		lay.keyActs = append(lay.keyActs, kact.asKeyAction())
 	}
 
 	return &lay
@@ -134,31 +152,13 @@ type jsKeyAction struct {
 	Actions []jsAction `json:"actions"`
 }
 
-func (ka jsKeyAction) asKeyAction() keyAction {
-	nka := keyAction{}
+func (ka jsKeyAction) asKeyAction() keyAct {
+	nka := keyAct{}
 	for i := range ka.Actions {
-		nka.a = append(nka.a, ka.Actions[i].asAction())
+		nka.actions = append(nka.actions, ka.Actions[i].asAction())
 	}
 	for i := range ka.Keys {
-		nka.k = append(nka.k, key.StrToKey(ka.Keys[i]))
+		nka.keys = append(nka.keys, key.StrToKey(ka.Keys[i]))
 	}
 	return nka
-}
-
-// SameKeys compares two key lists
-func SameKeys(a, b []key.Keyer) ParseStatus {
-	if len(a) != len(b) {
-		for i := range a {
-			if i >= len(b) {
-				return NoMatch
-			}
-		}
-		return PartialMatch
-	}
-	for i := range a {
-		if !a[i].IsEqual(b[i]) {
-			return NoMatch
-		}
-	}
-	return Match
 }

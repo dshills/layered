@@ -48,6 +48,7 @@ func (o *Objects) LoadDir(dir string) error {
 
 // Object returns an object by name
 func (o *Objects) Object(name string) (TextObjecter, error) {
+	name = strings.ToLower(name)
 	o.m.RLock()
 	defer o.m.RUnlock()
 	obj, ok := o.objs[name]
@@ -62,7 +63,7 @@ func (o *Objects) Add(objs ...TextObjecter) {
 	o.m.Lock()
 	defer o.m.Unlock()
 	for i := range objs {
-		o.objs[objs[i].Name()] = objs[i]
+		o.objs[strings.ToLower(objs[i].Name())] = objs[i]
 	}
 }
 
@@ -70,7 +71,7 @@ func (o *Objects) Add(objs ...TextObjecter) {
 func (o *Objects) Remove(name string) {
 	o.m.Lock()
 	defer o.m.Unlock()
-
+	delete(o.objs, strings.ToLower(name))
 }
 
 // SetRuntimes will set the list of runtime directories

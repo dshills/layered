@@ -1,5 +1,51 @@
 package key
 
+// Alt key constants
+const (
+	AltA          = "<alt-a>"
+	AltB          = "<alt-b>"
+	AltC          = "<alt-c>"
+	AltD          = "<alt-d>"
+	AltF          = "<alt-f>"
+	AltG          = "<alt-g>"
+	AltH          = "<alt-h>"
+	AltJ          = "<alt-j>"
+	AltK          = "<alt-k>"
+	AltL          = "<alt-l>"
+	AltM          = "<alt-m>"
+	AltO          = "<alt-o>"
+	AltP          = "<alt-p>"
+	AltQ          = "<alt-q>"
+	AltR          = "<alt-r>"
+	AltS          = "<alt-s>"
+	AltT          = "<alt-t>"
+	AltV          = "<alt-v>"
+	AltW          = "<alt-w>"
+	AltX          = "<alt-x>"
+	AltY          = "<alt-y>"
+	AltZ          = "<alt-z>"
+	Alt0          = "<alt-0>"
+	Alt1          = "<alt-1>"
+	Alt2          = "<alt-2>"
+	Alt3          = "<alt-3>"
+	Alt4          = "<alt-4>"
+	Alt5          = "<alt-5>"
+	Alt6          = "<alt-6>"
+	Alt7          = "<alt-7>"
+	Alt8          = "<alt-8>"
+	Alt9          = "<alt-9>"
+	AltBang       = "<alt-!>"
+	AltAt         = "<alt-@>"
+	AltPound      = "<alt-#>"
+	AltDollar     = "<alt-$>"
+	AltPercent    = "<alt-%>"
+	AltCarrot     = "<alt-^>"
+	AltAnd        = "<alt-&>"
+	AltStar       = "<alt-*>"
+	AltLeftParan  = "<alt-(>"
+	AltRightParan = "<alt-)>"
+)
+
 var altKeys = []string{
 	"<alt-a>",
 	"<alt-b>",
@@ -23,32 +69,6 @@ var altKeys = []string{
 	"<alt-x>",
 	"<alt-y>",
 	"<alt-z>",
-	"<alt-A>",
-	"<alt-B>",
-	"<alt-C>",
-	"<alt-D>",
-	"<alt-E>",
-	"<alt-F>",
-	"<alt-G>",
-	"<alt-H>",
-	"<alt-I>",
-	"<alt-J>",
-	"<alt-K>",
-	"<alt-L>",
-	"<alt-M>",
-	"<alt-N>",
-	"<alt-O>",
-	"<alt-P>",
-	"<alt-Q>",
-	"<alt-R>",
-	"<alt-S>",
-	"<alt-T>",
-	"<alt-U>",
-	"<alt-V>",
-	"<alt-W>",
-	"<alt-X>",
-	"<alt-Y>",
-	"<alt-Z>",
 	"<alt-0>",
 	"<alt-1>",
 	"<alt-2>",
@@ -73,72 +93,72 @@ var altKeys = []string{
 
 // Alt rune codes
 const (
-	Alta          = rune(229)
-	Altb          = rune(8747)
-	Altc          = rune(231)
-	Altd          = rune(8706)
-	AltEe         = rune(180)
-	Altf          = rune(402)
-	Altg          = rune(169)
-	Alth          = rune(729)
-	AltIi         = rune(710)
-	Altj          = rune(8710)
-	Altk          = rune(730)
-	Altl          = rune(172)
-	Altm          = rune(181)
-	AltNn         = rune(732)
-	Alto          = rune(248)
-	Altp          = rune(960)
-	Altq          = rune(339)
-	Altr          = rune(174)
-	Alts          = rune(223)
-	Altt          = rune(8224)
-	AltUu         = rune(168)
-	Altv          = rune(8730)
-	Altw          = rune(8721)
-	Altx          = rune(8776)
-	Alty          = rune(92)
-	Altz          = rune(937)
-	AltA          = rune(197)
-	AltB          = rune(305)
-	AltC          = rune(199)
-	AltD          = rune(206)
-	AltF          = rune(207)
-	AltG          = rune(733)
-	AltH          = rune(211)
-	AltJ          = rune(212)
-	AltK          = rune(63743)
-	AltL          = rune(210)
-	AltM          = rune(194)
-	AltO          = rune(216)
-	AltP          = rune(8719)
-	AltQ          = rune(338)
-	AltR          = rune(8240)
-	AltS          = rune(205)
-	AltT          = rune(711)
-	AltV          = rune(9674)
-	AltW          = rune(8222)
-	AltX          = rune(731)
-	AltY          = rune(193)
-	AltZ          = rune(184)
-	Alt0          = rune(186)
-	Alt1          = rune(161)
-	Alt2          = rune(8482)
-	Alt3          = rune(163)
-	Alt4          = rune(162)
-	Alt5          = rune(8734)
-	Alt6          = rune(167)
-	Alt7          = rune(182)
-	Alt8          = rune(8226)
-	Alt9          = rune(170)
-	AltBang       = rune(8260)
-	AltAt         = rune(8364)
-	AltPound      = rune(8249)
-	AltDollar     = rune(8250)
-	AltPercent    = rune(64257)
-	AltCarrot     = rune(64258)
-	AltAnd        = rune(8225)
-	AltStar       = rune(176)
-	AltLeftParan  = rune(183)
-	AltRightParan = rune(8218)
+	RunAlta          = rune(229)
+	RunAltb          = rune(8747)
+	RunAltc          = rune(231)
+	RunAltd          = rune(8706)
+	RunAltEe         = rune(180)
+	RunAltf          = rune(402)
+	RunAltg          = rune(169)
+	RunAlth          = rune(729)
+	RunAltIi         = rune(710)
+	RunAltj          = rune(8710)
+	RunAltk          = rune(730)
+	RunAltl          = rune(172)
+	RunAltm          = rune(181)
+	RunAltNn         = rune(732)
+	RunAlto          = rune(248)
+	RunAltp          = rune(960)
+	RunAltq          = rune(339)
+	RunAltr          = rune(174)
+	RunAlts          = rune(223)
+	RunAltt          = rune(8224)
+	RunAltUu         = rune(168)
+	RunAltv          = rune(8730)
+	RunAltw          = rune(8721)
+	RunAltx          = rune(8776)
+	RunAlty          = rune(92)
+	RunAltz          = rune(937)
+	RunAltA          = rune(197)
+	RunAltB          = rune(305)
+	RunAltC          = rune(199)
+	RunAltD          = rune(206)
+	RunAltF          = rune(207)
+	RunAltG          = rune(733)
+	RunAltH          = rune(211)
+	RunAltJ          = rune(212)
+	RunAltK          = rune(63743)
+	RunAltL          = rune(210)
+	RunAltM          = rune(194)
+	RunAltO          = rune(216)
+	RunAltP          = rune(8719)
+	RunAltQ          = rune(338)
+	RunAltR          = rune(8240)
+	RunAltS          = rune(205)
+	RunAltT          = rune(711)
+	RunAltV          = rune(9674)
+	RunAltW          = rune(8222)
+	RunAltX          = rune(731)
+	RunAltY          = rune(193)
+	RunAltZ          = rune(184)
+	RunAlt0          = rune(186)
+	RunAlt1          = rune(161)
+	RunAlt2          = rune(8482)
+	RunAlt3          = rune(163)
+	RunAlt4          = rune(162)
+	RunAlt5          = rune(8734)
+	RunAlt6          = rune(167)
+	RunAlt7          = rune(182)
+	RunAlt8          = rune(8226)
+	RunAlt9          = rune(170)
+	RunAltBang       = rune(8260)
+	RunAltAt         = rune(8364)
+	RunAltPound      = rune(8249)
+	RunAltDollar     = rune(8250)
+	RunAltPercent    = rune(64257)
+	RunAltCarrot     = rune(64258)
+	RunAltAnd        = rune(8225)
+	RunAltStar       = rune(176)
+	RunAltLeftParan  = rune(183)
+	RunAltRightParan = rune(8218)
 )

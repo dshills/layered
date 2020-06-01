@@ -68,10 +68,11 @@ const (
 
 // Other
 const (
-	Syntax     = "syntax"
-	RunMacro   = "runmacro"
-	RunCommand = "runcommand"
-	SetMark    = "setmark"
+	Syntax      = "syntax"
+	RunMacro    = "runmacro"
+	RunCommand  = "runcommand"
+	SetMark     = "setmark"
+	ChangeLayer = "changelayer"
 )
 
 // Def is a definition for an action
@@ -126,4 +127,5 @@ var Definitions = []Def{
 	Def{Name: RunMacro, ReqBuffer: true},
 	Def{Name: RunCommand, ReqBuffer: true},
 	Def{Name: SetMark, ReqBuffer: true},
+	Def{Name: ChangeLayer},
 }
