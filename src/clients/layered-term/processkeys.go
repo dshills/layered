@@ -9,7 +9,7 @@ import (
 )
 
 func processKeys(layers *layer.Layers, ed editor.Editorer) error {
-	scanner, err := layer.NewScanner(layers)
+	scanner, err := layer.NewScanner(layers, "normal")
 	if err != nil {
 		return err
 	}

@@ -55,6 +55,7 @@ IO
 const (
 	Search        = "search"
 	SearchResults = "searchresults"
+	DeleteCmdBack = "deletecmdback" // deletes a character from a partial command
 )
 ```
 Search

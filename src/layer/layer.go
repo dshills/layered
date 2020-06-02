@@ -6,23 +6,65 @@ import (
 )
 
 type keyAct struct {
-	keys    []key.Keyer
-	actions []action.Action
+	keys          []key.Keyer
+	actions       []action.Action
+	hasMultiMatch bool
 }
 
 func (ka keyAct) match(keys []key.Keyer) ParseStatus {
+	if ka.hasMultiMatch {
+		return ka.multiMatch(keys)
+	}
 	if len(keys) > len(ka.keys) {
 		return NoMatch
 	}
 	for i, k := range keys {
-		if !ka.keys[i].IsEqual(k) {
+		if !k.IsEqual(ka.keys[i]) {
 			return NoMatch
 		}
 	}
-	if len(keys) == len(ka.keys) {
-		return Match
+	if len(keys) != len(ka.keys) {
+		return PartialMatch
 	}
-	return PartialMatch
+	return Match
+}
+
+func (ka keyAct) multiMatch(keys []key.Keyer) ParseStatus {
+	if len(keys) == 0 {
+		return NoMatch
+	}
+	for i := range ka.keys {
+		if len(keys) == 0 {
+			return PartialMatch
+		}
+		if ka.keys[i].IsMatchMultiple() {
+			cnt := ka.keys[i].Matches(keys...)
+			if cnt == len(keys) {
+				return Match
+			}
+			if cnt == 0 {
+				return NoMatch
+			}
+			keys = keys[cnt:]
+			continue
+		}
+		if !ka.keys[i].IsEqual(keys[0]) {
+			return NoMatch
+		}
+		keys = keys[1:]
+	}
+	return Match
+}
+
+func newKeyAct(keys []key.Keyer, actions []action.Action) keyAct {
+	ka := keyAct{keys: keys, actions: actions}
+	for _, k := range keys {
+		if k.IsMatchMultiple() {
+			ka.hasMultiMatch = true
+			break
+		}
+	}
+	return ka
 }
 
 // Layer is a mapping of key strokes to actions
@@ -30,24 +72,11 @@ type Layer struct {
 	name           string
 	keyActs        []keyAct
 	isDefault      bool
-	partialAsParam bool
-	papTrigger     key.Keyer
-	includePap     bool
 	noMatchActions []action.Action
 	partialActions []action.Action
 	beginActions   []action.Action
 	endActions     []action.Action
 }
-
-// PartialAsParam returns true if the keys should be used as an action parameter
-// requires a trigger key
-func (l *Layer) PartialAsParam() bool { return l.partialAsParam }
-
-// PartialIncludeTrigger will add the trigger to the param
-func (l *Layer) PartialIncludeTrigger() bool { return l.includePap }
-
-// PartialTrigger will trigger a match using previous partial keys as a parameter
-func (l *Layer) PartialTrigger() key.Keyer { return l.papTrigger }
 
 // Match will attempt to map keys to actions
 func (l *Layer) Match(keys []key.Keyer) ([]action.Action, ParseStatus) {
@@ -108,7 +137,6 @@ type jsLayer struct {
 	OnEndActions        []jsAction    `json:"on_end_actions"`
 	NoMatchActions      []jsAction    `json:"no_match_actions"`
 	PartialMatchActions []jsAction    `json:"partial_match_actions"`
-	MatchActions        []jsAction    `json:"match_actions"`
 	Commands            []jsKeyAction `json:"commands"`
 }
 
@@ -153,12 +181,13 @@ type jsKeyAction struct {
 }
 
 func (ka jsKeyAction) asKeyAction() keyAct {
-	nka := keyAct{}
+	actions := []action.Action{}
 	for i := range ka.Actions {
-		nka.actions = append(nka.actions, ka.Actions[i].asAction())
+		actions = append(actions, ka.Actions[i].asAction())
 	}
+	keys := []key.Keyer{}
 	for i := range ka.Keys {
-		nka.keys = append(nka.keys, key.StrToKey(ka.Keys[i]))
+		keys = append(keys, key.StrToKey(ka.Keys[i]))
 	}
-	return nka
+	return newKeyAct(keys, actions)
 }

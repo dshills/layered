@@ -1,10 +1,11 @@
 {
-	"name": "colon",
+	"name": "search",
 	"commands": [
 		{ "keys": [ "<esc>" ], "actions": [{ "action": "ChangeMode", "target": "normal" }]},
+		{ "keys": [ "<cr>" ], "actions": [{ "action": "ChangeMode",  "target": "prev"}] },
 		{ "keys": [ "<bs>" ], "actions": [{ "action": "ChangeMode", "target": "prev"}] },
 		{ "keys": [ "<printable>", "<bs>" ], "actions": [{ "action": "DeleteCmdBack"}] },
-		{ "keys": [ "<printable>", "<cr>" ], "actions": [{ "action": "RunCommand",  "params": "input"}, { "action": "ChangeMode", "target": "prev" }] }
+		{ "keys": [ "<printable>" ], "actions": [{ "action": "search",  "param": "input"}] }
 	]
 }
 

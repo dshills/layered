@@ -12,7 +12,6 @@ type Collectioner interface {
 	LoadDir(dir string) error
 	Add(a Layerer)
 	Remove(name string)
-	Default() Layerer
 	Layer(name string) (Layerer, error)
 }
 ```
@@ -77,34 +76,12 @@ func (l *Layer) NoMatchActions() []action.Action
 ```
 NoMatchActions returns actions when keys do not match
 
-#### func (*Layer) PartialAsParam
-
-```go
-func (l *Layer) PartialAsParam() bool
-```
-PartialAsParam returns true if the keys should be used as an action parameter
-requires a trigger key
-
-#### func (*Layer) PartialIncludeTrigger
-
-```go
-func (l *Layer) PartialIncludeTrigger() bool
-```
-PartialIncludeTrigger will add the trigger to the param
-
 #### func (*Layer) PartialMatchActions
 
 ```go
 func (l *Layer) PartialMatchActions() []action.Action
 ```
 PartialMatchActions returns the partial match actions
-
-#### func (*Layer) PartialTrigger
-
-```go
-func (l *Layer) PartialTrigger() key.Keyer
-```
-PartialTrigger will trigger a match using previous partial keys as a parameter
 
 #### func (*Layer) Remove
 
@@ -125,10 +102,6 @@ type Layerer interface {
 	EndActions() []action.Action
 	PartialMatchActions() []action.Action
 	NoMatchActions() []action.Action
-	IsDefault() bool
-	PartialAsParam() bool
-	PartialIncludeTrigger() bool
-	PartialTrigger() key.Keyer
 }
 ```
 
@@ -149,13 +122,6 @@ Layers is a set of layers
 func (l *Layers) Add(a Layerer)
 ```
 Add adds a layer
-
-#### func (*Layers) Default
-
-```go
-func (l *Layers) Default() Layerer
-```
-Default will return the default layer
 
 #### func (*Layers) Layer
 
@@ -178,86 +144,6 @@ func (l *Layers) Remove(name string)
 ```
 Remove will remove a layer
 
-#### type OldLayer
-
-```go
-type OldLayer struct {
-}
-```
-
-OldLayer is a keyboard action map
-
-#### func (*OldLayer) Add
-
-```go
-func (l *OldLayer) Add(keys []key.Keyer, actions []action.Action)
-```
-Add will map keys to actions
-
-#### func (*OldLayer) BeginActions
-
-```go
-func (l *OldLayer) BeginActions() []action.Action
-```
-BeginActions returns actions that occur when switching to the layer
-
-#### func (*OldLayer) EndActions
-
-```go
-func (l *OldLayer) EndActions() []action.Action
-```
-EndActions returns action that occur when switching away from layer
-
-#### func (*OldLayer) IsDefault
-
-```go
-func (l *OldLayer) IsDefault() bool
-```
-IsDefault returns true if this is the default layer
-
-#### func (*OldLayer) MatchActions
-
-```go
-func (l *OldLayer) MatchActions() []action.Action
-```
-MatchActions returns actions that occur when a match is made they are in
-addition to key mapped actions
-
-#### func (*OldLayer) Name
-
-```go
-func (l *OldLayer) Name() string
-```
-Name returns the layer's name
-
-#### func (*OldLayer) NewParser
-
-```go
-func (l *OldLayer) NewParser() Parserer
-```
-NewParser returns a new key parser
-
-#### func (*OldLayer) NoMatchActions
-
-```go
-func (l *OldLayer) NoMatchActions() []action.Action
-```
-NoMatchActions returns actions the occur when a match is not made
-
-#### func (*OldLayer) PartialMatchActions
-
-```go
-func (l *OldLayer) PartialMatchActions() []action.Action
-```
-PartialMatchActions returns actions that occur when a partial match is made
-
-#### func (*OldLayer) Remove
-
-```go
-func (l *OldLayer) Remove(keys []key.Keyer)
-```
-Remove will remove a key mapping
-
 #### type ParseStatus
 
 ```go
@@ -275,34 +161,11 @@ const (
 ```
 ParseStatus constants
 
-#### func  SameKeys
-
-```go
-func SameKeys(a, b []key.Keyer) ParseStatus
-```
-SameKeys compares two key lists
-
 #### func (ParseStatus) String
 
 ```go
 func (s ParseStatus) String() string
 ```
-
-#### type Parser
-
-```go
-type Parser struct {
-}
-```
-
-Parser is a key stroke parser specific to a layer
-
-#### func (*Parser) Parse
-
-```go
-func (p *Parser) Parse(keys ...key.Keyer) (actions []action.Action, status ParseStatus)
-```
-Parse will take key strokes and will return actions when matches
 
 #### type Parserer
 
@@ -326,7 +189,7 @@ Scanner evaluates keys within a layer
 #### func  NewScanner
 
 ```go
-func NewScanner(layers Collectioner) (*Scanner, error)
+func NewScanner(layers Collectioner, stLayer string) (*Scanner, error)
 ```
 NewScanner returns a layer scanner
 

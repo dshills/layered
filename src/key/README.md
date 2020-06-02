@@ -167,6 +167,21 @@ Control constants
 
 ```go
 const (
+	Any       = "<any>"       // any key
+	Printable = "<printable>" // Any printable character
+	Control   = "<control>"   // any control character
+	Digit     = "<digit>"     // 0-9
+	Letter    = "<letter>"    // Any letter
+	Lower     = "<lower>"     // Any lower case
+	Upper     = "<upper>"     // Any upper case
+	NonBlank  = "<non-blank>" // Any non space printable character
+	Pattern   = "<pattern=>"  // regex pattern
+)
+```
+Special special keys these are artificial keys used for layer matching
+
+```go
+const (
 	Nul       = "<nul>"
 	Soh       = "<soh>"
 	Stx       = "<stx>"
@@ -316,9 +331,23 @@ Ctrl returns true if an ctrl key press
 #### func (*Key) IsEqual
 
 ```go
-func (k *Key) IsEqual(o Keyer) bool
+func (k *Key) IsEqual(keys ...Keyer) bool
 ```
-IsEqual returns true if same key
+IsEqual returns true if key(s) match
+
+#### func (*Key) IsMatchMultiple
+
+```go
+func (k *Key) IsMatchMultiple() bool
+```
+IsMatchMultiple returns true if the key pattern matches multiple keys
+
+#### func (*Key) Matches
+
+```go
+func (k *Key) Matches(keys ...Keyer) int
+```
+Matches returns the number of key matches from 0
 
 #### func (*Key) Rune
 
@@ -341,6 +370,12 @@ func (k *Key) SpecialKey() string
 ```
 SpecialKey returns true if a special key press
 
+#### func (*Key) String
+
+```go
+func (k *Key) String() string
+```
+
 #### type Keyer
 
 ```go
@@ -350,7 +385,9 @@ type Keyer interface {
 	Ctrl() bool
 	Rune() rune
 	SpecialKey() string
-	IsEqual(o Keyer) bool
+	IsEqual(keys ...Keyer) bool
+	Matches(keys ...Keyer) int
+	IsMatchMultiple() bool
 }
 ```
 

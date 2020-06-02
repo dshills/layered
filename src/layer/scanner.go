@@ -2,13 +2,18 @@ package layer
 
 import (
 	"fmt"
+	"strings"
+	"unicode"
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
 )
 
+const useKeysAsParam = "input"
+
 // Scanner evaluates keys within a layer
 type Scanner struct {
+	def     string
 	layers  Collectioner
 	prev    []string
 	current Layerer
@@ -18,36 +23,18 @@ type Scanner struct {
 
 // Init will initialize the scanner
 func (s *Scanner) Init() {
-	s.param = ""
 	s.partial = []key.Keyer{}
 }
 
 // Scan will match keys in the current layer
 func (s *Scanner) Scan(key key.Keyer) ([]action.Action, ParseStatus, error) {
-	if s.current.PartialAsParam() && s.current.PartialTrigger().IsEqual(key) {
-		if s.current.PartialIncludeTrigger() {
-			s.param += string(key.Rune())
-		}
-		acts := s.current.PartialMatchActions()
-		if len(acts) == 0 {
-			return nil, NoMatch, fmt.Errorf("Scanner.Scan: PartialAsParam set but no actions defined")
-		}
-		for i := range acts {
-			if acts[i].Param == "" {
-				acts[i].Param = s.param
-			}
-		}
-		s.Init()
-		s.layerChange(acts)
-		return acts, Match, nil
-	}
-
 	s.partial = append(s.partial, key)
 	acts, status := s.current.Match(s.partial)
 	switch status {
 	case Match:
-		s.Init()
+		acts = s.needParam(acts)
 		s.layerChange(acts)
+		s.Init()
 		return acts, status, nil
 	case NoMatch:
 		s.layerChange(s.current.NoMatchActions())
@@ -59,17 +46,51 @@ func (s *Scanner) Scan(key key.Keyer) ([]action.Action, ParseStatus, error) {
 	return nil, NoMatch, fmt.Errorf("Unexpected match status")
 }
 
+func (s *Scanner) needParam(acts []action.Action) []action.Action {
+	for i := range acts {
+		if acts[i].Param == useKeysAsParam {
+			acts[i].Param = s.keyerToParam(s.partial)
+		}
+	}
+	return acts
+}
+
+func (s *Scanner) keyerToParam(keys []key.Keyer) string {
+	builder := strings.Builder{}
+	for i := range keys {
+		r := keys[i].Rune()
+		if unicode.IsGraphic(r) {
+			builder.WriteRune(r)
+		}
+	}
+	return builder.String()
+}
+
 func (s *Scanner) layerChange(acts []action.Action) {
 	for _, act := range acts {
 		if act.Name == action.ChangeLayer {
+			nl := strings.ToLower(act.Param)
+			if nl == "prev" {
+				nl = s.prevNot(s.current.Name())
+			}
 			s.setPrev(s.current.Name())
-			lay, err := s.layers.Layer(act.Param)
+
+			lay, err := s.layers.Layer(nl)
 			if err != nil {
 				return
 			}
 			s.current = lay
 		}
 	}
+}
+
+func (s *Scanner) prevNot(lay string) string {
+	for i := len(s.prev); i >= 0; i-- {
+		if s.prev[i] != lay {
+			return s.prev[i]
+		}
+	}
+	return s.def
 }
 
 func (s *Scanner) setPrev(lay string) {
@@ -89,13 +110,10 @@ func (s *Scanner) setPrev(lay string) {
 }
 
 // NewScanner returns a layer scanner
-func NewScanner(layers Collectioner) (*Scanner, error) {
-	def := layers.Default()
-	if def == nil {
-		return nil, fmt.Errorf("Collectioner has no default layer")
+func NewScanner(layers Collectioner, stLayer string) (*Scanner, error) {
+	lay, err := layers.Layer(stLayer)
+	if err != nil {
+		return nil, err
 	}
-	return &Scanner{
-		layers:  layers,
-		current: def,
-	}, nil
+	return &Scanner{layers: layers, current: lay, def: stLayer}, nil
 }

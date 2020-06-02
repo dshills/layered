@@ -10,7 +10,6 @@ type Collectioner interface {
 	LoadDir(dir string) error
 	Add(a Layerer)
 	Remove(name string)
-	Default() Layerer
 	Layer(name string) (Layerer, error)
 }
 
@@ -46,10 +45,6 @@ type Layerer interface {
 	EndActions() []action.Action
 	PartialMatchActions() []action.Action
 	NoMatchActions() []action.Action
-	IsDefault() bool
-	PartialAsParam() bool
-	PartialIncludeTrigger() bool
-	PartialTrigger() key.Keyer
 }
 
 // Parserer will parse key strokes into actions

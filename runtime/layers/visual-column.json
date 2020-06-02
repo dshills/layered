@@ -1,6 +1,6 @@
 {
-	"name": "visual",
-	"on_begin_actions": [{ "action": "StartSelection", "target": "char" }],
+	"name": "visual-block",
+	"on_begin_actions": [{ "action": "StartSelection", "target": "block" }],
 	"on_end_actions": [{ "action": "StopSelection" }],
 	"commands": [
 		{ "keys": [ "<esc>" ], "actions": [ { "action": "ChangeMode", "target": "normal" } ] },

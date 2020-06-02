@@ -11,8 +11,7 @@ import (
 
 // Layers is a set of layers
 type Layers struct {
-	ls  []Layerer
-	def Layerer
+	ls []Layerer
 }
 
 // LoadDir wil load layers from a directory
@@ -39,16 +38,10 @@ func (l *Layers) LoadDir(dir string) error {
 			}
 			lay := js.asLayer()
 			l.Add(lay)
-			if lay.IsDefault() {
-				l.def = lay
-			}
 		}
 	}
 	if len(errs) > 0 {
 		return fmt.Errorf("Layer.LoadDir: %v", strings.Join(errs, ", "))
-	}
-	if l.def == nil {
-		return fmt.Errorf("Layers.LoadDir: No default layer defined")
 	}
 	return nil
 }
@@ -69,11 +62,6 @@ func (l *Layers) Remove(name string) {
 			return
 		}
 	}
-}
-
-// Default will return the default layer
-func (l *Layers) Default() Layerer {
-	return l.def
 }
 
 // Layer will return a layer by name

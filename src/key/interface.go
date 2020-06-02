@@ -7,5 +7,7 @@ type Keyer interface {
 	Ctrl() bool
 	Rune() rune
 	SpecialKey() string
-	IsEqual(o Keyer) bool
+	IsEqual(keys ...Keyer) bool
+	Matches(keys ...Keyer) int
+	IsMatchMultiple() bool
 }
