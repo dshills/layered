@@ -79,3 +79,23 @@ func main() {
 		os.Exit(1)
 	}
 }
+
+/*
+if err := keyboard.Open(); err != nil {
+	panic(err)
+}
+defer func() {
+	_ = keyboard.Close()
+}()
+for {
+	r, k, err := keyboard.GetKey()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Rune %v %v, Key %v\n", r, string(r), k)
+
+	if k == keyboard.KeyHome {
+		break
+	}
+}
+*/

@@ -37,8 +37,8 @@ func TestExect(t *testing.T) {
 
 func TestReset(t *testing.T) {
 	act := action.Action{
-		Name:  action.OpenFile,
-		Param: "/Users/dshills/Development/projects/goed-core/testdata/scanner.go",
+		Name:   action.OpenFile,
+		Target: "/Users/dshills/Development/projects/goed-core/testdata/scanner.go",
 	}
 	_, err := ed.Exec(bufid, act)
 	if err != nil {
@@ -93,7 +93,7 @@ func TestSyntax(t *testing.T) {
 }
 
 func TestSearch(t *testing.T) {
-	act := action.Action{Name: action.Search, Param: "scan"}
+	act := action.Action{Name: action.Search, Target: "scan"}
 	resp, err := ed.Exec(bufid, act)
 	if err != nil {
 		t.Fatal(err)

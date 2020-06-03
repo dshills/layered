@@ -3,13 +3,13 @@ package layer
 import (
 	"fmt"
 	"strings"
-	"unicode"
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
+	"github.com/dshills/layered/logger"
 )
 
-const useKeysAsParam = "input"
+const targetInput = "input"
 
 // Scanner evaluates keys within a layer
 type Scanner struct {
@@ -18,7 +18,6 @@ type Scanner struct {
 	prev    []string
 	current Layerer
 	partial []key.Keyer
-	param   string
 }
 
 // Init will initialize the scanner
@@ -32,12 +31,13 @@ func (s *Scanner) Scan(key key.Keyer) ([]action.Action, ParseStatus, error) {
 	acts, status := s.current.Match(s.partial)
 	switch status {
 	case Match:
-		acts = s.needParam(acts)
+		acts = s.needTarget(acts)
 		s.layerChange(acts)
 		s.Init()
 		return acts, status, nil
 	case NoMatch:
 		s.layerChange(s.current.NoMatchActions())
+		s.Init()
 		return s.current.NoMatchActions(), status, nil
 	case PartialMatch:
 		s.layerChange(s.current.PartialMatchActions())
@@ -46,30 +46,31 @@ func (s *Scanner) Scan(key key.Keyer) ([]action.Action, ParseStatus, error) {
 	return nil, NoMatch, fmt.Errorf("Unexpected match status")
 }
 
-func (s *Scanner) needParam(acts []action.Action) []action.Action {
+func (s *Scanner) needTarget(acts []action.Action) []action.Action {
 	for i := range acts {
-		if acts[i].Param == useKeysAsParam {
-			acts[i].Param = s.keyerToParam(s.partial)
+		if acts[i].Target == targetInput {
+			acts[i].Target = s.keyerToTarget(s.partial)
 		}
 	}
 	return acts
 }
 
-func (s *Scanner) keyerToParam(keys []key.Keyer) string {
+func (s *Scanner) keyerToTarget(keys []key.Keyer) string {
 	builder := strings.Builder{}
 	for i := range keys {
 		r := keys[i].Rune()
-		if unicode.IsGraphic(r) {
+		if r > 0 {
 			builder.WriteRune(r)
 		}
 	}
+	logger.Debugf("Scanner.keyerToTarget: %v", builder.String())
 	return builder.String()
 }
 
 func (s *Scanner) layerChange(acts []action.Action) {
 	for _, act := range acts {
-		if act.Name == action.ChangeLayer {
-			nl := strings.ToLower(act.Param)
+		if strings.ToLower(act.Name) == action.ChangeLayer {
+			nl := strings.ToLower(act.Target)
 			if nl == "prev" {
 				nl = s.prevNot(s.current.Name())
 			}
@@ -85,7 +86,7 @@ func (s *Scanner) layerChange(acts []action.Action) {
 }
 
 func (s *Scanner) prevNot(lay string) string {
-	for i := len(s.prev); i >= 0; i-- {
+	for i := len(s.prev) - 1; i >= 0; i-- {
 		if s.prev[i] != lay {
 			return s.prev[i]
 		}

@@ -3,7 +3,7 @@
 	"on_begin_actions": [{ "action": "StartSelection", "target": "block" }],
 	"on_end_actions": [{ "action": "StopSelection" }],
 	"commands": [
-		{ "keys": [ "<esc>" ], "actions": [ { "action": "ChangeMode", "target": "normal" } ] },
+		{ "keys": [ "<esc>" ], "actions": [ { "action": "ChangeLayer", "target": "normal" } ] },
 		{ "keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "selection" } ] },
 		{ "keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "selection" } ] },
 		{ "keys": [ "y" ], "actions":[ { "action": "Yank", "target": "selection" } ] },

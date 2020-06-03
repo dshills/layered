@@ -1,11 +1,11 @@
 {
 	"name": "search",
 	"commands": [
-		{ "keys": [ "<esc>" ], "actions": [{ "action": "ChangeMode", "target": "normal" }]},
-		{ "keys": [ "<cr>" ], "actions": [{ "action": "ChangeMode",  "target": "prev"}] },
-		{ "keys": [ "<bs>" ], "actions": [{ "action": "ChangeMode", "target": "prev"}] },
+		{ "keys": [ "<esc>" ], "actions": [{ "action": "ChangeLayer", "target": "normal" }]},
+		{ "keys": [ "<cr>" ], "actions": [{ "action": "ChangeLayer",  "target": "prev"}] },
+		{ "keys": [ "<bs>" ], "actions": [{ "action": "ChangeLayer", "target": "prev"}] },
 		{ "keys": [ "<printable>", "<bs>" ], "actions": [{ "action": "DeleteCmdBack"}] },
-		{ "keys": [ "<printable>" ], "actions": [{ "action": "search",  "param": "input"}] }
+		{ "keys": [ "<printable>" ], "actions": [{ "action": "search",  "target": "input"}] }
 	]
 }
 

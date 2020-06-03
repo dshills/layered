@@ -36,7 +36,10 @@ func (l *Layers) LoadDir(dir string) error {
 				errs = append(errs, err.Error())
 				continue
 			}
-			lay := js.asLayer()
+			lay, err := js.asLayer()
+			if err != nil {
+				return err
+			}
 			l.Add(lay)
 		}
 	}

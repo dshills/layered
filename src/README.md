@@ -3,4 +3,4 @@
 ## TODO
 
 - Unit test text store
--
+- Indent

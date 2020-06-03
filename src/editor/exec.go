@@ -40,7 +40,7 @@ func (e *Editor) Exec(bufid string, actions ...action.Action) (resp *Response, e
 
 		// Search
 		case action.Search:
-			res, err := buf.Search(act.Param)
+			res, err := buf.Search(act.Target)
 			if err != nil {
 				return nil, err
 			}
@@ -61,7 +61,7 @@ func (e *Editor) Exec(bufid string, actions ...action.Action) (resp *Response, e
 		case action.NewBuffer:
 			resp.Buffer = e.newBuffer()
 		case action.SaveBuffer:
-			if err := buf.SaveBuffer(act.Param); err != nil {
+			if err := buf.SaveBuffer(act.Target); err != nil {
 				return nil, err
 			}
 		case action.CloseBuffer:
@@ -79,15 +79,15 @@ func (e *Editor) Exec(bufid string, actions ...action.Action) (resp *Response, e
 			if err != nil {
 				return nil, err
 			}
-			if err := buf.OpenFile(act.Param); err != nil {
+			if err := buf.OpenFile(act.Target); err != nil {
 				return nil, err
 			}
 		case action.RenameFile:
-			if err := buf.RenameFile(act.Param); err != nil {
+			if err := buf.RenameFile(act.Target); err != nil {
 				return nil, err
 			}
 		case action.SaveFileAs:
-			buf.SetFilename(act.Param)
+			buf.SetFilename(act.Target)
 			if err := buf.SaveBuffer(""); err != nil {
 				return nil, err
 			}
@@ -157,17 +157,17 @@ func (e *Editor) Exec(bufid string, actions ...action.Action) (resp *Response, e
 				return nil, err
 			}
 		case action.InsertLine:
-			err = buf.NewLineBelow(act.Line, act.Param, act.Count)
+			err = buf.NewLineBelow(act.Line, act.Target, act.Count)
 			if err != nil {
 				return nil, err
 			}
 		case action.InsertLineAbove:
-			err = buf.NewLineAbove(act.Line, act.Param, act.Count)
+			err = buf.NewLineAbove(act.Line, act.Target, act.Count)
 			if err != nil {
 				return nil, err
 			}
 		case action.InsertString:
-			if err := buf.InsertString(act.Line, act.Column, act.Param); err != nil {
+			if err := buf.InsertString(act.Line, act.Column, act.Target); err != nil {
 				return nil, err
 			}
 		case action.Indent:

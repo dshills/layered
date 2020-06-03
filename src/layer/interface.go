@@ -39,8 +39,8 @@ func (s ParseStatus) String() string {
 type Layerer interface {
 	Match(keys []key.Keyer) ([]action.Action, ParseStatus)
 	Name() string
-	Add(keys []key.Keyer, actions []action.Action)
-	Remove(keys []key.Keyer)
+	Add(keys []string, actions []action.Action) error
+	Remove(keys []string)
 	BeginActions() []action.Action
 	EndActions() []action.Action
 	PartialMatchActions() []action.Action

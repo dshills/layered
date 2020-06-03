@@ -150,10 +150,10 @@ Definitions is a list of action definitions
 
 ```go
 type Action struct {
-	Name, Target, Param string
-	Line, Column        int
-	Object              string
-	Count               int
+	Name, Target string
+	Line, Column int
+	Object       string
+	Count        int
 }
 ```
 
