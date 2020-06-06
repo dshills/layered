@@ -1,7 +1,6 @@
 package layer
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -31,15 +30,8 @@ func (l *Layers) LoadDir(dir string) error {
 				continue
 			}
 			defer f.Close()
-			js := jsLayer{}
-			if err := json.NewDecoder(f).Decode(&js); err != nil {
-				errs = append(errs, err.Error())
-				continue
-			}
-			lay, err := js.asLayer()
-			if err != nil {
-				return err
-			}
+			var lay Layerer
+			lay.Load(f)
 			l.Add(lay)
 		}
 	}

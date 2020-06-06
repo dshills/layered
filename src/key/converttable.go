@@ -1,4 +1,4 @@
-package layer
+package key
 
 var convertCharTable = make(map[string]rune)
 var convertKeyTable = make(map[string]int)

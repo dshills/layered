@@ -1,11 +1,6 @@
-# key
---
-    import "."
+package key
 
-
-## Usage
-
-```go
+// Alt key constants
 const (
 	Alta          = "<alt-a>"
 	Altb          = "<alt-b>"
@@ -54,10 +49,53 @@ const (
 	AltLeftParan  = "<alt-(>"
 	AltRightParan = "<alt-)>"
 )
-```
-Alt key constants
 
-```go
+var altKeys = []string{
+	"<alt-a>",
+	"<alt-b>",
+	"<alt-c>",
+	"<alt-d>",
+	"<alt-f>",
+	"<alt-g>",
+	"<alt-h>",
+	"<alt-j>",
+	"<alt-k>",
+	"<alt-l>",
+	"<alt-m>",
+	"<alt-o>",
+	"<alt-p>",
+	"<alt-q>",
+	"<alt-r>",
+	"<alt-s>",
+	"<alt-t>",
+	"<alt-v>",
+	"<alt-w>",
+	"<alt-x>",
+	"<alt-y>",
+	"<alt-z>",
+	"<alt-0>",
+	"<alt-1>",
+	"<alt-2>",
+	"<alt-3>",
+	"<alt-4>",
+	"<alt-5>",
+	"<alt-6>",
+	"<alt-7>",
+	"<alt-8>",
+	"<alt-9>",
+	"<alt-!>",
+	"<alt-@",
+	"<alt-#>",
+	"<alt-$>",
+	"<alt-%>",
+	"<alt-^>",
+	"<alt-&>",
+	"<alt-*>",
+	"<alt-(>",
+	"<alt-)>",
+}
+
+// Alt rune codes
 const (
 	RunAlta          = rune(229)
 	RunAltb          = rune(8747)
@@ -106,10 +144,8 @@ const (
 	RunAltLeftParan  = rune(183)
 	RunAltRightParan = rune(8218)
 )
-```
-Alt rune codes
 
-```go
+// Control constants
 const (
 	CtrlA            = "<ctrl-a>"
 	CtrlB            = "<ctrl-b>"
@@ -156,10 +192,53 @@ const (
 	CtrlCarrot       = "<ctrl-^>"
 	CtrlUnderscore   = "<ctrl-_>"
 )
-```
-Control constants
 
-```go
+var ctrlKeys = []string{
+	"<ctrl-a>",
+	"<ctrl-b>",
+	"<ctrl-c>",
+	"<ctrl-d>",
+	"<ctrl-e>",
+	"<ctrl-f>",
+	"<ctrl-g>",
+	"<ctrl-h>",
+	"<ctrl-i>",
+	"<ctrl-j>",
+	"<ctrl-k>",
+	"<ctrl-l>",
+	"<ctrl-m>",
+	"<ctrl-n>",
+	"<ctrl-o>",
+	"<ctrl-p>",
+	"<ctrl-q>",
+	"<ctrl-r>",
+	"<ctrl-s>",
+	"<ctrl-t>",
+	"<ctrl-u>",
+	"<ctrl-v>",
+	"<ctrl-w>",
+	"<ctrl-x>",
+	"<ctrl-y>",
+	"<ctrl-z>",
+	"<ctrel-0>",
+	"<ctrel-1>",
+	"<ctrel-2>",
+	"<ctrel-3>",
+	"<ctrel-4>",
+	"<ctrel-5>",
+	"<ctrel-6>",
+	"<ctrel-7>",
+	"<ctrel-8>",
+	"<ctrel-9>",
+	"<ctrl- >",
+	"<ctrl-[>",
+	"<ctrl-\\>",
+	"<ctrl-]>",
+	"<ctrl-^>",
+	"<ctrl-_>",
+}
+
+// Special key constants
 const (
 	Space     = "<space>"
 	Nul       = "<nul>"
@@ -282,99 +361,125 @@ const (
 	F64       = "<f64>"
 	Del       = "<del>"
 )
-```
-Special key constants
 
-```go
-const (
-	KeyF1 = 0xFFFF - iota
-	KeyF2
-	KeyF3
-	KeyF4
-	KeyF5
-	KeyF6
-	KeyF7
-	KeyF8
-	KeyF9
-	KeyF10
-	KeyF11
-	KeyF12
-	KeyInsert
-	KeyDelete
-	KeyHome
-	KeyEnd
-	KeyPgup
-	KeyPgdn
-	KeyArrowUp
-	KeyArrowDown
-	KeyArrowLeft
-	KeyArrowRight
-	KeyEnter     = 0x0D
-	KeyEsc       = 0x1B
-	KeySpace     = 0x20
-	KeyTab       = 0x09
-	KeyBackspace = 0x08
-)
-```
-ctrl key constants
-
-#### func  StrToKey
-
-```go
-func StrToKey(s string) (r rune, k int, err error)
-```
-StrToKey converts a string representaion to a rune, key
-
-#### type Key
-
-```go
-type Key struct {
+var specialKeys = []string{
+	"<nul>",
+	"<soh>",
+	"<stx>",
+	"<etx>",
+	"<eot>",
+	"<enq>",
+	"<ack>",
+	"<bel>",
+	"<bs>",
+	"<tab>",
+	"<lf>",
+	"<vt>",
+	"<ff>",
+	"<cr>",
+	"<so>",
+	"<si>",
+	"<dle>",
+	"<dc1>",
+	"<dc2>",
+	"<dc3>",
+	"<dc4>",
+	"<nak>",
+	"<syn>",
+	"<etb>",
+	"<can>",
+	"<em>",
+	"<sub>",
+	"<esc>",
+	"<fs>",
+	"<gs>",
+	"<rs>",
+	"<us>",
+	"<up>",
+	"<down>",
+	"<right>",
+	"<left>",
+	"<upleft>",
+	"<upright>",
+	"<downleft>",
+	"<downright>",
+	"<center>",
+	"<pgup>",
+	"<pgdn>",
+	"<home>",
+	"<end>",
+	"<insert>",
+	"<delete>",
+	"<help>",
+	"<exit>",
+	"<clear>",
+	"<cancel>",
+	"<print>",
+	"<pause>",
+	"<backtab>",
+	"<f1>",
+	"<f2>",
+	"<f3>",
+	"<f4>",
+	"<f5>",
+	"<f6>",
+	"<f7>",
+	"<f8>",
+	"<f9>",
+	"<f10>",
+	"<f11>",
+	"<f12>",
+	"<f13>",
+	"<f14>",
+	"<f15>",
+	"<f16>",
+	"<f17>",
+	"<f18>",
+	"<f19>",
+	"<f20>",
+	"<f21>",
+	"<f22>",
+	"<f23>",
+	"<f24>",
+	"<f25>",
+	"<f26>",
+	"<f27>",
+	"<f28>",
+	"<f29>",
+	"<f30>",
+	"<f31>",
+	"<f32>",
+	"<f33>",
+	"<f34>",
+	"<f35>",
+	"<f36>",
+	"<f37>",
+	"<f38>",
+	"<f39>",
+	"<f40>",
+	"<f41>",
+	"<f42>",
+	"<f43>",
+	"<f44>",
+	"<f45>",
+	"<f46>",
+	"<f47>",
+	"<f48>",
+	"<f49>",
+	"<f50>",
+	"<f51>",
+	"<f52>",
+	"<f53>",
+	"<f54>",
+	"<f55>",
+	"<f56>",
+	"<f57>",
+	"<f58>",
+	"<f59>",
+	"<f60>",
+	"<f61>",
+	"<f62>",
+	"<f63>",
+	"<f64>",
+	"<del>",
 }
-```
-
-Key is a keyboard key press
-
-#### func (*Key) Key
-
-```go
-func (k *Key) Key() int
-```
-Key will return the key value rune value == 0
-
-#### func (*Key) Rune
-
-```go
-func (k *Key) Rune() rune
-```
-Rune returns the rune code, key == 0
-
-#### func (*Key) String
-
-```go
-func (k *Key) String() string
-```
-
-#### type Keyer
-
-```go
-type Keyer interface {
-	Rune() rune
-	Key() int
-}
-```
-
-Keyer represents a keyboard item
-
-#### func  New
-
-```go
-func New(r rune, k int) Keyer
-```
-New will return a key
-
-#### func  StrToKeyer
-
-```go
-func StrToKeyer(s string) (Keyer, error)
-```
-StrToKeyer will return a Keyer based on s

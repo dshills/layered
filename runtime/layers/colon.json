@@ -1,10 +1,10 @@
 {
 	"name": "colon",
 	"commands": [
-		{ "keys": [ "<esc>" ], "actions": [{ "action": "ChangeLayer", "target": "normal" }]},
-		{ "keys": [ "<bs>" ], "actions": [{ "action": "ChangeLayer", "target": "prev"}] },
-		{ "keys": [ "<printable>", "<bs>" ], "actions": [{ "action": "DeleteCmdBack"}] },
-		{ "keys": [ "<printable>", "<cr>" ], "actions": [{ "action": "RunCommand",  "target": "input"}, { "action": "ChangeLayer", "target": "prev" }] }
+		{ "name": "ChangeToInsert",  "keys": [ "<esc>" ], "actions": [{ "action": "ChangeLayer", "target": "normal" }]},
+		{ "name": "ChangeToPrev",  "keys": [ "<bs>" ], "actions": [{ "action": "ChangeLayer", "target": "prev"}] },
+		{ "name": "",  "keys": [ "<printable>", "<bs>" ], "actions": [{ "action": "DeleteCmdBack"}] },
+		{ "name": "RunColonCmd",  "keys": [ "<printable>", "<cr>" ], "actions": [{ "action": "RunCommand",  "target": "input"}, { "action": "ChangeLayer", "target": "prev" }] }
 	]
 }
 

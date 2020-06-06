@@ -1,14 +1,14 @@
 {
 	"name": "visual-line",
-	"on_begin_actions": [{ "action": "StartSelection", "target": "line" }],
-	"on_end_actions": [{ "action": "StopSelection" }],
+	"on_begin_actions": [{ "name": "",  "action": "StartSelection", "target": "line" }],
+	"on_end_actions": [{ "name": "",  "action": "StopSelection" }],
 	"commands": [
-		{ "keys": [ "<esc>" ], "actions": [ { "action": "ChangeLayer", "target": "normal" } ] },
-		{ "keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "selection" } ] },
-		{ "keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "selection" } ] },
-		{ "keys": [ "y" ], "actions":[ { "action": "Yank", "target": "selection" } ] },
-		{ "keys": [ "p" ], "actions":[ { "action": "Paste", "target": "selection" } ] },
-		{ "keys": [ "d" ], "actions":[ { "action": "Delete", "target": "selection" } ] }
+		{ "name": "",  "keys": [ "<esc>" ], "actions": [ { "action": "ChangeLayer", "target": "normal" } ] },
+		{ "name": "",  "keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "selection" } ] },
+		{ "name": "",  "keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "selection" } ] },
+		{ "name": "",  "keys": [ "y" ], "actions":[ { "action": "Yank", "target": "selection" } ] },
+		{ "name": "",  "keys": [ "p" ], "actions":[ { "action": "Paste", "target": "selection" } ] },
+		{ "name": "",  "keys": [ "d" ], "actions":[ { "action": "Delete", "target": "selection" } ] }
 	]
 }
 

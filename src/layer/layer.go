@@ -1,6 +1,9 @@
 package layer
 
 import (
+	"encoding/json"
+	"io"
+
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
 	"github.com/dshills/layered/logger"
@@ -43,8 +46,8 @@ func (l *Layer) Match(keys []key.Keyer) ([]action.Action, ParseStatus) {
 // Name returns the layer name
 func (l *Layer) Name() string { return l.name }
 
-// Add will add a keys / actions map
-func (l *Layer) Add(keys []string, actions []action.Action) error {
+// Map will add a keys / actions mapping
+func (l *Layer) Map(name string, keys []string, actions []action.Action) error {
 	kms := []keyMatch{}
 	for _, s := range keys {
 		km, err := newKeyMatch(s)
@@ -57,8 +60,8 @@ func (l *Layer) Add(keys []string, actions []action.Action) error {
 	return nil
 }
 
-// Remove will remove a mapping
-func (l *Layer) Remove(keys []string) {
+// Unmap will remove a mapping
+func (l *Layer) Unmap(name string) {
 	// TODO
 }
 
@@ -74,6 +77,36 @@ func (l *Layer) PartialMatchActions() []action.Action { return actCopy(l.partial
 // NoMatchActions returns actions when keys do not match
 func (l *Layer) NoMatchActions() []action.Action { return actCopy(l.noMatchActions) }
 
+// Load will load a layer from a reader
+func (l *Layer) Load(r io.Reader) error {
+	js := jsLayer{}
+	if err := json.NewDecoder(r).Decode(&js); err != nil {
+		return err
+	}
+	l.name = js.Name
+	for _, act := range js.OnBeginActions {
+		l.beginActions = append(l.beginActions, act.asAction())
+	}
+	for _, act := range js.OnEndActions {
+		l.endActions = append(l.endActions, act.asAction())
+	}
+	for _, act := range js.NoMatchActions {
+		l.noMatchActions = append(l.noMatchActions, act.asAction())
+	}
+	for _, act := range js.PartialMatchActions {
+		l.partialActions = append(l.partialActions, act.asAction())
+	}
+	for _, kact := range js.Commands {
+		kas, err := kact.asKeyAction()
+		if err != nil {
+			return err
+		}
+		l.keyActs = append(l.keyActs, kas)
+	}
+
+	return nil
+}
+
 type jsLayer struct {
 	Name                string        `json:"name"`
 	Default             bool          `json:"default"`
@@ -82,31 +115,6 @@ type jsLayer struct {
 	NoMatchActions      []jsAction    `json:"no_match_actions"`
 	PartialMatchActions []jsAction    `json:"partial_match_actions"`
 	Commands            []jsKeyAction `json:"commands"`
-}
-
-func (l *jsLayer) asLayer() (Layerer, error) {
-	lay := Layer{name: l.Name}
-	for _, act := range l.OnBeginActions {
-		lay.beginActions = append(lay.beginActions, act.asAction())
-	}
-	for _, act := range l.OnEndActions {
-		lay.endActions = append(lay.endActions, act.asAction())
-	}
-	for _, act := range l.NoMatchActions {
-		lay.noMatchActions = append(lay.noMatchActions, act.asAction())
-	}
-	for _, act := range l.PartialMatchActions {
-		lay.partialActions = append(lay.partialActions, act.asAction())
-	}
-	for _, kact := range l.Commands {
-		kas, err := kact.asKeyAction()
-		if err != nil {
-			return &lay, err
-		}
-		lay.keyActs = append(lay.keyActs, kas)
-	}
-
-	return &lay, nil
 }
 
 type jsAction struct {
@@ -122,6 +130,7 @@ func (a jsAction) asAction() action.Action {
 }
 
 type jsKeyAction struct {
+	Name    string     `json:"name"`
 	Keys    []string   `json:"keys"`
 	Actions []jsAction `json:"actions"`
 }

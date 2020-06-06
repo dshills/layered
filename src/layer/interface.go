@@ -1,6 +1,8 @@
 package layer
 
 import (
+	"io"
+
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
 )
@@ -39,12 +41,13 @@ func (s ParseStatus) String() string {
 type Layerer interface {
 	Match(keys []key.Keyer) ([]action.Action, ParseStatus)
 	Name() string
-	Add(keys []string, actions []action.Action) error
-	Remove(keys []string)
+	Map(name string, keys []string, actions []action.Action) error
+	UnMap(name string)
 	BeginActions() []action.Action
 	EndActions() []action.Action
 	PartialMatchActions() []action.Action
 	NoMatchActions() []action.Action
+	Load(io.Reader) error
 }
 
 // Parserer will parse key strokes into actions
