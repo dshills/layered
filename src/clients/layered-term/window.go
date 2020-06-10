@@ -6,6 +6,7 @@ import (
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/editor"
+	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/palette"
 	"github.com/dshills/layered/terminal"
 )
@@ -22,7 +23,27 @@ type window struct {
 	ed        editor.Editorer
 }
 
+func (w *window) makeVisible(ln, col int) {
+	logger.Debugf("makeVisible: Before st: %v cnt: %v ln: %v", w.startline, w.count, ln)
+	if ln >= w.startline && ln <= w.startline+w.count {
+		return
+	}
+	if ln < w.startline {
+		w.startline = ln
+	} else {
+		w.startline = ln - w.count + 1
+	}
+	if w.startline < 0 {
+		w.startline = 0
+	}
+
+	logger.Debugf("makeVisible: After st: %v cnt: %v ln: %v", w.startline, w.count, ln)
+	w.draw()
+}
+
 func (w *window) drawCursor(ln, col int) {
+	w.makeVisible(ln, col)
+	ln -= w.startline
 	w.writer.MoveTo(ln, col)
 }
 
@@ -37,6 +58,7 @@ func (w *window) draw() error {
 		Line:  w.startline,
 		Count: w.count,
 	}
+	w.writer.Clear()
 	resp := w.ed.Exec(w.bufid, act)
 	if resp.Err != nil {
 		return resp.Err
@@ -76,7 +98,9 @@ func (w *window) draw() error {
 			w.writer.WriteStyledStringAt(ln, rng[0], en.Fgd, empty, con)
 		}
 	}
-	w.writer.MoveTo(resp.Line, resp.Column)
+	w.makeVisible(resp.Line, resp.Column)
+	ln := resp.Line - w.startline
+	w.writer.MoveTo(ln, resp.Column)
 	return nil
 }
 
@@ -86,6 +110,6 @@ func newWindow(bufid string, tw *terminal.TermWriter, x, y, xx, yy int, ed edito
 		ed:     ed,
 		bufid:  bufid,
 		writer: terminal.NewWindowWriter(tw, image.Rect(x, y, xx, yy)),
-		count:  yy - y,
+		count:  yy - y - 1,
 	}
 }

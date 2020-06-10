@@ -1,0 +1,10 @@
+{
+	"key": "value",
+	"keyArray": [
+		1, 2, 3, false, true, null
+	],
+	"objArray": [
+		{ "index": "value" },
+		{"thisNum": 1, "thisNull": null, "thisBool": true, "thisString": "A string"}
+	]
+}

@@ -53,8 +53,8 @@
 		{ "name": "MoveScreenEnd",  "keys": [ "L" ], "actions":[ { "action": "Move", "target": "screen-end" } ]},
 		{ "name": "MoveScreenCenter",  "keys": [ "M" ], "actions":[ { "action": "Move", "target": "screen-center" }, { "action": "Move", "target": "bol-not-empty" } ]},
 		{ "name": "CenterScreen",  "keys": [ "z", "z" ], "actions":[ { "action": "Move", "target": "screen-center" } ]},
-		{ "name": "ScrollDown",  "keys": [ "<ctrl-d>" ], "actions":[ { "action": "Scroll", "target": "down" } ]},
-		{ "name": "ScrollUp",  "keys": [ "<ctrl-u>" ], "actions":[ { "action": "Scroll", "target": "up" } ]},
+		{ "name": "",  "keys": [ "<ctrl-d>" ], "actions":[ { "action": "ScrollDown" } ]},
+		{ "name": "",  "keys": [ "<ctrl-u>" ], "actions":[ { "action": "ScrollUp" } ]},
 
 		{ "name": "",  "keys": [ "<ctrl-r>" ], "actions":[ { "action": "Redo" } ]},
 		{ "name": "",  "keys": [ "u" ], "actions":[ { "action": "Undo" } ]},

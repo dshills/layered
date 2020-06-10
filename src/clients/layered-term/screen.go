@@ -9,7 +9,6 @@ import (
 
 	"github.com/dshills/layered/editor"
 	"github.com/dshills/layered/key"
-	"github.com/dshills/layered/layer"
 	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/palette"
 	"github.com/dshills/layered/terminal"
@@ -39,9 +38,6 @@ func (s *screen) handleResponse() {
 			logger.ErrorErr(resp.Err)
 			s.notice(resp.Err.Error())
 			continue
-		}
-		if resp.Status == layer.Match {
-			logger.Debugf("%v %v %v", resp.Buffer, resp.Line, resp.Column)
 		}
 		if resp.Buffer != "" {
 			s.activeBufID = resp.Buffer

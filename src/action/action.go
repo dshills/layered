@@ -21,8 +21,9 @@ func (a Action) String() string {
 func (a *Action) Valid(bufid string) error {
 	errs := []string{}
 	found := false
+	an := strings.ToLower(a.Name)
 	for _, d := range Definitions {
-		if d.Name == strings.ToLower(a.Name) {
+		if d.Name == an {
 			found = true
 			if a.Target == "" && d.ReqTarget {
 				errs = append(errs, "Missing Target")
