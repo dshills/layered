@@ -175,26 +175,5 @@
 		"keywords": [
 			"null"
 		]
-	},
-	{
-		"group": "jsonFold",
-		"type": "region",
-		"start": "{",
-		"end": "}(s\n+(\"|{))",
-		"matchgroup": [
-			"jsonBraces"
-		],
-		"transparent": true,
-		"fold": true
-	},
-	{
-		"group": "jsonFold",
-		"type": "region",
-		"end": "](s\n+\")",
-		"matchgroup": [
-			"jsonBraces"
-		],
-		"transparent": true,
-		"fold": true
 	}
 ]

@@ -18,20 +18,15 @@ const (
 	Pattern   = "<pattern=>"  // regex pattern
 )
 ```
-Special special keys these are artificial keys used for layer matching
+Key matcher constants
 
-#### type Collectioner
+#### type Factory
 
 ```go
-type Collectioner interface {
-	LoadDir(dir string) error
-	Add(a Layerer)
-	Remove(name string)
-	Layer(name string) (Layerer, error)
-}
+type Factory func(rtpaths ...string) (Manager, error)
 ```
 
-Collectioner is a collection of layers
+Factory will create a layer manager
 
 #### type Layer
 
@@ -112,7 +107,7 @@ type Layerer interface {
 	Match(keys []key.Keyer) ([]action.Action, ParseStatus)
 	Name() string
 	Map(name string, keys []string, actions []action.Action) error
-	UnMap(name string)
+	Unmap(name string)
 	BeginActions() []action.Action
 	EndActions() []action.Action
 	PartialMatchActions() []action.Action
@@ -135,9 +130,16 @@ Layers is a set of layers
 #### func (*Layers) Add
 
 ```go
-func (l *Layers) Add(a Layerer)
+func (l *Layers) Add(a ...Layerer)
 ```
 Add adds a layer
+
+#### func (*Layers) AddRuntime
+
+```go
+func (l *Layers) AddRuntime(rtpaths ...string) error
+```
+AddRuntime adds a runtime path
 
 #### func (*Layers) Layer
 
@@ -146,12 +148,12 @@ func (l *Layers) Layer(name string) (Layerer, error)
 ```
 Layer will return a layer by name
 
-#### func (*Layers) LoadDir
+#### func (*Layers) Load
 
 ```go
-func (l *Layers) LoadDir(dir string) error
+func (l *Layers) Load() error
 ```
-LoadDir wil load layers from a directory
+Load will load the layers within the runtimes
 
 #### func (*Layers) Remove
 
@@ -159,6 +161,35 @@ LoadDir wil load layers from a directory
 func (l *Layers) Remove(name string)
 ```
 Remove will remove a layer
+
+#### func (*Layers) RemoveRuntime
+
+```go
+func (l *Layers) RemoveRuntime(path string) error
+```
+RemoveRuntime will remove a runtime path
+
+#### type Manager
+
+```go
+type Manager interface {
+	AddRuntime(rtpaths ...string) error
+	RemoveRuntime(path string) error
+	Load() error
+	Add(a ...Layerer)
+	Remove(name string)
+	Layer(name string) (Layerer, error)
+}
+```
+
+Manager is a collection of managed layers
+
+#### func  New
+
+```go
+func New(rtpaths ...string) (Manager, error)
+```
+New will return a layer manager
 
 #### type ParseStatus
 
@@ -205,7 +236,7 @@ Scanner evaluates keys within a layer
 #### func  NewScanner
 
 ```go
-func NewScanner(layers Collectioner, stLayer string) (*Scanner, error)
+func NewScanner(layers Manager, stLayer string) (*Scanner, error)
 ```
 NewScanner returns a layer scanner
 
@@ -215,6 +246,20 @@ NewScanner returns a layer scanner
 func (s *Scanner) Init()
 ```
 Init will initialize the scanner
+
+#### func (*Scanner) LayerName
+
+```go
+func (s *Scanner) LayerName() string
+```
+LayerName will return name of the current layer
+
+#### func (*Scanner) Partial
+
+```go
+func (s *Scanner) Partial() string
+```
+Partial returns the partial keys
 
 #### func (*Scanner) Scan
 

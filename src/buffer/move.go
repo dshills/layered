@@ -3,6 +3,7 @@ package buffer
 import (
 	"fmt"
 
+	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/textobject"
 )
 
@@ -86,7 +87,9 @@ func (b *Buffer) Up(cnt int) {
 
 // Down will move the cursor down cnt
 func (b *Buffer) Down(cnt int) {
+	logger.Debugf("Buffer.Down %v", b.cur.AsRange())
 	b.cur.Down(cnt)
+	logger.Debugf("Buffer.Down %v", b.cur.AsRange())
 }
 
 // Prev will move the curosr back by cnt

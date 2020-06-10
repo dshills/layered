@@ -14,20 +14,6 @@ type Editor struct {
 
 Editor is an editor instance
 
-#### func (*Editor) Add
-
-```go
-func (e *Editor) Add(buf buffer.Bufferer)
-```
-Add will add a buffer to the editor
-
-#### func (*Editor) Buffer
-
-```go
-func (e *Editor) Buffer(id string) (buffer.Bufferer, error)
-```
-Buffer will return a buffer by id
-
 #### func (*Editor) Buffers
 
 ```go
@@ -38,35 +24,51 @@ Buffers returns the editors currrent buffers
 #### func (*Editor) Exec
 
 ```go
-func (e *Editor) Exec(bufid string, actions ...action.Action) (resp *Response, err error)
+func (e *Editor) Exec(bufid string, actions ...action.Action) Response
 ```
 Exec will execute a transaction in the editor
 
-#### func (*Editor) Remove
+#### func (*Editor) KeyChan
 
 ```go
-func (e *Editor) Remove(id string) error
+func (e *Editor) KeyChan() chan key.Keyer
 ```
-Remove will remove a buffer from the editor
+KeyChan returns the key channel
+
+#### func (*Editor) SetRespChan
+
+```go
+func (e *Editor) SetRespChan(rc chan Response)
+```
+SetRespChan will set the channel for sending responses
 
 #### type Editorer
 
 ```go
 type Editorer interface {
-	Buffers() []buffer.Bufferer
-	Add(buffer.Bufferer)
-	Remove(id string) error
-	Buffer(id string) (buffer.Bufferer, error)
-	Exec(bufid string, actions ...action.Action) (*Response, error)
+	Exec(bufid string, actions ...action.Action) Response
+	KeyChan() chan key.Keyer
+	SetRespChan(chan Response)
 }
 ```
 
-Editorer represents an editor
+Editorer is an editor interface
 
 #### func  New
 
 ```go
-func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, rt ...string) (Editorer, error)
+func New(
+	uf undo.Factory,
+	tf textstore.Factory,
+	bf buffer.Factory,
+	cf cursor.Factory,
+	sf syntax.Factory,
+	ftf filetype.Factory,
+	of textobject.Factory,
+	rf register.Factory,
+	lf layer.Factory,
+	rt ...string,
+) (Editorer, error)
 ```
 New will return a new editor
 
@@ -85,13 +87,22 @@ KeyValue is key/value data
 
 ```go
 type Response struct {
-	Buffer       string
-	Action       string
-	Line, Column int
-	Results      []KeyValue
-	Content      []string
-	Syntax       []syntax.Resulter
-	Search       []buffer.SearchResult
+	Buffer         string
+	Action         string
+	Line, Column   int
+	Results        []KeyValue
+	Content        []string
+	Syntax         []syntax.Resulter
+	Search         []buffer.SearchResult
+	Layer          string
+	Status         layer.ParseStatus
+	Partial        string
+	ContentChanged bool
+	CursorChanged  bool
+	NewBuffer      bool
+	CloseBuffer    bool
+	InfoChanged    bool
+	Err            error
 }
 ```
 

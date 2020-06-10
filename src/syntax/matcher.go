@@ -89,6 +89,6 @@ func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter {
 }
 
 // New returns a new syntax matcher
-func New(rt ...string) Matcherer {
+func New(rt ...string) Manager {
 	return &Matcher{runtimes: rt}
 }

@@ -2,14 +2,12 @@ package editor
 
 import (
 	"github.com/dshills/layered/action"
-	"github.com/dshills/layered/buffer"
+	"github.com/dshills/layered/key"
 )
 
-// Editorer represents an editor
+// Editorer is an editor interface
 type Editorer interface {
-	Buffers() []buffer.Bufferer
-	Add(buffer.Bufferer)
-	Remove(id string) error
-	Buffer(id string) (buffer.Bufferer, error)
-	Exec(bufid string, actions ...action.Action) (*Response, error)
+	Exec(bufid string, actions ...action.Action) Response
+	KeyChan() chan key.Keyer
+	SetRespChan(chan Response)
 }

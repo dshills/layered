@@ -3,6 +3,7 @@ package buffer
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 // SaveBuffer will save the buffer to disk
@@ -15,6 +16,13 @@ func (b *Buffer) SaveBuffer(path string) error {
 	if path == "" {
 		return fmt.Errorf("Buffer.SaveBuffer: Missing file name")
 	}
+
+	var err error
+	path, err = filepath.Abs(path)
+	if err != nil {
+		return fmt.Errorf("Buffer.OpenFile: %v", err)
+	}
+
 	f, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("Buffer.SaveBuffer: %v", err)
@@ -33,6 +41,13 @@ func (b *Buffer) OpenFile(path string) error {
 	if b.dirty {
 		return fmt.Errorf("Buffer.OpenFile: Current buffer not saved")
 	}
+
+	var err error
+	path, err = filepath.Abs(path)
+	if err != nil {
+		return fmt.Errorf("Buffer.OpenFile: %v", err)
+	}
+
 	f, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("Buffer.OpenFile: %v", err)
@@ -57,6 +72,13 @@ func (b *Buffer) RenameFile(path string) error {
 			return fmt.Errorf("Buffer.RenameFile: %v", err)
 		}
 	}
+
+	var err error
+	path, err = filepath.Abs(path)
+	if err != nil {
+		return fmt.Errorf("Buffer.OpenFile: %v", err)
+	}
+
 	if err := os.Rename(b.filename, path); err != nil {
 		return fmt.Errorf("Buffer.RenameFile: %v", err)
 	}

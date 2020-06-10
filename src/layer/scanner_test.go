@@ -68,13 +68,13 @@ func TestScanNormal(t *testing.T) {
 		newTst(false, 'p'),
 		newTst(false, 'y', 'y'),
 	}
-	layers := Layers{}
 	fp := filepath.Join(rt, "layers")
-	if err := layers.LoadDir(fp); err != nil {
+	layers, err := New(fp)
+	if err != nil {
 		t.Fatal(err)
 	}
 	for _, test := range tests {
-		scanner, err := NewScanner(&layers, "normal")
+		scanner, err := NewScanner(layers, "normal")
 		if err != nil {
 			t.Error(err)
 			continue

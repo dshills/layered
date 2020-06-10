@@ -24,7 +24,7 @@ BeginSelect will save the current cursor position
 #### func (*Buffer) Cursor
 
 ```go
-func (b *Buffer) Cursor() cursor.Cursorer
+func (b *Buffer) Cursor() cursor.Cursor
 ```
 Cursor will return the buffer's cursor
 
@@ -329,7 +329,7 @@ Up will move the cursor up cnt
 type Bufferer interface {
 	ID() string
 	TextStore() textstore.TextStorer
-	Cursor() cursor.Cursorer
+	Cursor() cursor.Cursor
 	Filer
 	Mover
 	TextEditor
@@ -345,14 +345,14 @@ Bufferer is a text buffer
 #### func  New
 
 ```go
-func New(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter, reg register.Registerer) Bufferer
+func New(txt textstore.TextStorer, cur cursor.Cursor, m syntax.Manager, ftd filetype.Manager, reg register.Registerer) Bufferer
 ```
 New will return a new Buffer
 
 #### type Factory
 
 ```go
-type Factory func(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter, reg register.Registerer) Bufferer
+type Factory func(txt textstore.TextStorer, cur cursor.Cursor, m syntax.Manager, ftd filetype.Manager, reg register.Registerer) Bufferer
 ```
 
 Factory is a function that returns new bufferers

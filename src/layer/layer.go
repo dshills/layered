@@ -6,7 +6,6 @@ import (
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
-	"github.com/dshills/layered/logger"
 )
 
 // Layer is a mapping of key strokes to actions
@@ -28,7 +27,6 @@ func actCopy(acts []action.Action) []action.Action {
 // Match will attempt to map keys to actions
 func (l *Layer) Match(keys []key.Keyer) ([]action.Action, ParseStatus) {
 	hasPartial := false
-	logger.Debugf("Layer.Match: %v", l.name)
 	for i := range l.keyActs {
 		switch l.keyActs[i].match(keys) {
 		case Match:
@@ -126,6 +124,7 @@ func (a jsAction) asAction() action.Action {
 	return action.Action{
 		Name:   a.Action,
 		Target: a.Target,
+		Count:  1,
 	}
 }
 

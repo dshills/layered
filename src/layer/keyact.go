@@ -57,6 +57,9 @@ func (km keyMatch) match(keys []key.Keyer) ([]key.Keyer, int) {
 	if len(keys) == 0 {
 		return keys, 0
 	}
+	if km.r == keys[0].Rune() && km.k == keys[0].Key() {
+		return keys[1:], 1
+	}
 	if km.matcher != "" {
 		cnt := 0
 		for _, key := range keys {
@@ -97,10 +100,6 @@ func (km keyMatch) match(keys []key.Keyer) ([]key.Keyer, int) {
 			cnt++
 		}
 		return nil, cnt
-	}
-	//logger.Debugf("Testing: %v (%v), %v == %v (%v), %v", keys[0].Rune(), keys[0].Rune(), keys[0].Key(), km.r, km.r, km.k)
-	if km.r == keys[0].Rune() && km.k == keys[0].Key() {
-		return keys[1:], 1
 	}
 	return keys, 0
 }

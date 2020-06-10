@@ -38,64 +38,27 @@ func main() {
 	}
 	defer keyboard.Close()
 
-	logger.Message("Creating editor")
-	ed, err := editor.New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, rtpath)
+	ed, err := editor.New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, layer.New, rtpath)
 	if err != nil {
 		logger.ErrorErr(err)
 		os.Exit(1)
 	}
 
-	logger.Message("Loading colors")
 	colors := palette.NewColorList()
 	cp := filepath.Join(rtpath, "config", "colors.json")
 	if err = colors.Load(cp); err != nil {
 		logger.ErrorErr(err)
 	}
-
-	logger.Message("Loading palette")
 	pal := palette.NewPalette()
 	cp = filepath.Join(rtpath, "config", "palette.json")
 	if err = pal.Load(cp, &colors); err != nil {
 		logger.ErrorErr(err)
 	}
 
-	logger.Message("Creating screen")
-	_, err = newScreen(ed, &pal)
+	screen, err := newScreen(ed, &pal)
 	if err != nil {
 		logger.ErrorErr(err)
 		os.Exit(1)
 	}
-
-	logger.Message("Loading layers")
-	layers := &layer.Layers{}
-	ld := filepath.Join(rtpath, "layers")
-	if err := layers.LoadDir(ld); err != nil {
-		logger.ErrorErr(err)
-		os.Exit(1)
-	}
-
-	if err := processKeys(layers, ed); err != nil {
-		logger.ErrorErr(err)
-		os.Exit(1)
-	}
+	screen.processKeys()
 }
-
-/*
-if err := keyboard.Open(); err != nil {
-	panic(err)
-}
-defer func() {
-	_ = keyboard.Close()
-}()
-for {
-	r, k, err := keyboard.GetKey()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Rune %v %v, Key %v\n", r, string(r), k)
-
-	if k == keyboard.KeyHome {
-		break
-	}
-}
-*/

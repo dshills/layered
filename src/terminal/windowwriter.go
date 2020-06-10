@@ -127,6 +127,27 @@ func (ww WindowWriter) writeAt(line, col int, s string) (int, error) {
 	return l, err
 }
 
+// MoveTo will move the cursor to position
+func (ww WindowWriter) MoveTo(line, col int) {
+	lmax := ww.region.Dy() - ww.paddingTop - ww.paddingBottom
+	cmax := ww.region.Dx() - ww.paddingLeft - ww.paddingRight
+	if line < 0 {
+		line = 0
+	}
+	if line > lmax {
+		line = lmax
+	}
+	if col < 0 {
+		col = 0
+	}
+	if col > cmax {
+		col = cmax
+	}
+	ls := ww.contentRegion.Min.Y + ww.paddingTop
+	cs := ww.contentRegion.Min.X + ww.paddingLeft
+	ww.tw.To(ls+line, cs+col)
+}
+
 // Clear will clear the content area
 func (ww WindowWriter) Clear() {
 	ww.Fill(' ')

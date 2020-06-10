@@ -28,3 +28,45 @@ func StrToKeyer(s string) (Keyer, error) {
 	}
 	return New(r, k), nil
 }
+
+// SpecialToString will convert a key.k value to a string
+func SpecialToString(k int) string {
+	switch k {
+	case KeyInsert:
+		return "<ins>"
+	case KeyDelete:
+		return "<del>"
+	case KeyHome:
+		return "<home>"
+	case KeyEnd:
+		return "<end>"
+	case KeyPgup:
+		return "<pgup>"
+	case KeyPgdn:
+		return "<pgdown>"
+	case KeyArrowUp:
+		return "<up>"
+	case KeyArrowDown:
+		return "<down>"
+	case KeyArrowLeft:
+		return "<left>"
+	case KeyArrowRight:
+		return "<right>"
+	case KeyEnter:
+		return "<cr>"
+	case KeyEsc:
+		return "<esc>"
+	case KeySpace:
+		return "<space>"
+	case KeyTab:
+		return "<tab>"
+	case KeyBackspace:
+		return "<bs>"
+	}
+	for key, val := range convertKeyTable {
+		if val == k {
+			return key
+		}
+	}
+	return "<unknown>"
+}

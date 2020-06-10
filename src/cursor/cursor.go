@@ -2,8 +2,8 @@ package cursor
 
 import "github.com/dshills/layered/textstore"
 
-// Cursor is a window cursor
-type Cursor struct {
+// BufCursor is a window cursor
+type BufCursor struct {
 	line                          int
 	col                           int
 	targetCol                     int
@@ -14,58 +14,58 @@ type Cursor struct {
 }
 
 // AsRange returns line, col as an int array
-func (c *Cursor) AsRange() []int {
+func (c *BufCursor) AsRange() []int {
 	return []int{c.line, c.col}
 }
 
 // Line will return the current line
-func (c Cursor) Line() int { return c.line }
+func (c BufCursor) Line() int { return c.line }
 
 // Column will return the current column
-func (c Cursor) Column() int { return c.col }
+func (c BufCursor) Column() int { return c.col }
 
-// GotoLine will move the Cursor to the specified line
-func (c *Cursor) GotoLine(ln int) bool {
+// GotoLine will move the BufCursor to the specified line
+func (c *BufCursor) GotoLine(ln int) bool {
 	return c.MoveValid(ln, c.targetCol)
 }
 
-// Top will move the Cursor to 0, 0
-func (c *Cursor) Top() bool {
+// Top will move the BufCursor to 0, 0
+func (c *BufCursor) Top() bool {
 	return c.MoveValid(0, c.targetCol)
 }
 
 // Bottom will move to the last line in the buffer
-func (c *Cursor) Bottom() bool {
+func (c *BufCursor) Bottom() bool {
 	return c.MoveValid(c.txt.NumLines()-1, c.targetCol)
 }
 
 // Get will return the current line and column
-func (c Cursor) Get() (int, int) {
+func (c BufCursor) Get() (int, int) {
 	return c.line, c.col
 }
 
-// Down moves the Cursor down cnt lines
-func (c *Cursor) Down(cnt int) bool {
+// Down moves the BufCursor down cnt lines
+func (c *BufCursor) Down(cnt int) bool {
 	return c.MoveValid(c.line+cnt, c.targetCol)
 }
 
-// Up moves the Cursor up cnt lines
-func (c *Cursor) Up(cnt int) bool {
+// Up moves the BufCursor up cnt lines
+func (c *BufCursor) Up(cnt int) bool {
 	return c.MoveValid(c.line-cnt, c.targetCol)
 }
 
-// Prev moves the Cursor back cnt chars
-func (c *Cursor) Prev(cnt int) bool {
+// Prev moves the BufCursor back cnt chars
+func (c *BufCursor) Prev(cnt int) bool {
 	return c.MoveValid(c.line, c.col-cnt)
 }
 
-// Next moves the Cursor forward cnt chars
-func (c *Cursor) Next(cnt int) bool {
+// Next moves the BufCursor forward cnt chars
+func (c *BufCursor) Next(cnt int) bool {
 	return c.MoveValid(c.line, c.col+cnt)
 }
 
-// MoveValid will move the Cursor to line, col insuring it is a valid position
-func (c *Cursor) MoveValid(line, col int) bool {
+// MoveValid will move the BufCursor to line, col insuring it is a valid position
+func (c *BufCursor) MoveValid(line, col int) bool {
 	nl := c.txt.NumLines()
 	c.targetCol = col
 	switch {
@@ -105,7 +105,7 @@ func (c *Cursor) MoveValid(line, col int) bool {
 }
 
 // StartTrack will save the current position
-func (c *Cursor) StartTrack() {
+func (c *BufCursor) StartTrack() {
 	c.trackLineEnd = -1
 	c.trackColEnd = -1
 	c.trackLineStart = c.line
@@ -113,13 +113,13 @@ func (c *Cursor) StartTrack() {
 }
 
 // EndTrack will save the ending position
-func (c *Cursor) EndTrack() {
+func (c *BufCursor) EndTrack() {
 	c.trackLineEnd = c.line
 	c.trackColEnd = c.col
 }
 
 // Tracked will return the start and end position
-func (c *Cursor) Tracked() [][]int {
+func (c *BufCursor) Tracked() [][]int {
 	return [][]int{
 		[]int{c.trackLineStart, c.trackColStart},
 		[]int{c.trackLineEnd, c.trackColEnd},
@@ -128,6 +128,6 @@ func (c *Cursor) Tracked() [][]int {
 }
 
 // New will return a new cursor
-func New(txt textstore.TextStorer) Cursorer {
-	return &Cursor{txt: txt}
+func New(txt textstore.TextStorer) Cursor {
+	return &BufCursor{txt: txt}
 }

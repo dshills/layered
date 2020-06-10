@@ -5,124 +5,124 @@
 
 ## Usage
 
-#### type Cursor
+#### type BufCursor
 
 ```go
-type Cursor struct {
+type BufCursor struct {
 }
 ```
 
-Cursor is a window cursor
+BufCursor is a window cursor
 
-#### func (*Cursor) AsRange
+#### func (*BufCursor) AsRange
 
 ```go
-func (c *Cursor) AsRange() []int
+func (c *BufCursor) AsRange() []int
 ```
 AsRange returns line, col as an int array
 
-#### func (*Cursor) Bottom
+#### func (*BufCursor) Bottom
 
 ```go
-func (c *Cursor) Bottom() bool
+func (c *BufCursor) Bottom() bool
 ```
 Bottom will move to the last line in the buffer
 
-#### func (Cursor) Column
+#### func (BufCursor) Column
 
 ```go
-func (c Cursor) Column() int
+func (c BufCursor) Column() int
 ```
 Column will return the current column
 
-#### func (*Cursor) Down
+#### func (*BufCursor) Down
 
 ```go
-func (c *Cursor) Down(cnt int) bool
+func (c *BufCursor) Down(cnt int) bool
 ```
-Down moves the Cursor down cnt lines
+Down moves the BufCursor down cnt lines
 
-#### func (*Cursor) EndTrack
+#### func (*BufCursor) EndTrack
 
 ```go
-func (c *Cursor) EndTrack()
+func (c *BufCursor) EndTrack()
 ```
 EndTrack will save the ending position
 
-#### func (Cursor) Get
+#### func (BufCursor) Get
 
 ```go
-func (c Cursor) Get() (int, int)
+func (c BufCursor) Get() (int, int)
 ```
 Get will return the current line and column
 
-#### func (*Cursor) GotoLine
+#### func (*BufCursor) GotoLine
 
 ```go
-func (c *Cursor) GotoLine(ln int) bool
+func (c *BufCursor) GotoLine(ln int) bool
 ```
-GotoLine will move the Cursor to the specified line
+GotoLine will move the BufCursor to the specified line
 
-#### func (Cursor) Line
+#### func (BufCursor) Line
 
 ```go
-func (c Cursor) Line() int
+func (c BufCursor) Line() int
 ```
 Line will return the current line
 
-#### func (*Cursor) MoveValid
+#### func (*BufCursor) MoveValid
 
 ```go
-func (c *Cursor) MoveValid(line, col int) bool
+func (c *BufCursor) MoveValid(line, col int) bool
 ```
-MoveValid will move the Cursor to line, col insuring it is a valid position
+MoveValid will move the BufCursor to line, col insuring it is a valid position
 
-#### func (*Cursor) Next
+#### func (*BufCursor) Next
 
 ```go
-func (c *Cursor) Next(cnt int) bool
+func (c *BufCursor) Next(cnt int) bool
 ```
-Next moves the Cursor forward cnt chars
+Next moves the BufCursor forward cnt chars
 
-#### func (*Cursor) Prev
+#### func (*BufCursor) Prev
 
 ```go
-func (c *Cursor) Prev(cnt int) bool
+func (c *BufCursor) Prev(cnt int) bool
 ```
-Prev moves the Cursor back cnt chars
+Prev moves the BufCursor back cnt chars
 
-#### func (*Cursor) StartTrack
+#### func (*BufCursor) StartTrack
 
 ```go
-func (c *Cursor) StartTrack()
+func (c *BufCursor) StartTrack()
 ```
 StartTrack will save the current position
 
-#### func (*Cursor) Top
+#### func (*BufCursor) Top
 
 ```go
-func (c *Cursor) Top() bool
+func (c *BufCursor) Top() bool
 ```
-Top will move the Cursor to 0, 0
+Top will move the BufCursor to 0, 0
 
-#### func (*Cursor) Tracked
+#### func (*BufCursor) Tracked
 
 ```go
-func (c *Cursor) Tracked() [][]int
+func (c *BufCursor) Tracked() [][]int
 ```
 Tracked will return the start and end position
 
-#### func (*Cursor) Up
+#### func (*BufCursor) Up
 
 ```go
-func (c *Cursor) Up(cnt int) bool
+func (c *BufCursor) Up(cnt int) bool
 ```
-Up moves the Cursor up cnt lines
+Up moves the BufCursor up cnt lines
 
-#### type Cursorer
+#### type Cursor
 
 ```go
-type Cursorer interface {
+type Cursor interface {
 	AsRange() []int
 	Line() int
 	Column() int
@@ -141,19 +141,19 @@ type Cursorer interface {
 }
 ```
 
-Cursorer is an editor cursor
+Cursor is an editor cursor
 
 #### func  New
 
 ```go
-func New(txt textstore.TextStorer) Cursorer
+func New(txt textstore.TextStorer) Cursor
 ```
 New will return a new cursor
 
 #### type Factory
 
 ```go
-type Factory func(txt textstore.TextStorer) Cursorer
+type Factory func(txt textstore.TextStorer) Cursor
 ```
 
 Factory is a function that returns a new cursor

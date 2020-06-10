@@ -5,26 +5,6 @@
 
 ## Usage
 
-#### type Detecter
-
-```go
-type Detecter interface {
-	Load(fts string) error
-	Detect(path string) (string, error)
-	AddDirectory(path ...string) error
-	RemoveDirectory(path string)
-}
-```
-
-Detecter is a file type detecter
-
-#### func  New
-
-```go
-func New(rtpaths ...string) (Detecter, error)
-```
-New returns a new file type detecter
-
 #### type FTDetecter
 
 ```go
@@ -34,12 +14,12 @@ type FTDetecter struct {
 
 FTDetecter determines file types
 
-#### func (*FTDetecter) AddDirectory
+#### func (*FTDetecter) AddRuntime
 
 ```go
-func (fd *FTDetecter) AddDirectory(paths ...string) error
+func (fd *FTDetecter) AddRuntime(paths ...string)
 ```
-AddDirectory will add a directory to the list of search directories
+AddRuntime will add a directory to the list of search directories
 
 #### func (*FTDetecter) Detect
 
@@ -51,21 +31,41 @@ Detect will return a file type or ""
 #### func (*FTDetecter) Load
 
 ```go
-func (fd *FTDetecter) Load(path string) error
+func (fd *FTDetecter) Load() error
 ```
-Load will load the ft detections
+Load will load file type detecters
 
-#### func (*FTDetecter) RemoveDirectory
+#### func (*FTDetecter) RemoveRuntime
 
 ```go
-func (fd *FTDetecter) RemoveDirectory(path string)
+func (fd *FTDetecter) RemoveRuntime(path string)
 ```
-RemoveDirectory will remove a directory from the runetime list
+RemoveRuntime will remove a directory from the runetime list
 
 #### type Factory
 
 ```go
-type Factory func(runtime ...string) (Detecter, error)
+type Factory func(runtime ...string) (Manager, error)
 ```
 
 Factory creates a
+
+#### type Manager
+
+```go
+type Manager interface {
+	AddRuntime(rtpath ...string)
+	RemoveRuntime(rtpath string)
+	Load() error
+	Detect(path string) (string, error)
+}
+```
+
+Manager is a file type detecter
+
+#### func  New
+
+```go
+func New(rtpaths ...string) (Manager, error)
+```
+New returns a new file type detecter

@@ -51,6 +51,21 @@ func init() {
 	convertCharTable[AltLeftParan] = rune(183)
 	convertCharTable[AltRightParan] = rune(8218)
 
+	convertKeyTable[Insert] = KeyInsert
+	convertKeyTable[Delete] = KeyDelete
+	convertKeyTable[Home] = KeyHome
+	convertKeyTable[End] = KeyEnd
+	convertKeyTable[Pgup] = KeyPgup
+	convertKeyTable[Pgdn] = KeyPgdn
+	convertKeyTable[Up] = KeyArrowUp
+	convertKeyTable[Down] = KeyArrowDown
+	convertKeyTable[Left] = KeyArrowLeft
+	convertKeyTable[Right] = KeyArrowRight
+	convertKeyTable[Enter] = KeyEnter
+	convertKeyTable[Esc] = KeyEsc
+	convertKeyTable[Space] = KeySpace
+	convertKeyTable[Tab] = KeyTab
+	convertKeyTable[Backspace] = KeyBackspace
 	convertKeyTable[CtrlA] = 0x01
 	convertKeyTable[CtrlB] = 0x02
 	convertKeyTable[CtrlC] = 0x03
@@ -104,21 +119,6 @@ func init() {
 	convertKeyTable[F10] = KeyF10
 	convertKeyTable[F11] = KeyF11
 	convertKeyTable[F12] = KeyF12
-	convertKeyTable[Insert] = KeyInsert
-	convertKeyTable[Delete] = KeyDelete
-	convertKeyTable[Home] = KeyHome
-	convertKeyTable[End] = KeyEnd
-	convertKeyTable[Pgup] = KeyPgup
-	convertKeyTable[Pgdn] = KeyPgdn
-	convertKeyTable[Up] = KeyArrowUp
-	convertKeyTable[Down] = KeyArrowDown
-	convertKeyTable[Left] = KeyArrowLeft
-	convertKeyTable[Right] = KeyArrowRight
-	convertKeyTable[Enter] = KeyEnter
-	convertKeyTable[Esc] = KeyEsc
-	convertKeyTable[Space] = KeySpace
-	convertKeyTable[Tab] = KeyTab
-	convertKeyTable[Backspace] = KeyBackspace
 
 }
 

@@ -18,10 +18,10 @@ type Buffer struct {
 	id            string
 	filename      string
 	filetype      string
-	cur           cursor.Cursorer
+	cur           cursor.Cursor
 	txt           textstore.TextStorer
-	mat           syntax.Matcherer
-	ftd           filetype.Detecter
+	mat           syntax.Manager
+	ftd           filetype.Manager
 	dirty         bool
 	updates       chan uint64
 	syntaxResults []syntax.Resulter
@@ -66,7 +66,7 @@ func (b *Buffer) SetFiletype(ft string) {
 func (b *Buffer) TextStore() textstore.TextStorer { return b.txt }
 
 // Cursor will return the buffer's cursor
-func (b *Buffer) Cursor() cursor.Cursorer { return b.cur }
+func (b *Buffer) Cursor() cursor.Cursor { return b.cur }
 
 // Dirty will return true if the buffer is unsaved
 func (b *Buffer) Dirty() bool { return b.dirty }
@@ -123,7 +123,7 @@ func (b *Buffer) Search(s string) ([]SearchResult, error) {
 }
 
 // New will return a new Buffer
-func New(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter, reg register.Registerer) Bufferer {
+func New(txt textstore.TextStorer, cur cursor.Cursor, m syntax.Manager, ftd filetype.Manager, reg register.Registerer) Bufferer {
 	up := make(chan uint64)
 	id := uuid.New().String()
 	b := &Buffer{

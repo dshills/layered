@@ -1,7 +1,28 @@
 package layer
 
-// Special special keys
-// these are artificial keys used for layer matching
+// ParseStatus is the status of a parser operation
+type ParseStatus int
+
+// ParseStatus constants
+const (
+	NoMatch ParseStatus = iota
+	PartialMatch
+	Match
+)
+
+func (s ParseStatus) String() string {
+	switch s {
+	case NoMatch:
+		return "No match"
+	case PartialMatch:
+		return "Partial match"
+	case Match:
+		return "Match"
+	}
+	return "Unknown status"
+}
+
+// Key matcher constants
 const (
 	Any       = "<any>"       // any key
 	Printable = "<printable>" // Any printable character

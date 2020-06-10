@@ -278,6 +278,13 @@ func (ww WindowWriter) Fill(r rune)
 ```
 Fill will fill the content area, including padding areas with character r
 
+#### func (WindowWriter) MoveTo
+
+```go
+func (ww WindowWriter) MoveTo(line, col int)
+```
+MoveTo will move the cursor to position
+
 #### func (*WindowWriter) Resize
 
 ```go

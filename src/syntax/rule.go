@@ -3,6 +3,7 @@ package syntax
 import (
 	"regexp"
 
+	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/textstore"
 )
 
@@ -20,27 +21,26 @@ const (
 
 // Rule is a syntax matching rules
 type Rule struct {
-	grp, typ                        string
-	st, end, mat, same, sk          string
-	contains, keywords              []string
-	contained, display, trans, fold bool
-	stRx, enRx                      *regexp.Regexp
-	priority                        int
+	group, rtype, start, end, match, same, skip string
+	contains, keywords                          []string
+	contained, display, transparent, fold       bool
+	stRx, enRx                                  *regexp.Regexp
+	priority                                    int
 }
 
 // Group will return the rules group
 func (r *Rule) Group() string {
-	return r.grp
+	return r.group
 }
 
 // Type returns the rule type
 func (r *Rule) Type() string {
-	return r.typ
+	return r.rtype
 }
 
 // Match will return match results
 func (r *Rule) Match(txt textstore.TextStorer) []Resulter {
-	switch r.typ {
+	switch r.rtype {
 	case KeywordRule:
 		fallthrough
 	case MatchRule:
@@ -63,7 +63,7 @@ func (r *Rule) matchSimple(txt textstore.TextStorer) []Resulter {
 		if len(idxs) == 0 {
 			continue
 		}
-		res := Result{ln: i, tok: r.grp, rg: idxs, pr: r.priority}
+		res := Result{ln: i, tok: r.group, rg: idxs, pr: r.priority}
 		results = append(results, &res)
 	}
 	return results
@@ -83,7 +83,7 @@ func (r *Rule) matchRegion(txt textstore.TextStorer) []Resulter {
 		if len(stIdxs) == 0 && len(endIdxs) == 0 {
 			continue
 		}
-		res := Result{ln: i, tok: r.grp, pr: r.priority}
+		res := Result{ln: i, tok: r.group, pr: r.priority}
 
 		op := open
 		for ii := 0; ii < op; ii++ {
@@ -122,7 +122,7 @@ func (r *Rule) matchRegionSame(txt textstore.TextStorer) []Resulter {
 		if len(idxs) == 0 {
 			continue
 		}
-		res := Result{ln: i, tok: r.grp, pr: r.priority}
+		res := Result{ln: i, tok: r.group, pr: r.priority}
 
 		op := open
 		for ii := 0; ii < op; ii++ {
@@ -149,4 +149,19 @@ func (r *Rule) matchRegionSame(txt textstore.TextStorer) []Resulter {
 		results = append(results, &res)
 	}
 	return results
+}
+
+func testResultsValid(rt string, results []Resulter) {
+	for _, lnres := range results {
+		for _, rg := range lnres.Range() {
+			if len(rg) != 2 {
+				logger.Debugf("%v Syntax Range len != 2 got %v", rt, len(rg))
+				continue
+			}
+			if rg[0] > rg[1] {
+				logger.Debugf("%v Syntax Range %v > %v", rt, rg[0], rg[1])
+				continue
+			}
+		}
+	}
 }

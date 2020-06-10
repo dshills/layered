@@ -318,6 +318,13 @@ const (
 ```
 ctrl key constants
 
+#### func  SpecialToString
+
+```go
+func SpecialToString(k int) string
+```
+SpecialToString will convert a key.k value to a string
+
 #### func  StrToKey
 
 ```go

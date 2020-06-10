@@ -8,14 +8,14 @@ import (
 
 // Object is a text object
 type Object struct {
-	n                 string
+	name              string
 	st, end           string
 	multiline, simple bool
 	startRx, endRx    *regexp.Regexp
 }
 
 // Name returns the text object name
-func (o *Object) Name() string { return o.n }
+func (o *Object) Name() string { return o.name }
 
 // FindAll returns text object matches
 func (o *Object) FindAll(s string) [][]int {
@@ -53,7 +53,7 @@ func loadObj(r io.Reader) (TextObjecter, error) {
 		return nil, err
 	}
 	obj := Object{
-		n:         js.Name,
+		name:      js.Name,
 		simple:    js.Simple,
 		multiline: js.Multiline,
 		st:        js.Start,

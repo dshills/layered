@@ -3,10 +3,10 @@ package cursor
 import "github.com/dshills/layered/textstore"
 
 // Factory is a function that returns a new cursor
-type Factory func(txt textstore.TextStorer) Cursorer
+type Factory func(txt textstore.TextStorer) Cursor
 
-// Cursorer is an editor cursor
-type Cursorer interface {
+// Cursor is an editor cursor
+type Cursor interface {
 	AsRange() []int
 	Line() int
 	Column() int

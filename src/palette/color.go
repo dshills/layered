@@ -16,6 +16,15 @@ type Color struct {
 	Transparent bool
 }
 
+// RGBA satisfies image.Color
+func (c Color) RGBA() (r, g, b, a uint32) {
+	r = uint32(c.Red)
+	g = uint32(c.Green)
+	b = uint32(c.Blue)
+	a = 1
+	return
+}
+
 // NewColor returns a new rgb color
 func NewColor(r, g, b uint8) Color {
 	return Color{Red: r, Green: g, Blue: b}

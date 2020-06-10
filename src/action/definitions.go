@@ -1,5 +1,27 @@
 package action
 
+import (
+	"fmt"
+	"strings"
+)
+
+// StrToAction will convert a string to an action
+// it will return an error if the action is not found
+func StrToAction(s string) (Action, error) {
+	s = strings.ToLower(s)
+	for i := range Definitions {
+		if Definitions[i].Name == s {
+			return Action{Name: Definitions[i].Name}, nil
+		}
+		for _, al := range Definitions[i].Alias {
+			if al == s {
+				return Action{Name: Definitions[i].Name}, nil
+			}
+		}
+	}
+	return Action{}, fmt.Errorf("Not found")
+}
+
 // Movement
 const (
 	Down        = "down"
@@ -79,6 +101,7 @@ const (
 // Def is a definition for an action
 type Def struct {
 	Name      string
+	Alias     []string
 	ReqBuffer bool
 	ReqParam  bool
 	ReqTarget bool
@@ -110,10 +133,10 @@ var Definitions = []Def{
 	Def{Name: NewBuffer},
 	Def{Name: SaveBuffer},
 	Def{Name: CloseBuffer, ReqBuffer: true},
-	Def{Name: OpenFile, ReqParam: true},
+	Def{Name: OpenFile, Alias: []string{"e", "edit"}, ReqParam: true},
 	Def{Name: RenameFile, ReqParam: true},
-	Def{Name: SaveFileAs, ReqParam: true},
-	Def{Name: BufferList},
+	Def{Name: SaveFileAs, Alias: []string{"w", "write"}, ReqParam: true},
+	Def{Name: BufferList, Alias: []string{"ls"}},
 	Def{Name: Search, ReqBuffer: true, ReqParam: true},
 	Def{Name: SearchResults, ReqBuffer: true},
 	Def{Name: Yank, ReqBuffer: true},

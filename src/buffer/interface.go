@@ -10,13 +10,13 @@ import (
 )
 
 // Factory is a function that returns new bufferers
-type Factory func(txt textstore.TextStorer, cur cursor.Cursorer, m syntax.Matcherer, ftd filetype.Detecter, reg register.Registerer) Bufferer
+type Factory func(txt textstore.TextStorer, cur cursor.Cursor, m syntax.Manager, ftd filetype.Manager, reg register.Registerer) Bufferer
 
 // Bufferer is a text buffer
 type Bufferer interface {
 	ID() string
 	TextStore() textstore.TextStorer
-	Cursor() cursor.Cursorer
+	Cursor() cursor.Cursor
 	Filer
 	Mover
 	TextEditor

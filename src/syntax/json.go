@@ -24,20 +24,20 @@ type jsRule struct {
 
 func (jr jsRule) asRuler(rank int) (Ruler, error) {
 	r := Rule{
-		priority:  rank,
-		grp:       jr.Group,
-		typ:       jr.Type,
-		st:        jr.Start,
-		end:       jr.End,
-		contains:  jr.Contains,
-		keywords:  jr.Keywords,
-		mat:       jr.Match,
-		contained: jr.Contained,
-		display:   jr.Display,
-		same:      jr.Same,
-		sk:        jr.Skip,
-		trans:     jr.Transparent,
-		fold:      jr.Fold,
+		priority:    rank,
+		group:       jr.Group,
+		rtype:       jr.Type,
+		start:       jr.Start,
+		end:         jr.End,
+		contains:    jr.Contains,
+		keywords:    jr.Keywords,
+		match:       jr.Match,
+		contained:   jr.Contained,
+		display:     jr.Display,
+		same:        jr.Same,
+		skip:        jr.Skip,
+		transparent: jr.Transparent,
+		fold:        jr.Fold,
 	}
 	switch jr.Type {
 	case KeywordRule:

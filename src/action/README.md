@@ -123,10 +123,10 @@ var Definitions = []Def{
 	Def{Name: NewBuffer},
 	Def{Name: SaveBuffer},
 	Def{Name: CloseBuffer, ReqBuffer: true},
-	Def{Name: OpenFile, ReqParam: true},
+	Def{Name: OpenFile, Alias: []string{"e", "edit"}, ReqParam: true},
 	Def{Name: RenameFile, ReqParam: true},
-	Def{Name: SaveFileAs, ReqParam: true},
-	Def{Name: BufferList},
+	Def{Name: SaveFileAs, Alias: []string{"w", "write"}, ReqParam: true},
+	Def{Name: BufferList, Alias: []string{"ls"}},
 	Def{Name: Search, ReqBuffer: true, ReqParam: true},
 	Def{Name: SearchResults, ReqBuffer: true},
 	Def{Name: Yank, ReqBuffer: true},
@@ -159,12 +159,26 @@ type Action struct {
 
 Action is an editor action
 
+#### func  StrToAction
+
+```go
+func StrToAction(s string) (Action, error)
+```
+StrToAction will convert a string to an action it will return an error if the
+action is not found
+
 #### func (*Action) NeedBuffer
 
 ```go
 func (a *Action) NeedBuffer() bool
 ```
 NeedBuffer will return true if the action requires a buffer
+
+#### func (Action) String
+
+```go
+func (a Action) String() string
+```
 
 #### func (*Action) Valid
 
@@ -178,6 +192,7 @@ Valid will return true if it is a valid action
 ```go
 type Def struct {
 	Name      string
+	Alias     []string
 	ReqBuffer bool
 	ReqParam  bool
 	ReqTarget bool

@@ -25,8 +25,23 @@ type ftEntry struct {
 	regEx   *regexp.Regexp
 }
 
+// Load will load file type detecters
+func (fd *FTDetecter) Load() error {
+	errs := []string{}
+	for _, p := range fd.runtimes {
+		path := filepath.Join(p, "config", "ftdetect.json")
+		if err := fd._load(path); err != nil {
+			errs = append(errs, err.Error())
+		}
+	}
+	if len(errs) > 0 {
+		return fmt.Errorf("%v", strings.Join(errs, ", "))
+	}
+	return nil
+}
+
 // Load will load the ft detections
-func (fd *FTDetecter) Load(path string) error {
+func (fd *FTDetecter) _load(path string) error {
 	//logger.Debugf("Load file type detection %v", path)
 	f, err := os.Open(path)
 	if err != nil {
@@ -83,28 +98,13 @@ func (fd *FTDetecter) Detect(path string) (string, error) {
 	return "", fmt.Errorf("Not found")
 }
 
-func (fd *FTDetecter) loadAll() error {
-	errs := []string{}
-	for i := len(fd.runtimes) - 1; i >= 0; i-- {
-		path := filepath.Join(fd.runtimes[i], "config", "ftdetect.json")
-		if err := fd.Load(path); err != nil {
-			errs = append(errs, err.Error())
-		}
-	}
-	if len(errs) > 0 {
-		return fmt.Errorf("FTDetecter.Load: %v", strings.Join(errs, ", "))
-	}
-	return nil
-}
-
-// AddDirectory will add a directory to the list of search directories
-func (fd *FTDetecter) AddDirectory(paths ...string) error {
+// AddRuntime will add a directory to the list of search directories
+func (fd *FTDetecter) AddRuntime(paths ...string) {
 	fd.runtimes = append(fd.runtimes, paths...)
-	return fd.loadAll()
 }
 
-// RemoveDirectory will remove a directory from the runetime list
-func (fd *FTDetecter) RemoveDirectory(path string) {
+// RemoveRuntime will remove a directory from the runetime list
+func (fd *FTDetecter) RemoveRuntime(path string) {
 	dl := []string{}
 	for i := range fd.runtimes {
 		if fd.runtimes[i] != path {
@@ -115,8 +115,8 @@ func (fd *FTDetecter) RemoveDirectory(path string) {
 }
 
 // New returns a new file type detecter
-func New(rtpaths ...string) (Detecter, error) {
-	ft := &FTDetecter{exts: make(map[string]string)}
-	err := ft.AddDirectory(rtpaths...)
+func New(rtpaths ...string) (Manager, error) {
+	ft := &FTDetecter{exts: make(map[string]string), runtimes: rtpaths}
+	err := ft.Load()
 	return ft, err
 }

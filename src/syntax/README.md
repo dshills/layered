@@ -17,10 +17,31 @@ Rule types
 #### type Factory
 
 ```go
-type Factory func(rt ...string) Matcherer
+type Factory func(rt ...string) Manager
 ```
 
 Factory is a function that returns new syntax matchers
+
+#### type Manager
+
+```go
+type Manager interface {
+	LoadFileType(ft string) error
+	LoadFile(path string) error
+	Add(Ruler)
+	Parse(textstore.TextStorer) []Resulter
+}
+```
+
+Manager is a collection of syntax rules representing a set of language syntax
+rules
+
+#### func  New
+
+```go
+func New(rt ...string) Manager
+```
+New returns a new syntax matcher
 
 #### type Matcher
 
@@ -58,27 +79,6 @@ LoadFileType will load a syntax file by file type
 func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter
 ```
 Parse will return a list of results for the text store
-
-#### type Matcherer
-
-```go
-type Matcherer interface {
-	LoadFileType(ft string) error
-	LoadFile(path string) error
-	Add(Ruler)
-	Parse(textstore.TextStorer) []Resulter
-}
-```
-
-Matcherer is a collection of syntax rules representing a set of language syntax
-rules
-
-#### func  New
-
-```go
-func New(rt ...string) Matcherer
-```
-New returns a new syntax matcher
 
 #### type Result
 

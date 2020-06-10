@@ -6,7 +6,6 @@ import (
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/editor"
-	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/palette"
 	"github.com/dshills/layered/terminal"
 )
@@ -23,11 +22,14 @@ type window struct {
 	ed        editor.Editorer
 }
 
+func (w *window) drawCursor(ln, col int) {
+	w.writer.MoveTo(ln, col)
+}
+
 func (w *window) draw() error {
 	if w.hidden {
 		return nil
 	}
-	logger.Debugf("Drawing Window line %v count %v - %v", w.startline, w.count, w.bufid)
 	w.writer.TermWriter().ResetStyle()
 	w.writer.ContentFgd = palette.NewColor(255, 255, 255)
 	act := action.Action{
@@ -35,9 +37,9 @@ func (w *window) draw() error {
 		Line:  w.startline,
 		Count: w.count,
 	}
-	resp, err := w.ed.Exec(w.bufid, act)
-	if err != nil {
-		return err
+	resp := w.ed.Exec(w.bufid, act)
+	if resp.Err != nil {
+		return resp.Err
 	}
 	for i := range resp.Content {
 		con := resp.Content[i]
@@ -52,6 +54,7 @@ func (w *window) draw() error {
 	empty := palette.Color{}
 	empty.Transparent = true
 	errs := []string{}
+	var bad, good int
 	for _, res := range resp.Syntax {
 		ln := res.Line() - w.startline
 		if ln < 0 || ln >= w.count {
@@ -63,11 +66,17 @@ func (w *window) draw() error {
 		}
 		w.writer.TermWriter().ResetStyle()
 		for _, rng := range res.Range() {
+			if rng[0] > rng[1] {
+				bad++
+				continue
+			}
+			good++
 			con := resp.Content[ln][rng[0]:rng[1]]
 			con = strings.ReplaceAll(con, "\t", " ")
 			w.writer.WriteStyledStringAt(ln, rng[0], en.Fgd, empty, con)
 		}
 	}
+	w.writer.MoveTo(resp.Line, resp.Column)
 	return nil
 }
 

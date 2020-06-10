@@ -15,7 +15,13 @@ func (k *Key) Key() int { return k.k }
 func (k *Key) Rune() rune { return k.r }
 
 func (k *Key) String() string {
-	return fmt.Sprintf("Rune: %v (%v), %v", k.r, string(k.r), k.k)
+	if k.r == 0 && k.k == 0 {
+		return "{null}"
+	}
+	if k.r > 0 {
+		return fmt.Sprintf("{%v(%v)}", k.r, string(k.r))
+	}
+	return fmt.Sprintf("{%v(%v)}", k.k, SpecialToString(k.k))
 }
 
 // New will return a key
