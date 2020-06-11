@@ -19,29 +19,33 @@ func StrToAction(s string) (Action, error) {
 			}
 		}
 	}
-	return Action{}, fmt.Errorf("Not found")
+	return Action{}, fmt.Errorf("Action %v Not found", s)
 }
 
 // Movement
 const (
-	Down        = "down"
-	Move        = "move"
-	MoveEnd     = "moveend"
-	MovePrev    = "moveprev"
-	MovePrevEnd = "moveprevend"
-	Next        = "next"
-	Prev        = "prev"
-	ScrollDown  = "scrolldown"
-	ScrollUp    = "scrollup"
-	Up          = "up"
+	Down           = "down"
+	Move           = "move"
+	MoveEnd        = "moveend"
+	MovePrev       = "moveprev"
+	MovePrevEnd    = "moveprevend"
+	Next           = "next"
+	Prev           = "prev"
+	ScrollDown     = "scrolldown"
+	ScrollUp       = "scrollup"
+	Up             = "up"
+	StartSelection = "startselection"
+	StopSelection  = "stopselection"
 )
 
 // Edit
 const (
+	Delete          = "delete"
 	DeleteChar      = "deletechar"
 	DeleteCharBack  = "deletecharback"
 	DeleteLine      = "deleteline"
 	DeleteObject    = "deleteobject"
+	DeleteToObject  = "deletetoobject"
 	Indent          = "indent"
 	InsertLine      = "insertline"
 	InsertLineAbove = "insertlineabove"
@@ -85,17 +89,18 @@ const (
 
 // Macro
 const (
-	RecordMacro  = "recordmacro"
-	StopRecMacro = "stoprecmacro"
+	StartRecordMacro = "startrecordmacro"
+	StopRecordMacro  = "stoprecmacro"
+	RunMacro         = "runmacro"
 )
 
 // Other
 const (
 	Syntax      = "syntax"
-	RunMacro    = "runmacro"
 	RunCommand  = "runcommand"
 	SetMark     = "setmark"
 	ChangeLayer = "changelayer"
+	Quit        = "quit"
 )
 
 // Def is a definition for an action
@@ -119,10 +124,12 @@ var Definitions = []Def{
 	Def{Name: ScrollDown, ReqBuffer: true},
 	Def{Name: ScrollUp, ReqBuffer: true},
 	Def{Name: Up, ReqBuffer: true},
+	Def{Name: Delete, ReqBuffer: true},
 	Def{Name: DeleteChar, ReqBuffer: true},
 	Def{Name: DeleteCharBack, ReqBuffer: true},
 	Def{Name: DeleteLine, ReqBuffer: true},
 	Def{Name: DeleteObject, ReqBuffer: true},
+	Def{Name: DeleteToObject, ReqBuffer: true},
 	Def{Name: Indent, ReqBuffer: true},
 	Def{Name: InsertLine},
 	Def{Name: InsertLineAbove},
@@ -137,6 +144,7 @@ var Definitions = []Def{
 	Def{Name: RenameFile, ReqParam: true},
 	Def{Name: SaveFileAs, Alias: []string{"w", "write"}, ReqParam: true},
 	Def{Name: BufferList, Alias: []string{"ls"}},
+	Def{Name: Quit, Alias: []string{"q"}},
 	Def{Name: Search, ReqBuffer: true, ReqParam: true},
 	Def{Name: SearchResults, ReqBuffer: true},
 	Def{Name: Yank, ReqBuffer: true},
@@ -145,11 +153,14 @@ var Definitions = []Def{
 	Def{Name: Undo, ReqBuffer: true},
 	Def{Name: StopGroupUndo, ReqBuffer: true},
 	Def{Name: StartGroupUndo, ReqBuffer: true},
-	Def{Name: RecordMacro, ReqBuffer: true},
-	Def{Name: StopRecMacro, ReqBuffer: true},
+	Def{Name: StartRecordMacro, ReqBuffer: true},
+	Def{Name: StopRecordMacro, ReqBuffer: true},
 	Def{Name: Syntax, ReqBuffer: true},
 	Def{Name: RunMacro, ReqBuffer: true},
 	Def{Name: RunCommand, ReqBuffer: true},
 	Def{Name: SetMark, ReqBuffer: true},
+	Def{Name: StartSelection, ReqBuffer: true},
+	Def{Name: StopSelection, ReqBuffer: true},
 	Def{Name: ChangeLayer},
+	Def{Name: DeleteCmdBack},
 }

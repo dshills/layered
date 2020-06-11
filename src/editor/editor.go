@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/buffer"
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
@@ -36,6 +37,7 @@ type Editor struct {
 	layers      layer.Manager
 	keyC        chan key.Keyer
 	respC       chan Response
+	actC        chan []action.Action
 	activeBufID string
 }
 
@@ -93,6 +95,11 @@ func (e *Editor) KeyChan() chan key.Keyer {
 	return e.keyC
 }
 
+// ActionChan returns the action channel
+func (e *Editor) ActionChan() chan []action.Action {
+	return e.actC
+}
+
 func (e *Editor) listen() error {
 	scanner, err := layer.NewScanner(e.layers, "normal")
 	if err != nil {
@@ -101,6 +108,15 @@ func (e *Editor) listen() error {
 	go func() {
 		for {
 			select {
+			case acts := <-e.actC:
+				resp := e.Exec(e.activeBufID, acts...)
+				resp.Layer = scanner.LayerName()
+				if e.respC != nil {
+					e.respC <- resp
+				}
+				if resp.Buffer != "" {
+					e.activeBufID = resp.Buffer
+				}
 			case k := <-e.keyC:
 				acts, st, err := scanner.Scan(k)
 				if err != nil {
@@ -149,6 +165,7 @@ func New(
 	ed.reg = rf()
 	ed.objs = of()
 	ed.keyC = make(chan key.Keyer, 10)
+	ed.actC = make(chan []action.Action)
 
 	var err error
 	errs := []string{}

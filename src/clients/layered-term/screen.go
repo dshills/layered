@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/editor"
 	"github.com/dshills/layered/key"
 	"github.com/dshills/layered/logger"
@@ -29,6 +30,7 @@ type screen struct {
 	activeBufID   string
 	noticePrefix  string
 	respC         chan editor.Response
+	doneC         chan struct{}
 }
 
 func (s *screen) handleResponse() {
@@ -38,6 +40,9 @@ func (s *screen) handleResponse() {
 			logger.ErrorErr(resp.Err)
 			s.notice(resp.Err.Error())
 			continue
+		}
+		if resp.Quit {
+			s.doneC <- struct{}{}
 		}
 		if resp.Buffer != "" {
 			s.activeBufID = resp.Buffer
@@ -73,6 +78,7 @@ func (s *screen) processKeys() {
 	keyC := s.ed.KeyChan()
 	s.ed.SetRespChan(s.respC)
 	go s.handleResponse()
+	s.ed.ActionChan() <- []action.Action{action.Action{Name: "OpenFile", Target: "./testdata/scanner.go"}}
 	for {
 		r, k, err := keyboard.GetKey()
 		if err != nil {
@@ -171,6 +177,7 @@ func newScreen(ed editor.Editorer, pal *palette.Palette) (*screen, error) {
 		width:  w,
 		length: l,
 		tw:     tw,
+		doneC:  make(chan struct{}),
 	}
 	tw.Clear()
 	sc.notice("")

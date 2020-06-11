@@ -2,10 +2,13 @@ package layer
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"strings"
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
+	"github.com/dshills/layered/logger"
 )
 
 // Layer is a mapping of key strokes to actions
@@ -81,27 +84,51 @@ func (l *Layer) Load(r io.Reader) error {
 	if err := json.NewDecoder(r).Decode(&js); err != nil {
 		return err
 	}
+	errs := []string{}
 	l.name = js.Name
-	for _, act := range js.OnBeginActions {
-		l.beginActions = append(l.beginActions, act.asAction())
+	for _, a := range js.OnBeginActions {
+		act, err := a.asAction()
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+		l.beginActions = append(l.beginActions, act)
 	}
-	for _, act := range js.OnEndActions {
-		l.endActions = append(l.endActions, act.asAction())
+	for _, a := range js.OnEndActions {
+		act, err := a.asAction()
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+		l.endActions = append(l.endActions, act)
 	}
-	for _, act := range js.NoMatchActions {
-		l.noMatchActions = append(l.noMatchActions, act.asAction())
+	for _, a := range js.NoMatchActions {
+		act, err := a.asAction()
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+		l.noMatchActions = append(l.noMatchActions, act)
 	}
-	for _, act := range js.PartialMatchActions {
-		l.partialActions = append(l.partialActions, act.asAction())
+	for _, a := range js.PartialMatchActions {
+		act, err := a.asAction()
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+		l.partialActions = append(l.partialActions, act)
 	}
 	for _, kact := range js.Commands {
 		kas, err := kact.asKeyAction()
 		if err != nil {
-			return err
+			errs = append(errs, err.Error())
 		}
 		l.keyActs = append(l.keyActs, kas)
 	}
 
+	if len(errs) > 0 {
+		return fmt.Errorf("%v", strings.Join(errs, ", "))
+	}
 	return nil
 }
 
@@ -120,12 +147,15 @@ type jsAction struct {
 	Target string `json:"target"`
 }
 
-func (a jsAction) asAction() action.Action {
-	return action.Action{
-		Name:   a.Action,
-		Target: a.Target,
-		Count:  1,
+func (a jsAction) asAction() (action.Action, error) {
+	act, err := action.StrToAction(a.Action)
+	if err != nil {
+		logger.Debugf("%v", err.Error())
+		return act, fmt.Errorf("%v", a.Action)
 	}
+	act.Target = a.Target
+	act.Count = 1
+	return act, nil
 }
 
 type jsKeyAction struct {
@@ -136,16 +166,26 @@ type jsKeyAction struct {
 
 func (ka jsKeyAction) asKeyAction() (keyAct, error) {
 	actions := []action.Action{}
-	for i := range ka.Actions {
-		actions = append(actions, ka.Actions[i].asAction())
+	errs := []string{}
+	for _, a := range ka.Actions {
+		act, err := a.asAction()
+		if err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+		actions = append(actions, act)
 	}
 	keys := []keyMatch{}
 	for i := range ka.Keys {
 		km, err := newKeyMatch(ka.Keys[i])
 		if err != nil {
-			return keyAct{}, err
+			errs = append(errs, err.Error())
+			continue
 		}
 		keys = append(keys, km)
+	}
+	if len(errs) > 0 {
+		return newKeyAct(keys, actions), fmt.Errorf("asKeyAction: %v", strings.Join(errs, ", "))
 	}
 	return newKeyAct(keys, actions), nil
 }

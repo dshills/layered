@@ -33,6 +33,7 @@ type Response struct {
 	NewBuffer      bool
 	CloseBuffer    bool
 	InfoChanged    bool
+	Quit           bool
 	Err            error
 }
 
@@ -59,6 +60,16 @@ func (e *Editor) Exec(bufid string, actions ...action.Action) Response {
 	for _, act := range actions {
 		//logger.Debugf("Editor.Exec: %v %v", bufid, act.Name)
 		switch strings.ToLower(act.Name) {
+
+		case action.Quit:
+			if len(e.bufs) > 1 {
+				e.remove(e.activeBufID)
+				e.activeBufID = e.bufs[len(e.bufs)-1].ID()
+				resp.Buffer = e.activeBufID
+				return resp
+			}
+			resp.Quit = true
+			return resp
 
 		// Search
 		case action.Search:

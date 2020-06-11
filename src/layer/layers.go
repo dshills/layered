@@ -47,12 +47,15 @@ func (l *Layers) _load(dir string) error {
 			}
 			defer f.Close()
 			lay := Layer{}
-			lay.Load(f)
+			if err := lay.Load(f); err != nil {
+				errs = append(errs, fmt.Sprintf("%v %v", file.Name(), err))
+				continue
+			}
 			l.Add(&lay)
 		}
 	}
 	if len(errs) > 0 {
-		return fmt.Errorf("Layer.LoadDir: %v", strings.Join(errs, ", "))
+		return fmt.Errorf("Layers.LoadDir: %v", strings.Join(errs, ", "))
 	}
 	return nil
 }

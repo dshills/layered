@@ -9,5 +9,6 @@ import (
 type Editorer interface {
 	Exec(bufid string, actions ...action.Action) Response
 	KeyChan() chan key.Keyer
+	ActionChan() chan []action.Action
 	SetRespChan(chan Response)
 }

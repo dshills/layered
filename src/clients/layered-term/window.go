@@ -6,7 +6,6 @@ import (
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/editor"
-	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/palette"
 	"github.com/dshills/layered/terminal"
 )
@@ -24,7 +23,6 @@ type window struct {
 }
 
 func (w *window) makeVisible(ln, col int) {
-	logger.Debugf("makeVisible: Before st: %v cnt: %v ln: %v", w.startline, w.count, ln)
 	if ln >= w.startline && ln <= w.startline+w.count {
 		return
 	}
@@ -37,7 +35,6 @@ func (w *window) makeVisible(ln, col int) {
 		w.startline = 0
 	}
 
-	logger.Debugf("makeVisible: After st: %v cnt: %v ln: %v", w.startline, w.count, ln)
 	w.draw()
 }
 

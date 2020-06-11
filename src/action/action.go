@@ -34,7 +34,7 @@ func (a *Action) Valid(bufid string) error {
 		}
 	}
 	if !found {
-		errs = append(errs, "Action not found")
+		errs = append(errs, "Action %v not found", a.Name)
 	}
 	if len(errs) > 0 {
 		return fmt.Errorf("Action: %v Invalid %v", a.Name, strings.Join(errs, ", "))

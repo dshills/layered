@@ -60,5 +60,6 @@ func main() {
 		logger.ErrorErr(err)
 		os.Exit(1)
 	}
-	screen.processKeys()
+	go screen.processKeys()
+	<-screen.doneC
 }

@@ -14,6 +14,13 @@ type Editor struct {
 
 Editor is an editor instance
 
+#### func (*Editor) ActionChan
+
+```go
+func (e *Editor) ActionChan() chan []action.Action
+```
+ActionChan returns the action channel
+
 #### func (*Editor) Buffers
 
 ```go
@@ -48,6 +55,7 @@ SetRespChan will set the channel for sending responses
 type Editorer interface {
 	Exec(bufid string, actions ...action.Action) Response
 	KeyChan() chan key.Keyer
+	ActionChan() chan []action.Action
 	SetRespChan(chan Response)
 }
 ```
@@ -102,6 +110,7 @@ type Response struct {
 	NewBuffer      bool
 	CloseBuffer    bool
 	InfoChanged    bool
+	Quit           bool
 	Err            error
 }
 ```

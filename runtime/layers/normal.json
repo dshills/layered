@@ -38,16 +38,16 @@
 		{ "name": "InsertAtEOL",  "keys": [ "A" ], "actions":[ { "action": "Move", "target": "eol" }, { "action": "ChangeLayer", "target": "insert" } ]},
 		{ "name": "InsertBOLNE",  "keys": [ "I" ], "actions":[ { "action": "Move", "target": "bol-not-empty" }, { "action": "ChangeLayer", "target": "insert" } ]},
 
-		{ "name": "DeleteToEOL",  "keys": [ "D" ], "actions":[ { "action": "DeleteTo", "target": "eol" } ]},
-		{ "name": "DeleteLine",  "keys": [ "d", "d" ], "actions":[ { "action": "Delete", "target": "line" } ]},
-		{ "name": "DeleteChar",  "keys": [ "x" ], "actions":[ { "action": "Delete", "target": "char" } ]},
-		{ "name": "DeleteCharBack",  "keys": [ "X" ], "actions":[ { "action": "Delete", "target": "char" }, { "action": "MovePrev", "target": "char" } ]},
+		{ "name": "DeleteToEOL",  "keys": [ "D" ], "actions":[ { "action": "DeleteToObject", "target": "eol" } ]},
+		{ "name": "",  "keys": [ "d", "d" ], "actions":[ { "action": "DeleteLine" } ]},
+		{ "name": "",  "keys": [ "x" ], "actions":[ { "action": "DeleteChar" } ]},
+		{ "name": "",  "keys": [ "X" ], "actions":[ { "action": "DeleteCharBack" }, { "action": "MovePrev", "target": "char" } ]},
 
 		{ "name": "InsertLineAbove",  "keys": [ "O" ], "actions":[ { "action": "Insert", "target": "line-above" }, { "action": "ChangeLayer", "target": "insert" } ]},
 		{ "name": "InsertLine",  "keys": [ "o" ], "actions":[ { "action": "Insert", "target": "line" }, { "action": "ChangeLayer", "target": "insert" } ]},
 
-		{ "name": "IndentLine",  "keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "line" }, { "action": "MoveBeginNotEmpty", "target": "line" } ]},
-		{ "name": "OutdentLine",  "keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "line" }, { "action": "MoveBeginNotEmpty", "target": "line" } ]},
+		{ "name": "IndentLine",  "keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "line" }, { "action": "Move", "target": "bol-not-empty" } ]},
+		{ "name": "OutdentLine",  "keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "line" }, { "action": "Move", "target": "bol-not-empty" } ]},
 
 		{ "name": "MoveScreenBegin",  "keys": [ "H" ], "actions":[ { "action": "Move", "target": "screen-begin" } ]},
 		{ "name": "MoveScreenEnd",  "keys": [ "L" ], "actions":[ { "action": "Move", "target": "screen-end" } ]},
