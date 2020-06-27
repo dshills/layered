@@ -24,6 +24,17 @@ func (k *Key) String() string {
 	return fmt.Sprintf("{%v(%v)}", k.k, SpecialToString(k.k))
 }
 
+// Eq returns true if the keys are equal
+func (k *Key) Eq(kk Keyer) bool {
+	if k.Rune() != kk.Rune() {
+		return false
+	}
+	if k.Key() != kk.Key() {
+		return false
+	}
+	return true
+}
+
 // New will return a key
 func New(r rune, k int) Keyer {
 	return &Key{r: r, k: k}

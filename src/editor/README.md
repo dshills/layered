@@ -28,6 +28,13 @@ func (e *Editor) Buffers() []buffer.Bufferer
 ```
 Buffers returns the editors currrent buffers
 
+#### func (*Editor) DoneChan
+
+```go
+func (e *Editor) DoneChan() chan struct{}
+```
+DoneChan returns the done channel
+
 #### func (*Editor) Exec
 
 ```go
@@ -42,12 +49,14 @@ func (e *Editor) KeyChan() chan key.Keyer
 ```
 KeyChan returns the key channel
 
-#### func (*Editor) SetRespChan
+#### func (*Editor) Listen
 
 ```go
-func (e *Editor) SetRespChan(rc chan Response)
+func (e *Editor) Listen(respC chan Response) error
 ```
-SetRespChan will set the channel for sending responses
+Listen will begin listening on key, action and done channels it requires a
+response channel from the consumer sending on the done channel will close the
+channels and exit
 
 #### type Editorer
 
@@ -56,7 +65,8 @@ type Editorer interface {
 	Exec(bufid string, actions ...action.Action) Response
 	KeyChan() chan key.Keyer
 	ActionChan() chan []action.Action
-	SetRespChan(chan Response)
+	DoneChan() chan struct{}
+	Listen(chan Response) error
 }
 ```
 

@@ -71,6 +71,9 @@ func (e *Editor) Exec(bufid string, actions ...action.Action) Response {
 			resp.Quit = true
 			return resp
 
+		case action.SelectBuffer:
+			e.activeBufID = bufid
+
 		// Search
 		case action.Search:
 			res, err := buf.Search(act.Target)

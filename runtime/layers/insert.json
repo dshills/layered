@@ -1,9 +1,9 @@
 {
 	"name": "insert",
-	"commands": [
-		{ "name": "",  "keys": [ "<esc>" ], "actions": [{ "action": "ChangeLayer", "target": "normal" }]},
+	"cancelOnKey": "<esc>",
+	"onPrintableKey": [{ "action": "Insert",  "target": "input"}],
+	"actions": [
 		{ "name": "",  "keys": [ "<cr>" ], "actions": [{ "action": "Insert",  "target": "line"}] },
-		{ "name": "",  "keys": [ "<bs>" ], "actions": [{ "action": "DeleteCharBack"}] },
-		{ "name": "",  "keys": [ "<printable>" ], "actions": [{ "action": "Insert",  "target": "input"}] }
+		{ "name": "",  "keys": [ "<bs>" ], "actions": [{ "action": "DeleteCharBack"}] }
 	]
 }

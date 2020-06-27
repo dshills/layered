@@ -1,9 +1,9 @@
 {
-	"name": "visual",
+	"name": "visual-block",
 	"cancelOnKey": "<esc>",
-	"onBeginLayer": [{ "name": "",  "action": "StartSelection", "target": "char" }],
+	"onBeginLayer": [{ "name": "",  "action": "StartSelection", "target": "block" }],
 	"onEndLayer": [{ "name": "",  "action": "StopSelection" }],
-	"actions": [
+	"commands": [
 		{ "keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "selection" } ] },
 		{ "keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "selection" } ] },
 

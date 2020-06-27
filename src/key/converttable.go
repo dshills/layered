@@ -98,7 +98,6 @@ func init() {
 	convertKeyTable[Ctrl5] = 0x1D
 	convertKeyTable[Ctrl6] = 0x1E
 	convertKeyTable[Ctrl7] = 0x1F
-	convertKeyTable[Ctrl8] = 0x7F
 	convertKeyTable[CtrlBackslash] = 0x1C
 	convertKeyTable[CtrlRightBracket] = 0x1D
 	convertKeyTable[CtrlUnderscore] = 0x1F
@@ -150,6 +149,6 @@ const (
 	KeyEsc       = 0x1B
 	KeySpace     = 0x20
 	KeyTab       = 0x09
-	KeyBackspace = 0x08
+	KeyBackspace = 127
 )
 const ()

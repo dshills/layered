@@ -20,6 +20,15 @@ const (
 ```
 Key matcher constants
 
+#### type ALayer
+
+```go
+type ALayer struct {
+}
+```
+
+ALayer is a layer
+
 #### type Factory
 
 ```go
@@ -27,6 +36,14 @@ type Factory func(rtpaths ...string) (Manager, error)
 ```
 
 Factory will create a layer manager
+
+#### type Group
+
+```go
+type Group []ALayer
+```
+
+Group is a group of layers
 
 #### type Layer
 
@@ -213,6 +230,22 @@ ParseStatus constants
 ```go
 func (s ParseStatus) String() string
 ```
+
+#### type Parser
+
+```go
+type Parser struct {
+}
+```
+
+Parser is a command parser
+
+#### func (*Parser) Parse
+
+```go
+func (p *Parser) Parse(k key.Keyer) []action.Action
+```
+Parse will parse a key
 
 #### type Parserer
 

@@ -145,7 +145,6 @@ const (
 	Ctrl5            = "<ctrl-5>"
 	Ctrl6            = "<ctrl-6>"
 	Ctrl7            = "<ctrl-7>"
-	Ctrl8            = "<ctrl-8>"
 	Ctrl9            = "<ctrl-9>"
 	CtrlTilde        = "<ctrl-~"
 	CtrlSlash        = "<ctrl-/>"
@@ -313,7 +312,7 @@ const (
 	KeyEsc       = 0x1B
 	KeySpace     = 0x20
 	KeyTab       = 0x09
-	KeyBackspace = 0x08
+	KeyBackspace = 127
 )
 ```
 ctrl key constants
@@ -341,6 +340,13 @@ type Key struct {
 
 Key is a keyboard key press
 
+#### func (*Key) Eq
+
+```go
+func (k *Key) Eq(kk Keyer) bool
+```
+Eq returns true if the keys are equal
+
 #### func (*Key) Key
 
 ```go
@@ -367,6 +373,7 @@ func (k *Key) String() string
 type Keyer interface {
 	Rune() rune
 	Key() int
+	Eq(Keyer) bool
 }
 ```
 

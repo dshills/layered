@@ -8,7 +8,6 @@ import (
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
-	"github.com/dshills/layered/logger"
 )
 
 // Layer is a mapping of key strokes to actions
@@ -150,7 +149,6 @@ type jsAction struct {
 func (a jsAction) asAction() (action.Action, error) {
 	act, err := action.StrToAction(a.Action)
 	if err != nil {
-		logger.Debugf("%v", err.Error())
 		return act, fmt.Errorf("%v", a.Action)
 	}
 	act.Target = a.Target

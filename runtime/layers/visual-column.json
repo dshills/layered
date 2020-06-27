@@ -1,14 +1,33 @@
 {
 	"name": "visual-block",
-	"on_begin_actions": [{ "name": "",  "action": "StartSelection", "target": "block" }],
-	"on_end_actions": [{ "name": "",  "action": "StopSelection" }],
-	"commands": [
-		{ "name": "",  "keys": [ "<esc>" ], "actions": [ { "action": "ChangeLayer", "target": "normal" } ] },
-		{ "name": "",  "keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "selection" } ] },
-		{ "name": "",  "keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "selection" } ] },
-		{ "name": "",  "keys": [ "y" ], "actions":[ { "action": "Yank", "target": "selection" } ] },
-		{ "name": "",  "keys": [ "p" ], "actions":[ { "action": "Paste", "target": "selection" } ] },
-		{ "name": "",  "keys": [ "d" ], "actions":[ { "action": "Delete", "target": "selection" } ] }
+	"cancelOnKey": "<esc>",
+	"onBeginLayer": [{ "name": "",  "action": "StartSelection", "target": "block" }],
+	"onEndLayer": [{ "name": "",  "action": "StopSelection" }],
+	"actions": [
+		{ "keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "selection" } ] },
+		{ "keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "selection" } ] },
+
+		{ "keys": [ "y" ], "actions":[ { "action": "Yank", "target": "selection" }, { "action": "ChangePrevLayer" } ] },
+		{ "keys": [ "p" ], "actions":[ { "action": "Paste", "target": "selection" }, { "action": "ChangePrevLayer" } ] },
+		{ "keys": [ "d" ], "actions":[ { "action": "Delete", "target": "selection" }, { "action": "ChangePrevLayer" } ] },
+
+		{"keys": [ "$" ], "actions":[ { "action": "Move", "target": "eol" } ], "name": "MoveEOL" },
+		{"keys": [ "0" ], "actions":[ { "action": "Move", "target": "bol" } ], "name": "MoveBOL" },
+		{"keys": [ "^" ], "actions":[ { "action": "Move", "target": "bol-not-empty" } ], "name": "MoveBOLNE" },
+		{"keys": [ "b" ], "actions":[ { "action": "MovePrev", "target": "word" } ], "name": "MoveWord" },
+		{"keys": [ "%" ], "actions":[ { "action": "Move", "target": "pair-match" } ], "name": "MovePair" },
+		{"keys": [ "e" ], "actions":[ { "action": "MoveEnd", "target": "word" } ], "name": "MoveWordEnd" },
+		{"keys": [ "G" ], "actions":[ { "action": "Move", "target": "document-end" } ], "name": "MoveDocEnd" },
+		{"keys": [ "g", "_" ], "actions":[ { "action": "Move", "target": "eol-not-empty" } ], "name": "MoveEOLNE" },
+		{"keys": [ "g", "g" ], "actions":[ { "action": "Move", "target": "document-begin" } ], "name": "MoveDocBegin" },
+		{"keys": [ "h" ], "actions":[ { "action": "Prev" } ], "name": "MovePrevChar" },
+		{"keys": [ "j" ], "actions":[ { "action": "Down" } ], "name": "MoveLine" },
+		{"keys": [ "k" ], "actions":[ { "action": "Up" } ], "name": "MovePrevLine" },
+		{"keys": [ "l" ], "actions":[ { "action": "Next" } ], "name": "MoveChar" },
+		{"keys": [ "N" ], "actions":[ { "action": "MovePrev", "target": "search" } ], "name": "MovePrevChar" },
+		{"keys": [ "n" ], "actions":[ { "action": "Move", "target": "search" } ], "name": "MoveNextSearch" },
+		{"keys": [ "W" ], "actions":[ { "action": "Move", "target": "full-word" } ], "name": "MoveFullWord" },
+		{ "name": "MoveWord",  "keys": [ "w" ], "actions":[ { "action": "Move", "target": "word" } ]}
 	]
 }
 

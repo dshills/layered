@@ -1,0 +1,64 @@
+{
+	"name": "default",
+	"actions": [
+		{ "keys": [ "d" ], "actions":[ { "action": "Delete" } ]},
+		{ "keys": [ "y" ], "actions":[ { "action": "Yank" } ]},
+		{ "keys": [ "c" ], "actions":[ { "action": "Delete" }, { "action": "ChangeLayer", "target": "insert" } ]},
+		{ "keys": [ "q" ], "actions":[ { "action": "StartRecordMacro", "target": "macro" } ]},
+		{ "keys": [ "@" ], "actions":[ { "action": "RunMacro", "target": "macro" } ]},
+		{ "keys": [ "m" ], "actions":[ { "action": "SetMark", "target": "mark" } ]},
+		{ "keys": [ "'" ], "actions":[ { "action": "Move", "target": "mark" } ]},
+
+		{"keys": [ ":" ], "actions":[ { "action": "ChangeLayer", "target": "colon" } ], "name": "ChangeToColon" },
+		{"keys": [ "/" ], "actions":[ { "action": "ChangeLayer", "target": "search" } ], "name": "ChangeToSearch" },
+		{"keys": [ "i" ], "actions":[ { "action": "ChangeLayer", "target": "insert" } ], "name": "ChangeToInsert" },
+		{"keys": [ "V" ], "actions":[ { "action": "ChangeLayer", "target": "visual-line" } ], "name": "ChangeToVisLine" },
+		{"keys": [ "v" ], "actions":[ { "action": "ChangeLayer", "target": "visual" } ], "name": "ChangeToVis" },
+		{"keys": [ "<ctrl-v>" ], "actions":[ { "action": "ChangeLayer", "target": "visual-block" } ], "name": "ChangeToVisBlock" },
+
+		{"keys": [ "$" ], "actions":[ { "action": "Move", "target": "eol" } ], "name": "MoveEOL" },
+		{"keys": [ "0" ], "actions":[ { "action": "Move", "target": "bol" } ], "name": "MoveBOL" },
+		{"keys": [ "^" ], "actions":[ { "action": "Move", "target": "bol-not-empty" } ], "name": "MoveBOLNE" },
+		{"keys": [ "b" ], "actions":[ { "action": "MovePrev", "target": "word" } ], "name": "MoveWord" },
+		{"keys": [ "%" ], "actions":[ { "action": "Move", "target": "pair-match" } ], "name": "MovePair" },
+		{"keys": [ "e" ], "actions":[ { "action": "MoveEnd", "target": "word" } ], "name": "MoveWordEnd" },
+		{"keys": [ "G" ], "actions":[ { "action": "Move", "target": "document-end" } ], "name": "MoveDocEnd" },
+		{"keys": [ "g", "_" ], "actions":[ { "action": "Move", "target": "eol-not-empty" } ], "name": "MoveEOLNE" },
+		{"keys": [ "g", "g" ], "actions":[ { "action": "Move", "target": "document-begin" } ], "name": "MoveDocBegin" },
+		{"keys": [ "h" ], "actions":[ { "action": "Prev" } ], "name": "MovePrevChar" },
+		{"keys": [ "j" ], "actions":[ { "action": "Down" } ], "name": "MoveLine" },
+		{"keys": [ "k" ], "actions":[ { "action": "Up" } ], "name": "MovePrevLine" },
+		{"keys": [ "l" ], "actions":[ { "action": "Next" } ], "name": "MoveChar" },
+		{"keys": [ "N" ], "actions":[ { "action": "MovePrev", "target": "search" } ], "name": "MovePrevChar" },
+		{"keys": [ "n" ], "actions":[ { "action": "Move", "target": "search" } ], "name": "MoveNextSearch" },
+		{"keys": [ "W" ], "actions":[ { "action": "Move", "target": "full-word" } ], "name": "MoveFullWord" },
+		{"keys": [ "w" ], "actions":[ { "action": "Move", "target": "word" } ], "name": "MoveWord" },
+
+		{"keys": [ "a" ], "actions":[ { "action": "ChangeLayer", "target": "insert" }, { "action": "Move", "target": "char" } ], "name": "InsertAtNext" },
+		{"keys": [ "A" ], "actions":[ { "action": "Move", "target": "eol" }, { "action": "ChangeLayer", "target": "insert" } ], "name": "InsertAtEOL" },
+		{"keys": [ "I" ], "actions":[ { "action": "Move", "target": "bol-not-empty" }, { "action": "ChangeLayer", "target": "insert" } ], "name": "InsertBOLNE" },
+
+		{"keys": [ "D" ], "actions":[ { "action": "DeleteToObject", "target": "eol" } ], "name": "DeleteToEOL" },
+		{ "keys": [ "d", "d" ], "actions":[ { "action": "DeleteLine" } ]},
+		{ "keys": [ "x" ], "actions":[ { "action": "DeleteChar" } ]},
+		{ "keys": [ "X" ], "actions":[ { "action": "DeleteCharBack" }, { "action": "MovePrev", "target": "char" } ]},
+
+		{"keys": [ "O" ], "actions":[ { "action": "Insert", "target": "line-above" }, { "action": "ChangeLayer", "target": "insert" } ], "name": "InsertLineAbove" },
+		{"keys": [ "o" ], "actions":[ { "action": "Insert", "target": "line" }, { "action": "ChangeLayer", "target": "insert" } ], "name": "InsertLine" },
+
+		{"keys": [ ">", ">" ], "actions":[ { "action": "Indent", "target": "line" }, { "action": "Move", "target": "bol-not-empty" } ], "name": "IndentLine" },
+		{"keys": [ "<", "<" ], "actions":[ { "action": "Outdent", "target": "line" }, { "action": "Move", "target": "bol-not-empty" } ], "name": "OutdentLine" },
+
+		{"keys": [ "H" ], "actions":[ { "action": "Move", "target": "screen-begin" } ], "name": "MoveScreenBegin" },
+		{"keys": [ "L" ], "actions":[ { "action": "Move", "target": "screen-end" } ], "name": "MoveScreenEnd" },
+		{"keys": [ "M" ], "actions":[ { "action": "Move", "target": "screen-center" }, { "action": "Move", "target": "bol-not-empty" } ], "name": "MoveScreenCenter" },
+		{"keys": [ "z", "z" ], "actions":[ { "action": "Move", "target": "screen-center" } ], "name": "CenterScreen" },
+		{ "keys": [ "<ctrl-d>" ], "actions":[ { "action": "ScrollDown" } ]},
+		{ "keys": [ "<ctrl-u>" ], "actions":[ { "action": "ScrollUp" } ]},
+
+		{ "keys": [ "<ctrl-r>" ], "actions":[ { "action": "Redo" } ]},
+		{ "keys": [ "u" ], "actions":[ { "action": "Undo" } ]},
+		{ "keys": [ "p" ], "actions":[ { "action": "Paste" } ]},
+		{ "name": "YankLine",  "keys": [ "y", "y" ], "actions":[ { "action": "Yank", "target": "line" } ]}
+	]
+}

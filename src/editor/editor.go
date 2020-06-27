@@ -10,7 +10,6 @@ import (
 	"github.com/dshills/layered/filetype"
 	"github.com/dshills/layered/key"
 	"github.com/dshills/layered/layer"
-	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/register"
 	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textobject"
@@ -36,14 +35,9 @@ type Editor struct {
 	reg         register.Registerer
 	layers      layer.Manager
 	keyC        chan key.Keyer
-	respC       chan Response
 	actC        chan []action.Action
+	doneC       chan struct{}
 	activeBufID string
-}
-
-// SetRespChan will set the channel for sending responses
-func (e *Editor) SetRespChan(rc chan Response) {
-	e.respC = rc
 }
 
 // Buffers returns the editors currrent buffers
@@ -100,52 +94,9 @@ func (e *Editor) ActionChan() chan []action.Action {
 	return e.actC
 }
 
-func (e *Editor) listen() error {
-	scanner, err := layer.NewScanner(e.layers, "normal")
-	if err != nil {
-		return err
-	}
-	go func() {
-		for {
-			select {
-			case acts := <-e.actC:
-				resp := e.Exec(e.activeBufID, acts...)
-				resp.Layer = scanner.LayerName()
-				if e.respC != nil {
-					e.respC <- resp
-				}
-				if resp.Buffer != "" {
-					e.activeBufID = resp.Buffer
-				}
-			case k := <-e.keyC:
-				acts, st, err := scanner.Scan(k)
-				if err != nil {
-					logger.Errorf("Editor.listen: %v", err)
-				}
-				if len(acts) > 0 {
-					//logger.Debugf("Editor.listen: %v", acts)
-					resp := e.Exec(e.activeBufID, acts...)
-					resp.Layer = scanner.LayerName()
-					resp.Status = st
-					resp.Partial = scanner.Partial()
-					if e.respC != nil {
-						e.respC <- resp
-					}
-					if resp.Buffer != "" {
-						e.activeBufID = resp.Buffer
-					}
-				} else if e.respC != nil {
-					e.respC <- Response{Layer: scanner.LayerName(), Status: st, Partial: scanner.Partial()}
-				}
-				switch st {
-				case layer.Match:
-				case layer.NoMatch:
-				case layer.PartialMatch:
-				}
-			}
-		}
-	}()
-	return nil
+// DoneChan returns the done channel
+func (e *Editor) DoneChan() chan struct{} {
+	return e.doneC
 }
 
 // New will return a new editor
@@ -164,8 +115,6 @@ func New(
 	ed := &Editor{layFac: lf, undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, ftFac: ftf, synFac: sf, objFac: of, regFac: rf, runtimes: rt}
 	ed.reg = rf()
 	ed.objs = of()
-	ed.keyC = make(chan key.Keyer, 10)
-	ed.actC = make(chan []action.Action)
 
 	var err error
 	errs := []string{}
@@ -176,9 +125,6 @@ func New(
 	ed.layers, err = lf(rt...)
 	if err != nil {
 		errs = append(errs, fmt.Sprintf("layers: %v", err.Error()))
-	}
-	if err := ed.listen(); err != nil {
-		errs = append(errs, fmt.Sprintf("listen: %v", err.Error()))
 	}
 	if len(errs) > 0 {
 		return ed, fmt.Errorf("Editor: %v", strings.Join(errs, ", "))

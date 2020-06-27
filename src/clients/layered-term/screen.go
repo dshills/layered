@@ -27,7 +27,6 @@ type screen struct {
 	tw            *terminal.TermWriter
 	width, length int
 	windows       []window
-	activeBufID   string
 	noticePrefix  string
 	respC         chan editor.Response
 	doneC         chan struct{}
@@ -36,22 +35,25 @@ type screen struct {
 func (s *screen) handleResponse() {
 	for {
 		resp := <-s.respC
+		logger.Debugf("screen: %v", resp)
 		if resp.Err != nil {
 			logger.ErrorErr(resp.Err)
 			s.notice(resp.Err.Error())
 			continue
 		}
 		if resp.Quit {
+			s.ed.DoneChan() <- struct{}{}
 			s.doneC <- struct{}{}
-		}
-		if resp.Buffer != "" {
-			s.activeBufID = resp.Buffer
+			close(s.doneC)
 		}
 		if resp.NewBuffer {
 			s.newWindow(resp.Buffer)
 		}
 		if resp.ContentChanged {
-			s.draw()
+			idx := s.winIdx(resp.Buffer)
+			if idx != -1 {
+				s.windows[idx].draw()
+			}
 		}
 		if resp.CursorChanged {
 			idx := s.winIdx(resp.Buffer)
@@ -73,10 +75,9 @@ func (s *screen) handleResponse() {
 }
 
 func (s *screen) processKeys() {
-	keys := []key.Keyer{}
 	s.respC = make(chan editor.Response)
+	s.ed.Listen(s.respC)
 	keyC := s.ed.KeyChan()
-	s.ed.SetRespChan(s.respC)
 	go s.handleResponse()
 	s.ed.ActionChan() <- []action.Action{action.Action{Name: "OpenFile", Target: "./testdata/scanner.go"}}
 	for {
@@ -95,7 +96,6 @@ func (s *screen) processKeys() {
 			continue
 		}
 		keyC <- keyer
-		keys = append(keys, keyer)
 		if k == keyboard.KeyHome {
 			break
 		}
@@ -183,15 +183,4 @@ func newScreen(ed editor.Editorer, pal *palette.Palette) (*screen, error) {
 	sc.notice("")
 	sc.status("NORMAL")
 	return sc, nil
-}
-
-func partialToString(keys []key.Keyer) string {
-	builder := strings.Builder{}
-	for i := range keys {
-		r := keys[i].Rune()
-		if r > 0 {
-			builder.WriteRune(r)
-		}
-	}
-	return builder.String()
 }

@@ -42,6 +42,13 @@ func (s *Scanner) Scan(key key.Keyer) ([]action.Action, ParseStatus, error) {
 	acts, status := s.current.Match(s.partial)
 	switch status {
 	case Match:
+		// Special case delete from the command
+		if len(acts) == 1 && acts[0].Name == action.DeleteCmdBack {
+			logger.Debugf("Before %v", s.keyerToTarget(s.partial))
+			s.partial = s.partial[:len(s.partial)-2]
+			logger.Debugf("After %v", s.keyerToTarget(s.partial))
+			return nil, PartialMatch, nil
+		}
 		acts = s.processActions(acts)
 		s.Init()
 		return acts, status, nil
@@ -50,6 +57,7 @@ func (s *Scanner) Scan(key key.Keyer) ([]action.Action, ParseStatus, error) {
 		s.Init()
 		return acts, status, nil
 	case PartialMatch:
+		logger.Debugf("Partial %+v", acts)
 		acts = s.processActions(s.current.PartialMatchActions())
 		return acts, status, nil
 	}
