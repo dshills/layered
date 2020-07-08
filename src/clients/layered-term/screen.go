@@ -10,6 +10,7 @@ import (
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/editor"
 	"github.com/dshills/layered/key"
+	"github.com/dshills/layered/layer"
 	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/palette"
 	"github.com/dshills/layered/terminal"
@@ -29,6 +30,7 @@ type screen struct {
 	windows       []window
 	noticePrefix  string
 	respC         chan editor.Response
+	reqC          chan editor.Request
 	doneC         chan struct{}
 }
 
@@ -42,7 +44,6 @@ func (s *screen) handleResponse() {
 			continue
 		}
 		if resp.Quit {
-			s.ed.DoneChan() <- struct{}{}
 			s.doneC <- struct{}{}
 			close(s.doneC)
 		}
@@ -75,16 +76,18 @@ func (s *screen) handleResponse() {
 }
 
 func (s *screen) processKeys() {
-	s.respC = make(chan editor.Response)
-	s.ed.Listen(s.respC)
-	keyC := s.ed.KeyChan()
+	s.ed.ExecChan(s.reqC, s.respC, s.doneC)
 	go s.handleResponse()
-	s.ed.ActionChan() <- []action.Action{action.Action{Name: "OpenFile", Target: "./testdata/scanner.go"}}
+	interp := layer.NewInterpriter()
+	s.reqC <- editor.NewRequest("", action.Action{Name: "OpenFile", Target: "./testdata/scanner.go"})
 	for {
 		r, k, err := keyboard.GetKey()
 		if err != nil {
 			logger.ErrorErr(err)
 			continue
+		}
+		if k == keyboard.KeyHome {
+			return
 		}
 		if k == 32 {
 			k = 0
@@ -95,9 +98,9 @@ func (s *screen) processKeys() {
 			logger.Errorf("Unknown key press %v %v", r, k)
 			continue
 		}
-		keyC <- keyer
-		if k == keyboard.KeyHome {
-			break
+		acts := interp.Match(keyer)
+		if len(acts) > 0 {
+			s.reqC <- editor.NewRequest("", acts...)
 		}
 	}
 }
@@ -120,7 +123,9 @@ func (s *screen) draw() {
 }
 
 func (s *screen) newWindow(bufid string) {
-	s.windows = append(s.windows, newWindow(bufid, s.tw, 0, 0, s.width, s.length-2, s.ed, s.pal))
+	win := newWindow(bufid, s.tw, 0, 0, s.width, s.length-2, s.ed, s.pal)
+	win.setChan(s.reqC, s.respC)
+	s.windows = append(s.windows, win)
 }
 
 func (s *screen) notice(str string) {
@@ -178,6 +183,8 @@ func newScreen(ed editor.Editorer, pal *palette.Palette) (*screen, error) {
 		length: l,
 		tw:     tw,
 		doneC:  make(chan struct{}),
+		reqC:   make(chan editor.Request),
+		respC:  make(chan editor.Response),
 	}
 	tw.Clear()
 	sc.notice("")

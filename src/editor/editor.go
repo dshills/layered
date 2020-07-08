@@ -4,12 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/buffer"
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
-	"github.com/dshills/layered/key"
-	"github.com/dshills/layered/layer"
 	"github.com/dshills/layered/register"
 	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textobject"
@@ -29,13 +26,10 @@ type Editor struct {
 	ftFac       filetype.Factory
 	objFac      textobject.Factory
 	regFac      register.Factory
-	layFac      layer.Factory
 	objs        textobject.Objecter
 	ftd         filetype.Manager
 	reg         register.Registerer
-	layers      layer.Manager
-	keyC        chan key.Keyer
-	actC        chan []action.Action
+	actC        chan Request
 	doneC       chan struct{}
 	activeBufID string
 }
@@ -84,13 +78,22 @@ func (e *Editor) newBuffer() string {
 	return buf.ID()
 }
 
-// KeyChan returns the key channel
-func (e *Editor) KeyChan() chan key.Keyer {
-	return e.keyC
+// ExecChan will listen for requests
+func (e *Editor) ExecChan(reqC chan Request, respC chan Response, done chan struct{}) {
+	go func(reqC chan Request, respC chan Response, done chan struct{}) {
+		for {
+			select {
+			case req := <-reqC:
+				respC <- e.Exec(req)
+			case <-done:
+				return
+			}
+		}
+	}(reqC, respC, done)
 }
 
 // ActionChan returns the action channel
-func (e *Editor) ActionChan() chan []action.Action {
+func (e *Editor) ActionChan() chan Request {
 	return e.actC
 }
 
@@ -100,19 +103,8 @@ func (e *Editor) DoneChan() chan struct{} {
 }
 
 // New will return a new editor
-func New(
-	uf undo.Factory,
-	tf textstore.Factory,
-	bf buffer.Factory,
-	cf cursor.Factory,
-	sf syntax.Factory,
-	ftf filetype.Factory,
-	of textobject.Factory,
-	rf register.Factory,
-	lf layer.Factory,
-	rt ...string,
-) (Editorer, error) {
-	ed := &Editor{layFac: lf, undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, ftFac: ftf, synFac: sf, objFac: of, regFac: rf, runtimes: rt}
+func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, rt ...string) (Editorer, error) {
+	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, ftFac: ftf, synFac: sf, objFac: of, regFac: rf, runtimes: rt}
 	ed.reg = rf()
 	ed.objs = of()
 
@@ -121,10 +113,6 @@ func New(
 	ed.ftd, err = ftf(rt...)
 	if err != nil {
 		errs = append(errs, fmt.Sprintf("filetype: %v", err.Error()))
-	}
-	ed.layers, err = lf(rt...)
-	if err != nil {
-		errs = append(errs, fmt.Sprintf("layers: %v", err.Error()))
 	}
 	if len(errs) > 0 {
 		return ed, fmt.Errorf("Editor: %v", strings.Join(errs, ", "))

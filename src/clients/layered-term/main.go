@@ -9,7 +9,6 @@ import (
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/editor"
 	"github.com/dshills/layered/filetype"
-	"github.com/dshills/layered/layer"
 	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/palette"
 	"github.com/dshills/layered/register"
@@ -38,7 +37,7 @@ func main() {
 	}
 	defer keyboard.Close()
 
-	ed, err := editor.New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, layer.New, rtpath)
+	ed, err := editor.New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, rtpath)
 	if err != nil {
 		logger.ErrorErr(err)
 		os.Exit(1)

@@ -7,33 +7,56 @@ import (
 	"github.com/dshills/layered/key"
 )
 
-// Factory will create a layer manager
-type Factory func(rtpaths ...string) (Manager, error)
+// Factory will return an Interpriter
+type Factory func() Interpriter
 
-// Manager is a collection of managed layers
-type Manager interface {
-	AddRuntime(rtpaths ...string) error
-	RemoveRuntime(path string) error
-	Load() error
-	Add(a ...Layerer)
-	Remove(name string)
-	Layer(name string) (Layerer, error)
+// KeyAction are keys that trigger actions
+type KeyAction interface {
+	Keys() []key.Keyer
+	Actions() []action.Action
+	Match(keys []key.Keyer) MatchStatus
 }
 
-// Layerer is a layer
-type Layerer interface {
-	Match(keys []key.Keyer) ([]action.Action, ParseStatus)
+// Layer is a keyboard interpriter
+type Layer interface {
 	Name() string
-	Map(name string, keys []string, actions []action.Action) error
-	Unmap(name string)
-	BeginActions() []action.Action
-	EndActions() []action.Action
-	PartialMatchActions() []action.Action
-	NoMatchActions() []action.Action
-	Load(io.Reader) error
+	Map(name string, keys []key.Keyer, actions []action.Action)
+	UnMap(name string)
+
+	Editable() bool
+	WaitForComplete() bool
+	NotStacked() bool
+
+	CancelKey() key.Keyer
+	PrevLayerKey() key.Keyer
+	CompleteKey() key.Keyer
+
+	OnAnyKey() []action.Action
+	OnPrintableKey() []action.Action
+	OnNonPritableKey() []action.Action
+	OnEnterLayer() []action.Action
+	OnExitLayer() []action.Action
+	OnComplete() []action.Action
+	OnMatch() []action.Action
+	OnNoMatch() []action.Action
+	OnPartialMatch() []action.Action
+
+	KeyActions() []KeyAction
+
+	Match(keys []key.Keyer) ([]action.Action, MatchStatus)
+	MatchSpecial(k key.Keyer) ([]action.Action, bool)
+
+	Load(r io.Reader) error
 }
 
-// Parserer will parse key strokes into actions
-type Parserer interface {
-	Parse(keys ...key.Keyer) ([]action.Action, ParseStatus)
+// Interpriter will convert keystrokes into actions
+type Interpriter interface {
+	Layers() []Layer
+	Active() Layer
+	Match(k ...key.Keyer) []action.Action
+	Partial() []key.Keyer
+	Status() MatchStatus
+	Add(...Layer)
+	Remove(name string)
+	LoadDirectory(dir string) error
 }

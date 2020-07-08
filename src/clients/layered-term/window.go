@@ -20,6 +20,13 @@ type window struct {
 	startline int
 	count     int
 	ed        editor.Editorer
+	reqC      chan editor.Request
+	respC     chan editor.Response
+}
+
+func (w *window) setChan(reqC chan editor.Request, respC chan editor.Response) {
+	w.reqC = reqC
+	w.respC = respC
 }
 
 func (w *window) makeVisible(ln, col int) {
@@ -45,7 +52,7 @@ func (w *window) drawCursor(ln, col int) {
 }
 
 func (w *window) draw() error {
-	if w.hidden {
+	if w.hidden || w.reqC == nil || w.respC == nil {
 		return nil
 	}
 	w.writer.TermWriter().ResetStyle()
@@ -56,7 +63,8 @@ func (w *window) draw() error {
 		Count: w.count,
 	}
 	w.writer.Clear()
-	resp := w.ed.Exec(w.bufid, act)
+	w.reqC <- editor.NewRequest(w.bufid, act)
+	resp := <-w.respC
 	if resp.Err != nil {
 		return resp.Err
 	}

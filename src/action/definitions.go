@@ -9,6 +9,7 @@ import (
 var Definitions = []Def{
 	Def{Name: BufferList, Alias: []string{"ls"}},
 	Def{Name: ChangeLayer},
+	Def{Name: ChangePrevLayer},
 	Def{Name: CloseBuffer, ReqBuffer: true},
 	Def{Name: Content, ReqBuffer: true},
 	Def{Name: Delete, ReqBuffer: true},

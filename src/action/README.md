@@ -94,11 +94,12 @@ Macro
 
 ```go
 const (
-	Syntax      = "syntax"
-	RunCommand  = "runcommand"
-	SetMark     = "setmark"
-	ChangeLayer = "changelayer"
-	Quit        = "quit"
+	Syntax          = "syntax"
+	RunCommand      = "runcommand"
+	SetMark         = "setmark"
+	ChangeLayer     = "changelayer"
+	ChangePrevLayer = "changeprevlayer"
+	Quit            = "quit"
 )
 ```
 Other
@@ -107,6 +108,7 @@ Other
 var Definitions = []Def{
 	Def{Name: BufferList, Alias: []string{"ls"}},
 	Def{Name: ChangeLayer},
+	Def{Name: ChangePrevLayer},
 	Def{Name: CloseBuffer, ReqBuffer: true},
 	Def{Name: Content, ReqBuffer: true},
 	Def{Name: Delete, ReqBuffer: true},

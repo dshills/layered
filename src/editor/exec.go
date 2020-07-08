@@ -5,59 +5,29 @@ import (
 	"strings"
 
 	"github.com/dshills/layered/action"
-	"github.com/dshills/layered/buffer"
-	"github.com/dshills/layered/layer"
-	"github.com/dshills/layered/syntax"
 )
 
-// KeyValue is key/value data
-type KeyValue struct {
-	Key   string
-	Value string
-}
-
-// Response is a exec response
-type Response struct {
-	Buffer         string
-	Action         string
-	Line, Column   int
-	Results        []KeyValue
-	Content        []string
-	Syntax         []syntax.Resulter
-	Search         []buffer.SearchResult
-	Layer          string
-	Status         layer.ParseStatus
-	Partial        string
-	ContentChanged bool
-	CursorChanged  bool
-	NewBuffer      bool
-	CloseBuffer    bool
-	InfoChanged    bool
-	Quit           bool
-	Err            error
-}
-
 // Exec will execute a transaction in the editor
-func (e *Editor) Exec(bufid string, actions ...action.Action) Response {
-	resp := Response{Buffer: bufid}
+func (e *Editor) Exec(req Request) Response {
+	resp := Response{Buffer: req.BufferID}
 	need := false
-	for i := range actions {
-		if err := actions[i].Valid(bufid); err != nil {
+	for _, act := range req.Actions {
+		if err := act.Valid(req.BufferID); err != nil {
 			resp.Err = err
 			return resp
 		}
-		if actions[i].NeedBuffer() {
+		if act.NeedBuffer() {
 			need = true
 		}
 	}
 
-	buf, err := e.buffer(bufid)
+	buf, err := e.buffer(req.BufferID)
 	if err != nil && need {
 		resp.Err = err
 		return resp
 	}
 
-	for _, act := range actions {
+	for _, act := range req.Actions {
 		//logger.Debugf("Editor.Exec: %v %v", bufid, act.Name)
 		switch strings.ToLower(act.Name) {
 
@@ -72,7 +42,7 @@ func (e *Editor) Exec(bufid string, actions ...action.Action) Response {
 			return resp
 
 		case action.SelectBuffer:
-			e.activeBufID = bufid
+			e.activeBufID = req.BufferID
 
 		// Search
 		case action.Search:
@@ -108,10 +78,10 @@ func (e *Editor) Exec(bufid string, actions ...action.Action) Response {
 				resp.Err = fmt.Errorf("CloseBuffer: Buffer is dirty")
 				return resp
 			}
-			e.remove(bufid)
+			e.remove(req.BufferID)
 			resp.CloseBuffer = true
 		case action.OpenFile:
-			id := bufid
+			id := req.BufferID
 			if id == "" {
 				resp.NewBuffer = true
 				id = e.newBuffer()

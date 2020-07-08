@@ -17,7 +17,7 @@ Editor is an editor instance
 #### func (*Editor) ActionChan
 
 ```go
-func (e *Editor) ActionChan() chan []action.Action
+func (e *Editor) ActionChan() chan Request
 ```
 ActionChan returns the action channel
 
@@ -38,35 +38,23 @@ DoneChan returns the done channel
 #### func (*Editor) Exec
 
 ```go
-func (e *Editor) Exec(bufid string, actions ...action.Action) Response
+func (e *Editor) Exec(req Request) Response
 ```
 Exec will execute a transaction in the editor
 
-#### func (*Editor) KeyChan
+#### func (*Editor) ExecChan
 
 ```go
-func (e *Editor) KeyChan() chan key.Keyer
+func (e *Editor) ExecChan(reqC chan Request, respC chan Response, done chan struct{})
 ```
-KeyChan returns the key channel
-
-#### func (*Editor) Listen
-
-```go
-func (e *Editor) Listen(respC chan Response) error
-```
-Listen will begin listening on key, action and done channels it requires a
-response channel from the consumer sending on the done channel will close the
-channels and exit
+ExecChan will listen for requests
 
 #### type Editorer
 
 ```go
 type Editorer interface {
-	Exec(bufid string, actions ...action.Action) Response
-	KeyChan() chan key.Keyer
-	ActionChan() chan []action.Action
-	DoneChan() chan struct{}
-	Listen(chan Response) error
+	Exec(Request) Response
+	ExecChan(reqC chan Request, respC chan Response, done chan struct{})
 }
 ```
 
@@ -75,18 +63,7 @@ Editorer is an editor interface
 #### func  New
 
 ```go
-func New(
-	uf undo.Factory,
-	tf textstore.Factory,
-	bf buffer.Factory,
-	cf cursor.Factory,
-	sf syntax.Factory,
-	ftf filetype.Factory,
-	of textobject.Factory,
-	rf register.Factory,
-	lf layer.Factory,
-	rt ...string,
-) (Editorer, error)
+func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, rt ...string) (Editorer, error)
 ```
 New will return a new editor
 
@@ -101,6 +78,31 @@ type KeyValue struct {
 
 KeyValue is key/value data
 
+#### type Request
+
+```go
+type Request struct {
+	BufferID string
+	Actions  []action.Action
+}
+```
+
+Request is a request for actions
+
+#### func  NewRequest
+
+```go
+func NewRequest(bufid string, acts ...action.Action) Request
+```
+NewRequest returns a Request
+
+#### func (*Request) Add
+
+```go
+func (r *Request) Add(act ...action.Action)
+```
+Add will add actions to a request
+
 #### type Response
 
 ```go
@@ -113,7 +115,6 @@ type Response struct {
 	Syntax         []syntax.Resulter
 	Search         []buffer.SearchResult
 	Layer          string
-	Status         layer.ParseStatus
 	Partial        string
 	ContentChanged bool
 	CursorChanged  bool

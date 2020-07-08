@@ -4,6 +4,10 @@ import "fmt"
 
 // StrToKey converts a string representaion to a rune, key
 func StrToKey(s string) (r rune, k int, err error) {
+	if len(s) == 0 {
+		err = fmt.Errorf("StrToKey: Blank string")
+		return
+	}
 	var ok bool
 	k, ok = convertKeyTable[s]
 	if ok {

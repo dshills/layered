@@ -75,9 +75,10 @@ const (
 
 // Other
 const (
-	Syntax      = "syntax"
-	RunCommand  = "runcommand"
-	SetMark     = "setmark"
-	ChangeLayer = "changelayer"
-	Quit        = "quit"
+	Syntax          = "syntax"
+	RunCommand      = "runcommand"
+	SetMark         = "setmark"
+	ChangeLayer     = "changelayer"
+	ChangePrevLayer = "changeprevlayer"
+	Quit            = "quit"
 )

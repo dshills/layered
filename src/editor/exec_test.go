@@ -7,7 +7,6 @@ import (
 	"github.com/dshills/layered/buffer"
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
-	"github.com/dshills/layered/layer"
 	"github.com/dshills/layered/register"
 	"github.com/dshills/layered/syntax"
 	"github.com/dshills/layered/textobject"
@@ -22,11 +21,14 @@ var bufid string
 
 func TestExect(t *testing.T) {
 	var err error
-	ed, err = New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, layer.New, rtpath)
+	ed, err = New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, rtpath)
 	if err != nil {
 		t.Error(err)
 	}
-	resp := ed.Exec("", action.Action{Name: action.NewBuffer})
+	req := Request{
+		Actions: []action.Action{action.Action{Name: action.NewBuffer}},
+	}
+	resp := ed.Exec(req)
 	if resp.Err != nil {
 		t.Error(resp.Err)
 	}
@@ -41,7 +43,7 @@ func TestReset(t *testing.T) {
 		Name:   action.OpenFile,
 		Target: "/Users/dshills/Development/projects/goed-core/testdata/scanner.go",
 	}
-	resp := ed.Exec(bufid, act)
+	resp := ed.Exec(NewRequest(bufid, act))
 	if resp.Err != nil {
 		t.Error(resp.Err)
 	}
@@ -49,21 +51,21 @@ func TestReset(t *testing.T) {
 
 func TestDeleteLine(t *testing.T) {
 	act := action.Action{Name: action.DeleteLine, Line: 1}
-	resp := ed.Exec(bufid, act)
+	resp := ed.Exec(NewRequest(bufid, act))
 	if resp.Err != nil {
 		t.Error(resp.Err)
 	}
 }
 
 func TestUndo(t *testing.T) {
-	resp := ed.Exec(bufid, action.Action{Name: action.Undo})
+	resp := ed.Exec(NewRequest(bufid, action.Action{Name: action.Undo}))
 	if resp.Err != nil {
 		t.Error(resp.Err)
 	}
 }
 
 func TestBufferList(t *testing.T) {
-	resp := ed.Exec(bufid, action.Action{Name: action.BufferList})
+	resp := ed.Exec(NewRequest(bufid, action.Action{Name: action.BufferList}))
 	if resp.Err != nil {
 		t.Error(resp.Err)
 	}
@@ -74,7 +76,7 @@ func TestBufferList(t *testing.T) {
 
 func TestContent(t *testing.T) {
 	act := action.Action{Name: action.Content, Line: 45, Count: 30}
-	resp := ed.Exec(bufid, act)
+	resp := ed.Exec(NewRequest(bufid, act))
 	if resp.Err != nil {
 		t.Error(resp.Err)
 	}
@@ -84,7 +86,7 @@ func TestContent(t *testing.T) {
 }
 
 func TestSyntax(t *testing.T) {
-	resp := ed.Exec(bufid, action.Action{Name: action.Syntax})
+	resp := ed.Exec(NewRequest(bufid, action.Action{Name: action.Syntax}))
 	if resp.Err != nil {
 		t.Error(resp.Err)
 	}
@@ -95,7 +97,7 @@ func TestSyntax(t *testing.T) {
 
 func TestSearch(t *testing.T) {
 	act := action.Action{Name: action.Search, Target: "scan"}
-	resp := ed.Exec(bufid, act)
+	resp := ed.Exec(NewRequest(bufid, act))
 	if resp.Err != nil {
 		t.Error(resp.Err)
 	}

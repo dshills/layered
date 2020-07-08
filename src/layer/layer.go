@@ -5,185 +5,171 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"unicode"
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/key"
 )
 
-// Layer is a mapping of key strokes to actions
-type Layer struct {
-	name           string
-	keyActs        []keyAct
-	noMatchActions []action.Action
-	partialActions []action.Action
-	beginActions   []action.Action
-	endActions     []action.Action
+type layer struct {
+	name         string
+	editable     bool
+	wait         bool
+	nostack      bool
+	cancelKey    key.Keyer
+	completeKey  key.Keyer
+	prevlayerKey key.Keyer
+	any          []action.Action
+	anyprint     []action.Action
+	anynonprint  []action.Action
+	onEnter      []action.Action
+	onExit       []action.Action
+	onComplete   []action.Action
+	onMatch      []action.Action
+	onNoMatch    []action.Action
+	onPartial    []action.Action
+	keyActions   []KeyAction
 }
 
-func actCopy(acts []action.Action) []action.Action {
-	a := make([]action.Action, len(acts))
-	copy(a, acts)
-	return a
-}
+func (l *layer) Name() string                                               { return l.name }
+func (l *layer) Map(name string, keys []key.Keyer, actions []action.Action) {}
+func (l *layer) UnMap(name string)                                          {}
+func (l *layer) Editable() bool                                             { return l.editable }
+func (l *layer) WaitForComplete() bool                                      { return l.wait }
+func (l *layer) NotStacked() bool                                           { return l.nostack }
+func (l *layer) CancelKey() key.Keyer                                       { return l.cancelKey }
+func (l *layer) PrevLayerKey() key.Keyer                                    { return l.prevlayerKey }
+func (l *layer) CompleteKey() key.Keyer                                     { return l.completeKey }
 
-// Match will attempt to map keys to actions
-func (l *Layer) Match(keys []key.Keyer) ([]action.Action, ParseStatus) {
-	hasPartial := false
-	for i := range l.keyActs {
-		switch l.keyActs[i].match(keys) {
-		case Match:
-			return actCopy(l.keyActs[i].actions), Match
-		case PartialMatch:
-			hasPartial = true
-		}
-	}
-	if hasPartial {
-		return nil, PartialMatch
-	}
-	return nil, NoMatch
-}
-
-// Name returns the layer name
-func (l *Layer) Name() string { return l.name }
-
-// Map will add a keys / actions mapping
-func (l *Layer) Map(name string, keys []string, actions []action.Action) error {
-	kms := []keyMatch{}
-	for _, s := range keys {
-		km, err := newKeyMatch(s)
-		if err != nil {
-			return err
-		}
-		kms = append(kms, km)
-	}
-	l.keyActs = append(l.keyActs, keyAct{matchers: kms, actions: actions})
-	return nil
-}
-
-// Unmap will remove a mapping
-func (l *Layer) Unmap(name string) {
-	// TODO
-}
-
-// BeginActions will return the actions that are returned when switching to layer
-func (l *Layer) BeginActions() []action.Action { return actCopy(l.beginActions) }
-
-// EndActions will return the actions that are returned when leaving layer
-func (l *Layer) EndActions() []action.Action { return actCopy(l.endActions) }
-
-// PartialMatchActions returns the partial match actions
-func (l *Layer) PartialMatchActions() []action.Action { return actCopy(l.partialActions) }
-
-// NoMatchActions returns actions when keys do not match
-func (l *Layer) NoMatchActions() []action.Action { return actCopy(l.noMatchActions) }
-
-// Load will load a layer from a reader
-func (l *Layer) Load(r io.Reader) error {
-	js := jsLayer{}
-	if err := json.NewDecoder(r).Decode(&js); err != nil {
-		return err
-	}
+func (l *layer) OnAnyKey() []action.Action         { return l.any }
+func (l *layer) OnPrintableKey() []action.Action   { return l.anyprint }
+func (l *layer) OnNonPritableKey() []action.Action { return l.anyprint }
+func (l *layer) OnEnterLayer() []action.Action     { return l.onEnter }
+func (l *layer) OnExitLayer() []action.Action      { return l.onExit }
+func (l *layer) OnComplete() []action.Action       { return l.onComplete }
+func (l *layer) OnMatch() []action.Action          { return l.onMatch }
+func (l *layer) OnNoMatch() []action.Action        { return l.onNoMatch }
+func (l *layer) OnPartialMatch() []action.Action   { return l.onPartial }
+func (l *layer) KeyActions() []KeyAction           { return l.keyActions }
+func (l *layer) Load(r io.Reader) error {
 	errs := []string{}
-	l.name = js.Name
-	for _, a := range js.OnBeginActions {
-		act, err := a.asAction()
-		if err != nil {
-			errs = append(errs, err.Error())
-			continue
-		}
-		l.beginActions = append(l.beginActions, act)
+	var err error
+	lay := layJSON{}
+	if err := json.NewDecoder(r).Decode(&lay); err != nil {
+		return fmt.Errorf("%v", err)
 	}
-	for _, a := range js.OnEndActions {
-		act, err := a.asAction()
-		if err != nil {
-			errs = append(errs, err.Error())
-			continue
-		}
-		l.endActions = append(l.endActions, act)
+	l.name = strings.ToLower(lay.Name)
+	l.editable = lay.Editable
+	l.wait = lay.WaitForComplete
+	l.prevlayerKey, _ = key.StrToKeyer(lay.PrevLayerOnKey)
+	l.cancelKey, _ = key.StrToKeyer(lay.CancelOnKey)
+	l.completeKey, _ = key.StrToKeyer(lay.CompleteOnKey)
+
+	l.any, err = convertActions(lay.OnAnyKey)
+	if err != nil {
+		errs = append(errs, err.Error())
 	}
-	for _, a := range js.NoMatchActions {
-		act, err := a.asAction()
-		if err != nil {
-			errs = append(errs, err.Error())
-			continue
-		}
-		l.noMatchActions = append(l.noMatchActions, act)
+	l.anyprint, err = convertActions(lay.OnPrintableKey)
+	if err != nil {
+		errs = append(errs, err.Error())
 	}
-	for _, a := range js.PartialMatchActions {
-		act, err := a.asAction()
-		if err != nil {
-			errs = append(errs, err.Error())
-			continue
-		}
-		l.partialActions = append(l.partialActions, act)
+	l.anynonprint, err = convertActions(lay.OnNonPritableKey)
+	if err != nil {
+		errs = append(errs, err.Error())
 	}
-	for _, kact := range js.Commands {
-		kas, err := kact.asKeyAction()
-		if err != nil {
-			errs = append(errs, err.Error())
-		}
-		l.keyActs = append(l.keyActs, kas)
+	l.onEnter, err = convertActions(lay.OnEnterLayer)
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+	l.onExit, err = convertActions(lay.OnExitLayer)
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+	l.onComplete, err = convertActions(lay.OnComplete)
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+	l.onMatch, err = convertActions(lay.OnMatch)
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+	l.onNoMatch, err = convertActions(lay.OnNoMatch)
+	if err != nil {
+		errs = append(errs, err.Error())
+	}
+	l.onPartial, err = convertActions(lay.OnPartialMatch)
+	if err != nil {
+		errs = append(errs, err.Error())
 	}
 
+	for _, ka := range lay.Actions {
+		acts, err := convertActions(ka.Actions)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		keys, err := convertKeys(ka.Keys)
+		if err != nil {
+			errs = append(errs, err.Error())
+		}
+		if len(acts) > 0 && len(keys) > 0 {
+			l.keyActions = append(l.keyActions, NewKeyAction(ka.Name, keys, acts))
+		}
+	}
 	if len(errs) > 0 {
 		return fmt.Errorf("%v", strings.Join(errs, ", "))
 	}
+
 	return nil
 }
 
-type jsLayer struct {
-	Name                string        `json:"name"`
-	Default             bool          `json:"default"`
-	OnBeginActions      []jsAction    `json:"on_begin_actions"`
-	OnEndActions        []jsAction    `json:"on_end_actions"`
-	NoMatchActions      []jsAction    `json:"no_match_actions"`
-	PartialMatchActions []jsAction    `json:"partial_match_actions"`
-	Commands            []jsKeyAction `json:"commands"`
-}
+func (l *layer) Match(keys []key.Keyer) ([]action.Action, MatchStatus) {
+	status := NoMatch
+	acts := []action.Action{}
 
-type jsAction struct {
-	Action string `json:"action"`
-	Target string `json:"target"`
-}
-
-func (a jsAction) asAction() (action.Action, error) {
-	act, err := action.StrToAction(a.Action)
-	if err != nil {
-		return act, fmt.Errorf("%v", a.Action)
-	}
-	act.Target = a.Target
-	act.Count = 1
-	return act, nil
-}
-
-type jsKeyAction struct {
-	Name    string     `json:"name"`
-	Keys    []string   `json:"keys"`
-	Actions []jsAction `json:"actions"`
-}
-
-func (ka jsKeyAction) asKeyAction() (keyAct, error) {
-	actions := []action.Action{}
-	errs := []string{}
-	for _, a := range ka.Actions {
-		act, err := a.asAction()
-		if err != nil {
-			errs = append(errs, err.Error())
-			continue
+	for _, ka := range l.keyActions {
+		switch ka.Match(keys) {
+		case Match:
+			acts = append(acts, ka.Actions()...)
+			status = Match
+			break
+		case PartialMatch:
+			status = PartialMatch
 		}
-		actions = append(actions, act)
 	}
-	keys := []keyMatch{}
-	for i := range ka.Keys {
-		km, err := newKeyMatch(ka.Keys[i])
-		if err != nil {
-			errs = append(errs, err.Error())
-			continue
-		}
-		keys = append(keys, km)
+
+	switch status {
+	case Match:
+		acts = append(acts, l.OnMatch()...)
+	case NoMatch:
+		acts = append(acts, l.OnNoMatch()...)
+	case PartialMatch:
+		acts = append(acts, l.OnPartialMatch()...)
 	}
-	if len(errs) > 0 {
-		return newKeyAct(keys, actions), fmt.Errorf("asKeyAction: %v", strings.Join(errs, ", "))
+
+	return acts, status
+}
+
+func (l *layer) MatchSpecial(k key.Keyer) ([]action.Action, bool) {
+	acts := []action.Action{}
+	if l.cancelKey != nil && l.cancelKey.Eq(k) {
+		return []action.Action{action.Action{Name: action.ChangeLayer, Target: "default"}}, true
 	}
-	return newKeyAct(keys, actions), nil
+	if l.completeKey != nil && l.completeKey.Eq(k) {
+		return l.onComplete, true
+	}
+	if l.prevlayerKey != nil && l.prevlayerKey.Eq(k) {
+		return []action.Action{action.Action{Name: action.ChangeLayer, Target: "previous"}}, true
+	}
+	acts = append(acts, l.OnAnyKey()...)
+	if unicode.IsPrint(k.Rune()) {
+		acts = append(acts, l.OnPrintableKey()...)
+	} else {
+		acts = append(acts, l.OnNonPritableKey()...)
+	}
+	return acts, false
+}
+
+// NewLayer will return a Layer
+func NewLayer(name string) Layer {
+	return &layer{name: name}
 }
