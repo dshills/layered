@@ -1,0 +1,135 @@
+{
+	"name": "block-()",
+	"start": "\\(",
+	"end": "\\)",
+	"multiline": true,
+	"keys": "(}b"
+}
+
+{
+	"name": "block-<>",
+	"start": "<",
+	"end": ">",
+	"multiline": true,
+	"keys": "<"
+}
+
+{
+	"name": "block-[]",
+	"start": "\\[",
+	"end": "\\]",
+	"multiline": true,
+	"keys": "[]"
+}
+
+	{
+		"name": "block-{}",
+		"start": "{",
+		"end": "}",
+		"multiline": true,
+		"keys": "{}B"
+	}
+
+{
+	"name": "bol-not-blank",
+	"start": "([^\\s\\t])",
+	"simple": true,
+	"first_match": true,
+	"keys": "^"
+}
+
+{
+	"name": "bol",
+	"start": "^.",
+	"simple": true,
+	"first_match": true,
+	"keys": "0"
+}
+
+{
+	"name": "eol-not-blank",
+	"start": "([^\\s\\t])[\\s\\t]*$",
+	"simple": true,
+	"first_match": true,
+	"keys": "_"
+}
+
+{
+	"name": "eol",
+	"start": ".$",
+	"simple": true,
+	"first_match": true,
+	"keys": "$"
+}
+
+{
+	"name": "line",
+	"start": "^$",
+	"simple": true,
+	"keys": "l"
+}
+
+{
+	"name": "paragraph",
+	"start": "(^$)",
+	"alt_start": "BOF-NOT-EMPTY",
+	"alt_end": "EOF",
+	"simple": true,
+	"multiline": true,
+	"keys": "p"
+}
+
+{
+	"name": "sentence",
+	"start": "[^\\s\\t]([\\.|\\?|\\!])([\\s\\t]|$)",
+	"simple": true,
+	"multiline": true,
+	"keys": "s"
+}
+
+{
+	"name": "string-double",
+	"start": "\"",
+	"end": "\"",
+	"multiline": true,
+	"keys": "\""
+}
+
+{
+	"name": "string-double",
+	"start": "\"",
+	"end": "\"",
+	"multiline": true,
+	"keys": "\""
+}
+
+{
+	"name": "string-tick",
+	"start": "`",
+	"end": "`",
+	"multiline": true,
+	"keys": "`"
+}
+
+{
+	"name": "tag",
+	"start": "</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>",
+	"simple": true,
+	"multiline": true,
+	"keys": "t"
+}
+
+{
+	"name": "word-ext",
+	"start": "([^\\s\\t]+|^$)",
+	"simple": true,
+	"keys": "W"
+}
+
+{
+	"name": "word",
+	"start": "(\\b[a-zA-Z0-9_]+|^$|[^\\s\\t])",
+	"simple": true,
+	"keys": "w"
+}
+

@@ -1,9 +1,10 @@
 {
 	"name": "insert",
 	"cancelOnKey": "<esc>",
-	"onPrintableKey": [{ "action": "Insert",  "target": "input"}],
+	"onPrintableKey": [{ "action": "InsertString",  "target": "input"}],
+	"allowCursorPastEnd": true,
 	"actions": [
-		{ "name": "",  "keys": [ "<cr>" ], "actions": [{ "action": "Insert",  "target": "line"}] },
+		{ "name": "",  "keys": [ "<cr>" ], "actions": [{ "action": "InsertLine"}] },
 		{ "name": "",  "keys": [ "<bs>" ], "actions": [{ "action": "DeleteCharBack"}] }
 	]
 }
