@@ -101,7 +101,7 @@ Add will add actions to a request
 
 ```go
 type Response struct {
-	Buffer         string
+	BufferID       string
 	Action         action.Action
 	Line, Column   int
 	Dirty          bool

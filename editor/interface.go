@@ -39,7 +39,7 @@ type KeyValue struct {
 
 // Response is a exec response
 type Response struct {
-	Buffer         string
+	BufferID       string
 	Action         action.Action
 	Line, Column   int
 	Dirty          bool

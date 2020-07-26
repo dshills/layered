@@ -106,8 +106,8 @@ func TestMoveObj(t *testing.T) {
 		reqC <- NewRequest(buffer, ta.action)
 		resp := <-respC
 		fmt.Printf("Response: %v %v => %v:%v\n", resp.Action.Name, resp.Action.Target, resp.Line, resp.Column)
-		if resp.Buffer != "" {
-			buffer = resp.Buffer
+		if resp.BufferID != "" {
+			buffer = resp.BufferID
 		}
 		if resp.Err != nil {
 			t.Error(resp.Err)

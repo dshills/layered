@@ -48,16 +48,16 @@ func (s *screen) handleResponse() {
 			close(s.doneC)
 		}
 		if resp.NewBuffer {
-			s.newWindow(resp.Buffer)
+			s.newWindow(resp.BufferID)
 		}
 		if resp.ContentChanged {
-			idx := s.winIdx(resp.Buffer)
+			idx := s.winIdx(resp.BufferID)
 			if idx != -1 {
 				s.windows[idx].draw()
 			}
 		}
 		if resp.CursorChanged {
-			idx := s.winIdx(resp.Buffer)
+			idx := s.winIdx(resp.BufferID)
 			if idx != -1 {
 				s.windows[idx].drawCursor(resp.Line, resp.Column)
 			}

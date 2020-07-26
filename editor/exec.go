@@ -26,18 +26,18 @@ func (e *Editor) ExecChan(reqC chan Request, respC chan Response, done chan stru
 func (e *Editor) exec(req Request, respC chan Response) {
 	buf, err := e.validateRequest(req)
 	if err != nil {
-		respC <- Response{Buffer: req.BufferID, Err: err}
+		respC <- Response{BufferID: req.BufferID, Err: err}
 	}
 	req = e.updatePos(req, buf)
 	for _, act := range req.Actions {
-		resp := Response{Buffer: req.BufferID, Action: act, ContentChanged: true}
+		resp := Response{BufferID: req.BufferID, Action: act, ContentChanged: true}
 		switch strings.ToLower(act.Name) {
 
 		case action.Quit:
 			if len(e.bufs) > 1 {
 				e.remove(e.activeBufID)
 				e.activeBufID = e.bufs[len(e.bufs)-1].ID()
-				resp.Buffer = e.activeBufID
+				resp.BufferID = e.activeBufID
 				resp.CloseBuffer = true
 				respC <- resp
 				return
@@ -83,7 +83,7 @@ func (e *Editor) exec(req Request, respC chan Response) {
 			}
 			resp.ContentChanged = false
 		case action.NewBuffer:
-			resp.Buffer = e.newBuffer()
+			resp.BufferID = e.newBuffer()
 			resp.NewBuffer = true
 		case action.SaveBuffer:
 			if err := buf.SaveBuffer(act.Target); err != nil {
@@ -94,7 +94,7 @@ func (e *Editor) exec(req Request, respC chan Response) {
 			resp.ContentChanged = false
 		case action.CloseBuffer:
 			if buf.Dirty() {
-				resp.Err = fmt.Errorf("CloseBuffer: Buffer is dirty")
+				resp.Err = fmt.Errorf("CloseBuffer: BufferID is dirty")
 				respC <- resp
 				return
 			}
@@ -106,7 +106,7 @@ func (e *Editor) exec(req Request, respC chan Response) {
 			if id == "" {
 				resp.NewBuffer = true
 				id = e.newBuffer()
-				resp.Buffer = id
+				resp.BufferID = id
 			}
 			buf, err := e.buffer(id)
 			if err != nil {
@@ -307,7 +307,7 @@ func getInfo(req Request, buf buffer.Bufferer, resp Response) Response {
 	if buf == nil {
 		return resp
 	}
-	resp.Buffer = buf.ID()
+	resp.BufferID = buf.ID()
 	resp.Dirty = buf.Dirty()
 	resp.Filename = buf.Filename()
 	resp.Filetype = buf.Filetype()
