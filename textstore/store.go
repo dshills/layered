@@ -10,30 +10,18 @@ import (
 	"github.com/dshills/layered/undo"
 )
 
-type subscription struct {
-	id string
-	ch chan uint64
-}
-
-// Store is an implementation of LineBuffer
+// Store is a TextStore
 type Store struct {
-	lines     []*Line
+	lines     []*line
 	delim     string
 	undoFac   undo.Factory
 	undo      []undo.ChangeSetter
 	redo      []undo.ChangeSetter
-	hold      []undo.ChangeSetter
+	active    []undo.ChangeSetter
 	grpUndo   bool
 	isUndoing bool
 	subs      []subscription
 	txthash   uint64
-}
-
-// Reset will set the Store to s
-func (s *Store) Reset(st string) uint64 {
-	r := strings.NewReader(st)
-	s.ReadFrom(r)
-	return s.txthash
 }
 
 // ReadFrom will read from an io.Reader
@@ -43,9 +31,9 @@ func (s *Store) ReadFrom(r io.Reader) (int64, error) {
 		nw = true
 	}
 	scanner := bufio.NewScanner(r)
-	s.lines = []*Line{}
+	s.lines = []*line{}
 	for scanner.Scan() {
-		s.lines = append(s.lines, NewLine(scanner.Text()))
+		s.lines = append(s.lines, newLine(scanner.Text()))
 	}
 	if nw {
 		s.hash()
@@ -55,25 +43,62 @@ func (s *Store) ReadFrom(r io.Reader) (int64, error) {
 	return int64(s.Len()), scanner.Err()
 }
 
-// NewLine creates a new line after line
-func (s *Store) NewLine(st string, line int) (int, error) {
-	if line < 0 || line >= len(s.lines) {
-		return 0, fmt.Errorf("NewLine: Invalid line %v", line)
+// Replace replaces text at ln, col
+func (s *Store) Replace(ln, from, to int, st string) error {
+	if ln < 0 || ln >= len(s.lines) {
+		return fmt.Errorf("Replace: line %v out of range", ln)
 	}
-	s.lines = append(s.lines[:line], append([]*Line{NewLine(st)}, s.lines[line:]...)...)
+	s.lines[ln].replaceString(from, to, st)
+	s.AddUndoSet(s.lines[ln].changeSet(ln, s.undoFac))
+	return nil
+}
+
+// Insert inserts text to line
+func (s *Store) Insert(ln, col int, st string) error {
+	if ln < 0 || ln >= len(s.lines) {
+		return fmt.Errorf("Insert: line %v out of range", ln)
+	}
+	s.lines[ln].insertString(col, st)
+	s.AddUndoSet(s.lines[ln].changeSet(ln, s.undoFac))
+	return nil
+}
+
+// Delete will delete text at line, col
+func (s *Store) Delete(ln, col, cnt int) error {
+	if ln < 0 || ln >= len(s.lines) {
+		return fmt.Errorf("Delete: line %v out of range", ln)
+	}
+	s.lines[ln].delete(col, cnt)
+	s.AddUndoSet(s.lines[ln].changeSet(ln, s.undoFac))
+	return nil
+}
+
+// NewLine creates a new line after line
+func (s *Store) NewLine(ln int, st string) (int, error) {
+	if ln < 0 || ln >= len(s.lines) {
+		return 0, fmt.Errorf("newLine: Invalid line %v", ln)
+	}
+	s.lines = append(s.lines[:ln], append([]*line{newLine(st)}, s.lines[ln:]...)...)
 	cs := s.undoFac()
-	cs.AddLine(line)
-	cs.ChangeLine(line+1, "", st)
+	cs.AddLine(ln)
+	cs.ChangeLine(ln+1, "", st)
 	s.AddUndoSet(cs)
-	return line, nil
+	return ln, nil
+}
+
+// Reset will set the Store to s
+func (s *Store) Reset(st string) uint64 {
+	r := strings.NewReader(st)
+	s.ReadFrom(r)
+	return s.txthash
 }
 
 // DeleteLine will remove a line
 func (s *Store) DeleteLine(line int) (string, error) {
 	if line < 0 || line >= len(s.lines) {
-		return "", fmt.Errorf("NewLine: Invalid line %v", line)
+		return "", fmt.Errorf("newLine: Invalid line %v", line)
 	}
-	original := s.lines[line].text
+	original := s.lines[line].String()
 	if line < len(s.lines)-1 {
 		copy(s.lines[line:], s.lines[line+1:])
 	}
@@ -87,114 +112,50 @@ func (s *Store) DeleteLine(line int) (string, error) {
 }
 
 // ResetLine will set the contents of a line
-func (s *Store) ResetLine(st string, line int) (string, error) {
+func (s *Store) ResetLine(line int, st string) (string, error) {
 	if line < 0 || line >= len(s.lines) {
 		return "", fmt.Errorf("ResetLine: Invalid offset %v", line)
 	}
-	original := s.lines[line].text
-	s.lines[line].Reset(st)
+	original := s.lines[line].String()
+	s.lines[line].reset(st)
 	cs := s.undoFac()
 	cs.ChangeLine(line, original, st)
 	s.AddUndoSet(cs)
 	return original, nil
 }
 
-// LineString will return the line as a string
-func (s *Store) LineString(line int) (string, error) {
-	if line < 0 || line >= len(s.lines) {
-		return "", fmt.Errorf("LineString: Invalid offset %v", line)
-	}
-	return s.lines[line].text, nil
-}
-
-// LineRangeString will return an array of line content
-func (s *Store) LineRangeString(line, cnt int) ([]string, error) {
-	nl := len(s.lines)
-	if line < 0 || line >= nl {
-		return nil, fmt.Errorf("LineRangeString: Invalid offset %v", line)
-	}
-	list := []string{}
-	for i := line; i < line+cnt; i++ {
-		if i >= nl {
-			break
-		}
-		list = append(list, s.lines[i].text)
-	}
-	return list, nil
-}
-
-// NumLines returns the number of lines
-func (s *Store) NumLines() int {
-	return len(s.lines)
-}
-
-// LineLen returns the length of a line without delimeters
-func (s *Store) LineLen(line int) int {
-	if line < 0 || line >= len(s.lines) {
-		return -1
-	}
-	return s.lines[line].Len()
-}
-
-// String will return all lines with delimeters
 func (s *Store) String() string {
 	builder := strings.Builder{}
-	for i := range s.lines {
-		builder.WriteString(s.lines[i].String())
-		builder.WriteString(s.delim)
+	for _, ln := range s.lines {
+		builder.WriteString(ln.delimited(s.delim))
 	}
 	return builder.String()
 }
 
-// Len will return the total length with delimeters
-func (s *Store) Len() int {
-	cnt := 0
-	dl := len(s.delim)
-	for i := range s.lines {
-		cnt += s.lines[i].Len() + dl
-	}
-	return cnt
+func (s *Store) notifyChange() {
+	go func() {
+		if s.hash() {
+			for i := range s.subs {
+				s.subs[i].ch <- s.Hash64()
+			}
+		}
+	}()
 }
 
-// ReadRuneAt will return the run within a line
-func (s *Store) ReadRuneAt(line, col int) (rune, int, error) {
-	if line < 0 || line >= len(s.lines) {
-		return 0, 0, fmt.Errorf("ReadRuneAt: Invalid line %v", line)
+func (s *Store) hash() bool {
+	h := fnv.New64a()
+	h.Write([]byte(s.String()))
+	nh := h.Sum64()
+	if s.txthash != nh {
+		s.txthash = nh
+		return true
 	}
-	if col >= s.lines[line].Len() {
-		return 0, 0, fmt.Errorf("ReadRuneAt: Invalid col %v", col)
-	}
-	reader, err := s.LineAt(line)
-	if err != nil {
-		return 0, 0, err
-	}
-	return reader.ReadRuneAt(int64(col))
+	return false
 }
 
-// LineAt returns the line at line
-func (s *Store) LineAt(line int) (LineReader, error) {
-	if line < 0 || line >= len(s.lines) {
-		return nil, fmt.Errorf("LineAt: Invalid line %v", line)
-	}
-	return NewReader(s.lines[line]), nil
-}
-
-// LineWriterAt returns a writer for line at line
-func (s *Store) LineWriterAt(line int) (LineWriter, error) {
-	if line < 0 || line >= len(s.lines) {
-		return nil, fmt.Errorf("LineWriterAt: Invalid line %v", line)
-	}
-	return NewWriter(s.lines[line], line, s), nil
-}
-
-// SetLineDelim will set the line delimeter
-func (s *Store) SetLineDelim(str string) {
-	s.delim = str
-}
-
-// LineDelim will return the current linedelimeter
-func (s *Store) LineDelim() string {
-	return s.delim
+// Hash64 will return a 64bit hash
+func (s *Store) Hash64() uint64 {
+	return s.txthash
 }
 
 // Undo will undo the last set of edits
@@ -214,14 +175,14 @@ func (s *Store) Undo() error {
 		change := changes[i]
 		switch change.Type() {
 		case undo.DeleteLine:
-			s.NewLine(change.Undo(""), change.Line())
+			s.NewLine(change.Line(), change.Undo(""))
 
 		case undo.AddLine:
 			s.DeleteLine(change.Line())
 
 		case undo.ChangeLine:
 			txt, _ := s.LineString(change.Line())
-			s.ResetLine(change.Undo(txt), change.Line())
+			s.ResetLine(change.Line(), change.Undo(txt))
 		}
 	}
 	return nil
@@ -240,40 +201,109 @@ func (s *Store) Redo() error {
 		change := changes[i]
 		switch change.Type() {
 		case undo.DeleteLine:
-			s.NewLine(change.Undo(""), change.Line())
+			s.NewLine(change.Line(), change.Undo(""))
 
 		case undo.AddLine:
 			s.DeleteLine(change.Line())
 
 		case undo.ChangeLine:
 			txt, _ := s.LineString(change.Line())
-			s.ResetLine(change.Undo(txt), change.Line())
+			s.ResetLine(change.Line(), change.Undo(txt))
 		}
 	}
 	return nil
 }
 
-// StartGroupUndo will defer undo save until stopped
-// grouping all undos together
-func (s *Store) StartGroupUndo() {
+// SetLineDelim will set the line delimeter
+func (s *Store) SetLineDelim(str string) {
+	s.delim = str
+}
+
+// LineDelim will return the current linedelimeter
+func (s *Store) LineDelim() string {
+	return s.delim
+}
+
+// Len will return the total length with delimeters
+func (s *Store) Len() int {
+	cnt := 0
+	dl := len(s.delim)
+	for i := range s.lines {
+		cnt += s.lines[i].Len() + dl
+	}
+	return cnt
+}
+
+// WriteTo will write the store to w
+func (s *Store) WriteTo(w io.Writer) (int64, error) {
+	cnt, err := w.Write([]byte(s.String()))
+	return int64(cnt), err
+}
+
+// LineRange returns a range of lines
+func (s *Store) LineRange(ln, cnt int) ([]string, error) {
+	if ln < 0 || ln+cnt >= len(s.lines) {
+		return nil, fmt.Errorf("LineRange: line %v out of range", ln)
+	}
+	strs := []string{}
+	for i := 0; i < cnt; i++ {
+		strs = append(strs, s.lines[ln+i].String())
+	}
+	return strs, nil
+}
+
+// LineString will return the line as a string
+func (s *Store) LineString(line int) (string, error) {
+	if line < 0 || line >= len(s.lines) {
+		return "", fmt.Errorf("LineString: Invalid offset %v", line)
+	}
+	return s.lines[line].String(), nil
+}
+
+// NumLines returns the number of lines
+func (s *Store) NumLines() int {
+	return len(s.lines)
+}
+
+// LineLen returns the lkength of a line
+func (s *Store) LineLen(line int) int {
+	if line < 0 || line >= len(s.lines) {
+		return -1
+	}
+	return s.lines[line].Len()
+}
+
+// RuneAt returns the rune at ln, col
+func (s *Store) RuneAt(ln, col int) (rune, error) {
+	if ln < 0 || ln >= len(s.lines) {
+		return 0, fmt.Errorf("RuneAt: line %v out of range", ln)
+	}
+	if col < 0 || col >= s.lines[ln].Len() {
+		return 0, fmt.Errorf("RuneAt: column %v out of range", col)
+	}
+	return s.lines[ln].runeAt(col), nil
+}
+
+// BeginEdit will start edit tracking
+func (s *Store) BeginEdit() {
 	if s.grpUndo {
 		return
 	}
-	s.hold = []undo.ChangeSetter{}
+	s.active = []undo.ChangeSetter{}
 	s.grpUndo = true
 }
 
-// StopGroupUndo will save undos as a simgle undo
-func (s *Store) StopGroupUndo() {
+// EndEdit will save undos since begin
+func (s *Store) EndEdit() {
 	if !s.grpUndo {
 		return
 	}
 	s.grpUndo = false
 	cs := undo.New()
-	for i := range s.hold {
-		cs.AddChanges(s.hold[i].Changes()...)
+	for i := range s.active {
+		cs.AddChanges(s.active[i].Changes()...)
 	}
-	s.hold = []undo.ChangeSetter{}
+	s.active = []undo.ChangeSetter{}
 	s.AddUndoSet(cs)
 }
 
@@ -282,22 +312,12 @@ func (s *Store) AddUndoSet(cs undo.ChangeSetter) {
 	s.notifyChange()
 	switch {
 	case s.grpUndo:
-		s.hold = append(s.hold, cs)
+		s.active = append(s.active, cs)
 	case s.isUndoing:
 		s.redo = append(s.redo, cs)
 	default:
 		s.undo = append(s.undo, cs)
 	}
-}
-
-func (s *Store) notifyChange() {
-	go func() {
-		if s.hash() {
-			for i := range s.subs {
-				s.subs[i].ch <- s.Hash64()
-			}
-		}
-	}()
 }
 
 // Subscribe will subscribe to updates
@@ -317,23 +337,12 @@ func (s *Store) Unsubscribe(id string) {
 	}
 }
 
-func (s *Store) hash() bool {
-	h := fnv.New64a()
-	h.Write([]byte(s.String()))
-	nh := h.Sum64()
-	if s.txthash != nh {
-		s.txthash = nh
-		return true
-	}
-	return false
+type subscription struct {
+	id string
+	ch chan uint64
 }
 
-// Hash64 will return a 64bit hash
-func (s *Store) Hash64() uint64 {
-	return s.txthash
-}
-
-// New returns a new Store
-func New(fac undo.Factory) TextStorer {
-	return &Store{undoFac: fac, delim: "\n"}
+// New returns a TextStorer
+func New(uf undo.Factory) TextStorer {
+	return &Store{undoFac: uf}
 }

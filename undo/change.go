@@ -29,3 +29,36 @@ func (c *Change) Undo(after string) string {
 	txt, _ := dmp.PatchApply(c.p, after)
 	return txt
 }
+
+// SetLine will set the line the change occured
+func (c *Change) SetLine(l int) {
+	c.l = l
+}
+
+// SetType will set the change type
+func (c *Change) SetType(t ChangeType) {
+	c.t = t
+}
+
+// SetCursor will set the cursor position
+func (c *Change) SetCursor(cur []int) {
+	c.pos = cur
+}
+
+// SetDirty will set the dirty flag
+func (c *Change) SetDirty(di bool) {
+	c.d = di
+}
+
+// GenChange will create a diff
+func (c *Change) GenChange(before, after string) {
+	dmp := diffmatchpatch.New()
+	c.p = dmp.PatchMake(after, before)
+}
+
+// NewChange will return a Changer
+func NewChange(before, after string) Changer {
+	c := Change{}
+	c.GenChange(before, after)
+	return &c
+}

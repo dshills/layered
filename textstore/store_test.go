@@ -18,10 +18,11 @@ func TestReadFrom(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	store.ReadFrom(f)
 }
 func TestNewLine(t *testing.T) {
-	store.NewLine("", 0)
+	store.NewLine(0, "")
 }
 
 func TestDeleteLine(t *testing.T) {
@@ -29,14 +30,14 @@ func TestDeleteLine(t *testing.T) {
 }
 
 func TestResetLine(t *testing.T) {
-	store.ResetLine("Ta-da", 1)
+	store.ResetLine(1, "Ta-da")
 }
 
 func TestLineString(t *testing.T) {
 	store.LineString(0)
 }
-func TestLineRangeString(t *testing.T) {
-	store.LineRangeString(0, 10)
+func TestLineRange(t *testing.T) {
+	store.LineRange(0, 10)
 }
 func TestNumLines(t *testing.T) {
 	store.NumLines()
@@ -48,13 +49,10 @@ func TestLen(t *testing.T) {
 	store.Len()
 }
 func TestReadRuneAt(t *testing.T) {
-	store.ReadRuneAt(0, 0)
+	store.RuneAt(0, 0)
 }
 func TestLineAt(t *testing.T) {
-	store.LineAt(0)
-}
-func TestLineWriterAt(t *testing.T) {
-	store.LineWriterAt(1)
+	store.LineString(0)
 }
 func TestSetLineDelim(t *testing.T) {
 	store.SetLineDelim("\n")
@@ -67,10 +65,4 @@ func TestUndo(t *testing.T) {
 }
 func TestRedo(t *testing.T) {
 	store.Redo()
-}
-func TestStartGroupUndo(t *testing.T) {
-	store.StartGroupUndo()
-}
-func TestStopGroupUndo(t *testing.T) {
-	store.StopGroupUndo()
 }

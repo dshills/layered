@@ -1,5 +1,31 @@
 package undo
 
+// Factory is a function that returns a new change set
+type Factory func() ChangeSetter
+
+// ChangeSetter is a set of changes
+type ChangeSetter interface {
+	AddChanges(...Changer)
+	Changes() []Changer
+	RemoveLine(ln int)
+	AddLine(ln int)
+	ChangeLine(ln int, before, after string)
+}
+
+// Changer is a change to a text store
+type Changer interface {
+	Cursor() []int
+	Dirty() bool
+	Type() ChangeType
+	Line() int
+	Undo(after string) string
+	SetLine(int)
+	SetType(ChangeType)
+	SetCursor([]int)
+	SetDirty(bool)
+	GenChange(before, after string)
+}
+
 // ChangeType is a the type of change made
 type ChangeType int
 
@@ -20,25 +46,4 @@ func (c ChangeType) String() string {
 		return "ChangeLine"
 	}
 	return "Unknown"
-}
-
-// Factory is a function that returns a new change set
-type Factory func() ChangeSetter
-
-// ChangeSetter is a set of changes
-type ChangeSetter interface {
-	AddChanges(...Changer)
-	Changes() []Changer
-	RemoveLine(ln int)
-	AddLine(ln int)
-	ChangeLine(ln int, before, after string)
-}
-
-// Changer is a change to a text store
-type Changer interface {
-	Cursor() []int
-	Dirty() bool
-	Type() ChangeType
-	Line() int
-	Undo(after string) string
 }

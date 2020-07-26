@@ -39,7 +39,7 @@ type SearchResult struct {
 
 // Content will return the content within a range
 func (b *Buffer) Content(start, cnt int) ([]string, error) {
-	return b.txt.LineRangeString(start, cnt)
+	return b.txt.LineRange(start, cnt)
 }
 
 // ID will return the identifier for the buffer

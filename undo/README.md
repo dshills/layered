@@ -28,12 +28,47 @@ func (c *Change) Dirty() bool
 ```
 Dirty returns the dirty status before the change
 
+#### func (*Change) GenChange
+
+```go
+func (c *Change) GenChange(before, after string)
+```
+GenChange will create a diff
+
 #### func (*Change) Line
 
 ```go
 func (c *Change) Line() int
 ```
 Line will return the line the change was made
+
+#### func (*Change) SetCursor
+
+```go
+func (c *Change) SetCursor(cur []int)
+```
+SetCursor will set the cursor position
+
+#### func (*Change) SetDirty
+
+```go
+func (c *Change) SetDirty(di bool)
+```
+SetDirty will set the dirty flag
+
+#### func (*Change) SetLine
+
+```go
+func (c *Change) SetLine(l int)
+```
+SetLine will set the line the change occured
+
+#### func (*Change) SetType
+
+```go
+func (c *Change) SetType(t ChangeType)
+```
+SetType will set the change type
 
 #### func (*Change) Type
 
@@ -146,10 +181,22 @@ type Changer interface {
 	Type() ChangeType
 	Line() int
 	Undo(after string) string
+	SetLine(int)
+	SetType(ChangeType)
+	SetCursor([]int)
+	SetDirty(bool)
+	GenChange(before, after string)
 }
 ```
 
 Changer is a change to a text store
+
+#### func  NewChange
+
+```go
+func NewChange(before, after string) Changer
+```
+NewChange will return a Changer
 
 #### type Factory
 

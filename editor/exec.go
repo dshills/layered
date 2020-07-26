@@ -315,7 +315,7 @@ func getInfo(req Request, buf buffer.Bufferer, resp Response) Response {
 	resp.Column = buf.Cursor().Column()
 	resp.NumLines = buf.TextStore().NumLines()
 	if resp.ContentChanged {
-		resp.Content, _ = buf.TextStore().LineRangeString(req.LineOffset, req.LineCount)
+		resp.Content, _ = buf.TextStore().LineRange(req.LineOffset, req.LineCount)
 		resp.Syntax = buf.SyntaxResultsRange(req.LineOffset, req.LineCount)
 		resp.Search = buf.SearchResults()
 	}

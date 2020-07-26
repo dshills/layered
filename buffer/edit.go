@@ -2,8 +2,8 @@ package buffer
 
 import (
 	"fmt"
+	"strings"
 
-	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/textobject"
 )
 
@@ -24,17 +24,10 @@ func (b *Buffer) ReplaceObject(line, col int, obj textobject.TextObjecter, s str
 		if len(matches) == 0 {
 			continue
 		}
-		lw, err := b.txt.LineWriterAt(i)
-		if err != nil {
-			return fmt.Errorf("Buffer.DeleteObject %v", err)
-		}
-		if _, err := lw.ReplaceAt([]byte(s), int64(col), int64(matches[0][1])); err != nil {
-			return fmt.Errorf("Buffer.DeleteChar: %v", err)
-		}
+		b.txt.Replace(i, col, matches[0][1], s)
 		if cnt > 1 {
 			b.ReplaceObject(i, col, obj, s, cnt-1)
 		}
-		lw.Flush()
 		return nil
 	}
 	return nil
@@ -53,17 +46,10 @@ func (b *Buffer) DeleteObject(line, col int, obj textobject.TextObjecter, cnt in
 		if len(matches) == 0 {
 			continue
 		}
-		lw, err := b.txt.LineWriterAt(i)
-		if err != nil {
-			return fmt.Errorf("Buffer.DeleteObject %v", err)
-		}
-		if _, err := lw.ReplaceAt([]byte(""), int64(col), int64(matches[0][1])); err != nil {
-			return fmt.Errorf("Buffer.DeleteChar: %v", err)
-		}
+		b.txt.Delete(i, col, matches[0][1])
 		if cnt > 1 {
 			b.DeleteObject(i, col, obj, cnt-1)
 		}
-		lw.Flush()
 		return nil
 	}
 	return nil
@@ -71,7 +57,7 @@ func (b *Buffer) DeleteObject(line, col int, obj textobject.TextObjecter, cnt in
 
 // NewLineBelow will add a line below line with string st
 func (b *Buffer) NewLineBelow(line int, st string, cnt int) error {
-	if _, err := b.txt.NewLine(st, line+1); err != nil {
+	if _, err := b.txt.NewLine(line+1, st); err != nil {
 		return fmt.Errorf("Buffer.NewLineBelow: %v", err)
 	}
 	b.cur.MoveValid(b.cur.Line()+1, 0)
@@ -83,7 +69,7 @@ func (b *Buffer) NewLineBelow(line int, st string, cnt int) error {
 
 // NewLineAbove will add a line above line with string st
 func (b *Buffer) NewLineAbove(line int, st string, cnt int) error {
-	if _, err := b.txt.NewLine(st, line); err != nil {
+	if _, err := b.txt.NewLine(line, st); err != nil {
 		return fmt.Errorf("Buffer.NewLineAbove: %v", err)
 	}
 	b.cur.MoveValid(b.cur.Line(), 0)
@@ -95,31 +81,14 @@ func (b *Buffer) NewLineAbove(line int, st string, cnt int) error {
 
 // DeleteChar will delete the next char
 func (b *Buffer) DeleteChar(line, col, cnt int) error {
-	lw, err := b.txt.LineWriterAt(line)
-	if err != nil {
-		return fmt.Errorf("Buffer.DeleteChar %v", err)
-	}
-	if _, err := lw.ReplaceAt([]byte(""), int64(col), 1); err != nil {
-		return fmt.Errorf("Buffer.DeleteChar: %v", err)
-	}
-	lw.Flush()
-	if cnt > 1 {
-		b.DeleteChar(line, col, cnt-1)
-	}
+	b.txt.Delete(line, col, cnt)
 	return nil
 }
 
 // DeleteCharBack will delete the prev char
 func (b *Buffer) DeleteCharBack(line, col, cnt int) error {
-	lw, err := b.txt.LineWriterAt(line)
-	if err != nil {
-		return fmt.Errorf("Buffer.DeleteCharBack %v", err)
-	}
 	b.cur.Prev(1)
-	if _, err := lw.ReplaceAt([]byte(""), int64(col), 1); err != nil {
-		return fmt.Errorf("Buffer.DeleteCharBack: %v", err)
-	}
-	lw.Flush()
+	b.txt.Delete(line, col, 1)
 	if cnt > 1 {
 		b.DeleteCharBack(line, col, cnt-1)
 	}
@@ -128,16 +97,8 @@ func (b *Buffer) DeleteCharBack(line, col, cnt int) error {
 
 // InsertString will insert a string at line, col
 func (b *Buffer) InsertString(line, col int, st string) error {
-	lw, err := b.txt.LineWriterAt(line)
-	if err != nil {
-		return fmt.Errorf("Buffer.InsertString %v", err)
-	}
-	if _, err := lw.InsertAt([]byte(st), int64(col)); err != nil {
-		return fmt.Errorf("Buffer.InsertString: %v", err)
-	}
-	lw.Flush()
+	b.txt.Insert(line, col, st)
 	b.cur.Next(len(st))
-	logger.Debugf("InsertString: Pos: %v:%v, %v, After %v:%v CursorPast: %v", line, col, st, b.cur.Line(), b.cur.Column(), b.cur.MovePast())
 	return nil
 }
 
@@ -155,15 +116,9 @@ func (b *Buffer) DeleteLine(line, cnt int) error {
 
 // Indent will indent the current line
 func (b *Buffer) Indent(line, cnt int) error {
+	st := strings.Repeat("\t", cnt)
 	for i := line; i <= line+cnt; i++ {
-		lw, err := b.txt.LineWriterAt(i)
-		if err != nil {
-			return fmt.Errorf("Buffer.Indent %v", err)
-		}
-		if _, err := lw.InsertRuneAt('\t', int64(0)); err != nil {
-			return fmt.Errorf("Buffer.Indent: %v", err)
-		}
-		lw.Flush()
+		b.txt.Insert(i, 0, st)
 	}
 	return nil
 }
@@ -171,19 +126,9 @@ func (b *Buffer) Indent(line, cnt int) error {
 // Outdent will decrease the indent level
 func (b *Buffer) Outdent(line, cnt int) error {
 	for i := line; i <= line+cnt; i++ {
-		r, _, err := b.txt.ReadRuneAt(b.cur.Line(), 0)
-		if err != nil {
-			return fmt.Errorf("Buffer.Outdent %v", err)
-		}
+		r, _ := b.txt.RuneAt(b.cur.Line(), 0)
 		if r == '\t' {
-			lw, err := b.txt.LineWriterAt(i)
-			if err != nil {
-				return fmt.Errorf("buffer.Outdent %v", err)
-			}
-			if _, err := lw.ReplaceAt([]byte(""), int64(b.cur.Line()), 1); err != nil {
-				return fmt.Errorf("buffer.Outdent %v", err)
-			}
-			lw.Flush()
+			b.txt.Delete(line, 0, 1)
 		}
 	}
 	return nil
@@ -201,10 +146,10 @@ func (b *Buffer) Redo() error {
 
 // StartGroupUndo will group edits into a single undo
 func (b *Buffer) StartGroupUndo() {
-	b.txt.StartGroupUndo()
+	b.txt.BeginEdit()
 }
 
 // StopGroupUndo will stop grouping undos
 func (b *Buffer) StopGroupUndo() {
-	b.txt.StopGroupUndo()
+	b.txt.EndEdit()
 }
