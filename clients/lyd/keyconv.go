@@ -1,0 +1,204 @@
+package main
+
+import (
+	"fmt"
+
+	"github.com/dshills/layered/key"
+	"github.com/gdamore/tcell"
+)
+
+func convertKey(ev *tcell.EventKey) (key.Keyer, error) {
+	switch ev.Key() {
+	case tcell.KeyRune:
+		return key.StrToKeyer(string(ev.Rune()))
+	case tcell.KeyESC:
+		return key.StrToKeyer("<esc>")
+	case tcell.KeyTAB:
+		return key.New('\t', 0), nil
+	case tcell.KeyCtrlSpace:
+		return key.StrToKeyer("<ctrl- >")
+	case tcell.KeyCtrlA:
+		return key.StrToKeyer("<ctrl-a>")
+	case tcell.KeyCtrlB:
+		return key.StrToKeyer("<ctrl-b>")
+	case tcell.KeyCtrlC:
+		return key.StrToKeyer("<ctrl-c>")
+	case tcell.KeyCtrlD:
+		return key.StrToKeyer("<ctrl-d>")
+	case tcell.KeyCtrlE:
+		return key.StrToKeyer("<ctrl-e>")
+	case tcell.KeyCtrlF:
+		return key.StrToKeyer("<ctrl-f>")
+	case tcell.KeyCtrlG:
+		return key.StrToKeyer("<ctrl-g>")
+	case tcell.KeyCtrlH:
+		return key.StrToKeyer("<ctrl-h>")
+	case tcell.KeyCtrlJ:
+		return key.StrToKeyer("<ctrl-j>")
+	case tcell.KeyCtrlK:
+		return key.StrToKeyer("<ctrl-k>")
+	case tcell.KeyCtrlL:
+		return key.StrToKeyer("<ctrl-l>")
+	case tcell.KeyCtrlM:
+		return key.StrToKeyer("<ctrl-m>")
+	case tcell.KeyCtrlN:
+		return key.StrToKeyer("<ctrl-n>")
+	case tcell.KeyCtrlO:
+		return key.StrToKeyer("<ctrl-o>")
+	case tcell.KeyCtrlP:
+		return key.StrToKeyer("<ctrl-p>")
+	case tcell.KeyCtrlQ:
+		return key.StrToKeyer("<ctrl-q>")
+	case tcell.KeyCtrlR:
+		return key.StrToKeyer("<ctrl-r>")
+	case tcell.KeyCtrlS:
+		return key.StrToKeyer("<ctrl-s>")
+	case tcell.KeyCtrlT:
+		return key.StrToKeyer("<ctrl-t>")
+	case tcell.KeyCtrlU:
+		return key.StrToKeyer("<ctrl-u>")
+	case tcell.KeyCtrlV:
+		return key.StrToKeyer("<ctrl-v>")
+	case tcell.KeyCtrlW:
+		return key.StrToKeyer("<ctrl-w>")
+	case tcell.KeyCtrlX:
+		return key.StrToKeyer("<ctrl-x>")
+	case tcell.KeyCtrlY:
+		return key.StrToKeyer("<ctrl-y>")
+	case tcell.KeyCtrlZ:
+		return key.StrToKeyer("<ctrl-z>")
+	case tcell.KeyCtrlBackslash:
+	case tcell.KeyCtrlRightSq:
+	case tcell.KeyCtrlCarat:
+	case tcell.KeyCtrlUnderscore:
+	case tcell.KeyUp:
+		return key.StrToKeyer("<up>")
+	case tcell.KeyDown:
+		return key.StrToKeyer("<down>")
+	case tcell.KeyRight:
+		return key.StrToKeyer("<right>")
+	case tcell.KeyLeft:
+		return key.StrToKeyer("<left>")
+	case tcell.KeyUpLeft:
+	case tcell.KeyUpRight:
+	case tcell.KeyDownLeft:
+	case tcell.KeyDownRight:
+	case tcell.KeyCenter:
+	case tcell.KeyPgUp:
+		return key.StrToKeyer("<pgup>")
+	case tcell.KeyPgDn:
+		return key.StrToKeyer("<pgdn>")
+	case tcell.KeyHome:
+		return key.StrToKeyer("<home>")
+	case tcell.KeyEnd:
+		return key.StrToKeyer("<end>")
+	case tcell.KeyInsert:
+	case tcell.KeyDelete:
+	case tcell.KeyHelp:
+	case tcell.KeyExit:
+	case tcell.KeyClear:
+	case tcell.KeyCancel:
+	case tcell.KeyPrint:
+	case tcell.KeyPause:
+	case tcell.KeyBacktab:
+	case tcell.KeyF1:
+	case tcell.KeyF2:
+	case tcell.KeyF3:
+	case tcell.KeyF4:
+	case tcell.KeyF5:
+	case tcell.KeyF6:
+	case tcell.KeyF7:
+	case tcell.KeyF8:
+	case tcell.KeyF9:
+	case tcell.KeyF10:
+	case tcell.KeyF11:
+	case tcell.KeyF12:
+	case tcell.KeyF13:
+	case tcell.KeyF14:
+	case tcell.KeyF15:
+	case tcell.KeyF16:
+	case tcell.KeyF17:
+	case tcell.KeyF18:
+	case tcell.KeyF19:
+	case tcell.KeyF20:
+	case tcell.KeyF21:
+	case tcell.KeyF22:
+	case tcell.KeyF23:
+	case tcell.KeyF24:
+	case tcell.KeyF25:
+	case tcell.KeyF26:
+	case tcell.KeyF27:
+	case tcell.KeyF28:
+	case tcell.KeyF29:
+	case tcell.KeyF30:
+	case tcell.KeyF31:
+	case tcell.KeyF32:
+	case tcell.KeyF33:
+	case tcell.KeyF34:
+	case tcell.KeyF35:
+	case tcell.KeyF36:
+	case tcell.KeyF37:
+	case tcell.KeyF38:
+	case tcell.KeyF39:
+	case tcell.KeyF40:
+	case tcell.KeyF41:
+	case tcell.KeyF42:
+	case tcell.KeyF43:
+	case tcell.KeyF44:
+	case tcell.KeyF45:
+	case tcell.KeyF46:
+	case tcell.KeyF47:
+	case tcell.KeyF48:
+	case tcell.KeyF49:
+	case tcell.KeyF50:
+	case tcell.KeyF51:
+	case tcell.KeyF52:
+	case tcell.KeyF53:
+	case tcell.KeyF54:
+	case tcell.KeyF55:
+	case tcell.KeyF56:
+	case tcell.KeyF57:
+	case tcell.KeyF58:
+	case tcell.KeyF59:
+	case tcell.KeyF60:
+	case tcell.KeyF61:
+	case tcell.KeyF62:
+	case tcell.KeyF63:
+	case tcell.KeyF64:
+
+		/*
+			case tcell.KeyNUL:
+			case tcell.KeySOH:
+			case tcell.KeySTX:
+			case tcell.KeyETX:
+			case tcell.KeyEOT:
+			case tcell.KeyENQ:
+			case tcell.KeyACK:
+			case tcell.KeyBEL:
+			case tcell.KeyBS:
+			case tcell.KeyLF:
+			case tcell.KeyVT:
+			case tcell.KeyFF:
+			case tcell.KeyCR:
+			case tcell.KeySO:
+			case tcell.KeySI:
+			case tcell.KeyDLE:
+			case tcell.KeyDC1:
+			case tcell.KeyDC2:
+			case tcell.KeyDC3:
+			case tcell.KeyDC4:
+			case tcell.KeyNAK:
+			case tcell.KeySYN:
+			case tcell.KeyETB:
+			case tcell.KeyCAN:
+			case tcell.KeyEM:
+			case tcell.KeySUB:
+			case tcell.KeyFS:
+			case tcell.KeyGS:
+			case tcell.KeyRS:
+			case tcell.KeyUS:
+			case tcell.KeyDEL:
+		*/
+	}
+	return nil, fmt.Errorf("Not found")
+}

@@ -1,7 +1,7 @@
 # Go parameters
 PROJECT_NAME := $(shell echo $${PWD\#\#*/})
-PKG_LIST := $(shell go list ./... | grep -v testdata | grep -v runtime | grep -v .git)
-SRCDIRS = $(shell find . -type d | grep -v testdata | grep -v runtime | grep -v .git)
+PKG_LIST := $(shell go list ./... | grep -v testdata | grep -v runtime | grep -v .git | grep -v clients)
+SRCDIRS = $(shell find . -type d | grep -v testdata | grep -v runtime | grep -v .git | grep -v clients)
 
 all: lint vet install docs tags
 
@@ -70,6 +70,10 @@ linux: ## Compile for linux
 
 dep: ## Install dependencies
 	@go install $(SRCDIRS)
+
+term: install
+	@cd clients/lyd;go install;cd -
+
 
 docs: dep ## Generate README files
 	@godocdown action > action/README.md
