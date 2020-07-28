@@ -28,6 +28,14 @@ type Rule struct {
 	priority                                    int
 }
 
+// IsDependent will return true if the rule has no dependency on other rules
+func (r *Rule) IsDependent() bool {
+	if r.contained || len(r.contains) > 0 {
+		return true
+	}
+	return false
+}
+
 // Group will return the rules group
 func (r *Rule) Group() string {
 	return r.group
@@ -104,7 +112,9 @@ func (r *Rule) matchRegion(txt textstore.TextStorer) []Resulter {
 				open++
 			}
 		}
-		results = append(results, &res)
+		if len(res.rg) > 0 {
+			results = append(results, &res)
+		}
 	}
 	return results
 }
@@ -146,7 +156,9 @@ func (r *Rule) matchRegionSame(txt textstore.TextStorer) []Resulter {
 			open++
 		}
 
-		results = append(results, &res)
+		if len(res.rg) > 0 {
+			results = append(results, &res)
+		}
 	}
 	return results
 }

@@ -35,4 +35,5 @@ type Ruler interface {
 	Group() string
 	Type() string
 	Match(textstore.TextStorer) []Resulter
+	IsDependent() bool
 }

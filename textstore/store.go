@@ -24,6 +24,44 @@ type Store struct {
 	txthash   uint64
 }
 
+// --------  edits
+
+// BeginEdit will start edit tracking
+func (s *Store) BeginEdit() {
+	if s.grpUndo {
+		return
+	}
+	s.active = []undo.ChangeSetter{}
+	s.grpUndo = true
+}
+
+// EndEdit will save undos since begin
+func (s *Store) EndEdit() {
+	if !s.grpUndo {
+		return
+	}
+	s.grpUndo = false
+	cs := undo.New()
+	for i := range s.active {
+		cs.AddChanges(s.active[i].Changes()...)
+	}
+	s.active = []undo.ChangeSetter{}
+	s.AddUndoSet(cs)
+}
+
+// AddUndoSet will add an undo change set to the store
+func (s *Store) AddUndoSet(cs undo.ChangeSetter) {
+	s.notifyChange()
+	switch {
+	case s.grpUndo:
+		s.active = append(s.active, cs)
+	case s.isUndoing:
+		s.redo = append(s.redo, cs)
+	default:
+		s.undo = append(s.undo, cs)
+	}
+}
+
 // ReadFrom will read from an io.Reader
 func (s *Store) ReadFrom(r io.Reader) (int64, error) {
 	nw := false
@@ -74,16 +112,21 @@ func (s *Store) Delete(ln, col, cnt int) error {
 }
 
 // NewLine creates a new line after line
-func (s *Store) NewLine(ln int, st string) (int, error) {
-	if ln < 0 || ln >= len(s.lines) {
-		return 0, fmt.Errorf("newLine: Invalid line %v", ln)
+func (s *Store) NewLine(ln int, st string) {
+	if ln <= 0 {
+		s.lines = append([]*line{newLine(st)}, s.lines...)
+		return
+	}
+	if ln >= len(s.lines) {
+		s.lines = append(s.lines, newLine(st))
+		return
 	}
 	s.lines = append(s.lines[:ln], append([]*line{newLine(st)}, s.lines[ln:]...)...)
 	cs := s.undoFac()
 	cs.AddLine(ln)
 	cs.ChangeLine(ln+1, "", st)
 	s.AddUndoSet(cs)
-	return ln, nil
+	return
 }
 
 // Reset will set the Store to s
@@ -124,6 +167,8 @@ func (s *Store) ResetLine(line int, st string) (string, error) {
 	return original, nil
 }
 
+// ------------ end edits
+
 func (s *Store) String() string {
 	builder := strings.Builder{}
 	for _, ln := range s.lines {
@@ -133,11 +178,12 @@ func (s *Store) String() string {
 }
 
 func (s *Store) notifyChange() {
+	if len(s.subs) == 0 || !s.hash() {
+		return
+	}
 	go func() {
-		if s.hash() {
-			for i := range s.subs {
-				s.subs[i].ch <- s.Hash64()
-			}
+		for i := range s.subs {
+			s.subs[i].ch <- s.Hash64()
 		}
 	}()
 }
@@ -284,42 +330,6 @@ func (s *Store) RuneAt(ln, col int) (rune, error) {
 	return s.lines[ln].runeAt(col), nil
 }
 
-// BeginEdit will start edit tracking
-func (s *Store) BeginEdit() {
-	if s.grpUndo {
-		return
-	}
-	s.active = []undo.ChangeSetter{}
-	s.grpUndo = true
-}
-
-// EndEdit will save undos since begin
-func (s *Store) EndEdit() {
-	if !s.grpUndo {
-		return
-	}
-	s.grpUndo = false
-	cs := undo.New()
-	for i := range s.active {
-		cs.AddChanges(s.active[i].Changes()...)
-	}
-	s.active = []undo.ChangeSetter{}
-	s.AddUndoSet(cs)
-}
-
-// AddUndoSet will add an undo change set to the store
-func (s *Store) AddUndoSet(cs undo.ChangeSetter) {
-	s.notifyChange()
-	switch {
-	case s.grpUndo:
-		s.active = append(s.active, cs)
-	case s.isUndoing:
-		s.redo = append(s.redo, cs)
-	default:
-		s.undo = append(s.undo, cs)
-	}
-}
-
 // Subscribe will subscribe to updates
 func (s *Store) Subscribe(id string, up chan uint64) {
 	s.subs = append(s.subs, subscription{id: id, ch: up})
@@ -344,5 +354,5 @@ type subscription struct {
 
 // New returns a TextStorer
 func New(uf undo.Factory) TextStorer {
-	return &Store{undoFac: uf}
+	return &Store{undoFac: uf, delim: "\n"}
 }

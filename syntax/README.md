@@ -194,6 +194,13 @@ func (r *Rule) Group() string
 ```
 Group will return the rules group
 
+#### func (*Rule) IsDependent
+
+```go
+func (r *Rule) IsDependent() bool
+```
+IsDependent will return true if the rule has no dependency on other rules
+
 #### func (*Rule) Match
 
 ```go
@@ -215,6 +222,7 @@ type Ruler interface {
 	Group() string
 	Type() string
 	Match(textstore.TextStorer) []Resulter
+	IsDependent() bool
 }
 ```
 

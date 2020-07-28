@@ -75,6 +75,5 @@ func (jr jsRule) asRuler(rank int) (Ruler, error) {
 			r.enRx = reg
 		}
 	}
-
 	return &r, nil
 }

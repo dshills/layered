@@ -18,6 +18,28 @@ type Matcher struct {
 	rules    []Ruler
 }
 
+// Parse will return a list of results for the text store
+func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter {
+	results := []Resulter{}
+	wg := sync.WaitGroup{}
+	for i := range m.rules {
+		wg.Add(1)
+		go func(rule Ruler, wg *sync.WaitGroup) {
+			results = append(results, rule.Match(ts)...)
+			wg.Done()
+		}(m.rules[i], &wg)
+	}
+	wg.Wait()
+	results = m.dependencies(results)
+	sort.Sort(resultList(results))
+	return results
+}
+
+func (m *Matcher) dependencies(results []Resulter) []Resulter {
+	// TODO fix contained results
+	return results
+}
+
 // LoadFileType will load a syntax file by file type
 func (m *Matcher) LoadFileType(ft string) error {
 	ft = strings.ToLower(ft) + ".json"
@@ -70,22 +92,6 @@ func (m *Matcher) LoadFile(path string) error {
 // Add will add a rule to the matcher
 func (m *Matcher) Add(r Ruler) {
 	m.rules = append(m.rules, r)
-}
-
-// Parse will return a list of results for the text store
-func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter {
-	results := []Resulter{}
-	wg := sync.WaitGroup{}
-	for ii := range m.rules {
-		wg.Add(1)
-		go func(rule Ruler, wg *sync.WaitGroup) {
-			results = append(results, rule.Match(ts)...)
-			wg.Done()
-		}(m.rules[ii], &wg)
-	}
-	wg.Wait()
-	sort.Sort(resultList(results))
-	return results
 }
 
 // New returns a new syntax matcher

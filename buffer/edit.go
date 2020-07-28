@@ -57,9 +57,7 @@ func (b *Buffer) DeleteObject(line, col int, obj textobject.TextObjecter, cnt in
 
 // NewLineBelow will add a line below line with string st
 func (b *Buffer) NewLineBelow(line int, st string, cnt int) error {
-	if _, err := b.txt.NewLine(line+1, st); err != nil {
-		return fmt.Errorf("Buffer.NewLineBelow: %v", err)
-	}
+	b.txt.NewLine(line+1, st)
 	b.cur.MoveValid(b.cur.Line()+1, 0)
 	if cnt > 1 {
 		b.NewLineBelow(line, st, cnt-1)
@@ -69,9 +67,7 @@ func (b *Buffer) NewLineBelow(line int, st string, cnt int) error {
 
 // NewLineAbove will add a line above line with string st
 func (b *Buffer) NewLineAbove(line int, st string, cnt int) error {
-	if _, err := b.txt.NewLine(line, st); err != nil {
-		return fmt.Errorf("Buffer.NewLineAbove: %v", err)
-	}
+	b.txt.NewLine(line, st)
 	b.cur.MoveValid(b.cur.Line(), 0)
 	if cnt > 1 {
 		b.NewLineAbove(line, st, cnt-1)

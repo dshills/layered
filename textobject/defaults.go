@@ -3,31 +3,31 @@ package textobject
 func (o *Objects) loadDefaults() {
 	var err error
 
-	obj := &Object{name: "block-()", start: "\\(", end: "\\)", multiline: true}
+	obj := &Object{name: "blockparen", start: "\\(", end: "\\)", multiline: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "block-<>", start: "<", end: ">", multiline: true}
+	obj = &Object{name: "blockangle", start: "<", end: ">", multiline: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "block-[]", start: "\\[", end: "\\]", multiline: true}
+	obj = &Object{name: "blocksquare", start: "\\[", end: "\\]", multiline: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "block-obj = &Object{}", start: "obj = &Object{", end: "}", multiline: true}
+	obj = &Object{name: "blockcurly", start: "{", end: "}", multiline: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "bol-not-blank", start: "([^\\s\\t])", simple: true, usefirst: true}
+	obj = &Object{name: "bolnotblank", start: "([^\\s\\t])", simple: true, usefirst: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
@@ -39,7 +39,7 @@ func (o *Objects) loadDefaults() {
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "eol-not-blank", start: "([^\\s\\t])[\\s\\t]*$", simple: true, usefirst: true}
+	obj = &Object{name: "eolnotblank", start: "([^\\s\\t])[\\s\\t]*$", simple: true, usefirst: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
@@ -69,19 +69,19 @@ func (o *Objects) loadDefaults() {
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "string-double", start: "\"", end: "\"", multiline: true}
+	obj = &Object{name: "stringdouble", start: "\"", end: "\"", multiline: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "string-double", start: "\"", end: "\"", multiline: true}
+	obj = &Object{name: "stringsingle", start: "'", end: "'", multiline: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "string-tick", start: "`", end: "`", multiline: true}
+	obj = &Object{name: "stringtick", start: "`", end: "`", multiline: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
@@ -93,7 +93,7 @@ func (o *Objects) loadDefaults() {
 	}
 	o.Add(obj)
 
-	obj = &Object{name: "word-ext", start: "([^\\s\\t]+|^$)", simple: true}
+	obj = &Object{name: "wordext", start: "([^\\s\\t]+|^$)", simple: true}
 	if err = obj.compile(); err != nil {
 		panic(err)
 	}
@@ -104,5 +104,4 @@ func (o *Objects) loadDefaults() {
 		panic(err)
 	}
 	o.Add(obj)
-
 }

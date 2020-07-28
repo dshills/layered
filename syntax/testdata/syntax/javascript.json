@@ -1,0 +1,293 @@
+[
+	{
+		"group": "todo.javaScriptCommentTodo",
+		"type": "keyword",
+		"keywords": [
+			"TODO",
+			"FIXME",
+			"XXX",
+			"TBD"
+		],
+		"contained": true
+	},
+	{
+		"group": "comment.javaScriptLineComment",
+		"type": "match",
+		"match": "//.*",
+		"contains": [
+			"@Spell",
+			"javaScriptCommentTodo"
+		]
+	},
+	{
+		"group": "javaScriptCommentSkip",
+		"type": "match",
+		"match": "^[\n\t]*\\*($|[\n\t]+)"
+	},
+	{
+		"group": "comment.javaScriptComment",
+		"type": "region",
+		"start": "/\\*",
+		"end": "\\*/",
+		"contains": [
+			"@Spell",
+			"javaScriptCommentTodo"
+		]
+	},
+	{
+		"group": "special.javaScriptSpecial",
+		"type": "match",
+		"match": "\\\\\\d\\d\\d|\\\\."
+	},
+	{
+		"group": "constant.string.javaScriptStringD",
+		"type": "region",
+		"start": "\"",
+		"end": "\"|$",
+		"skip": "\\\\\\\\|\\\\\"",
+		"contains": [
+			"javaScriptSpecial",
+			"@htmlPreproc"
+		]
+	},
+	{
+		"group": "constant.string.javaScriptStringS",
+		"type": "region",
+		"start": "'",
+		"end": "'|$",
+		"skip": "\\\\\\\\|\\\\'",
+		"contains": [
+			"javaScriptSpecial",
+			"@htmlPreproc"
+		]
+	},
+	{
+		"group": "special.javaScriptSpecialCharacter",
+		"type": "match",
+		"match": "'\\\\.'"
+	},
+	{
+		"group": "javaScriptValue.javaScriptNumber",
+		"type": "match",
+		"match": "-?\\A\\d+L?\\z|0[xX][0-9a-fA-F]+\\z"
+	},
+	{
+		"group": "constant.string.javaScriptRegexpString",
+		"type": "region",
+		"start": "\\+/[^/*]\\+me=e-1",
+		"end": "\\+/[gim]{0,2{\\s*[;.,\\)}]\\+me=e-1",
+		"skip": "\\\\\\\\|\\\\/",
+		"match": "oneline",
+		"contains": [
+			"@htmlPreproc"
+		]
+	},
+	{
+		"group": "conditional.javaScriptConditional",
+		"type": "keyword",
+		"keywords": [
+			"if",
+			"else",
+			"switch"
+		]
+	},
+	{
+		"group": "repeat.javaScriptRepeat",
+		"type": "keyword",
+		"keywords": [
+			"while",
+			"for",
+			"do",
+			"in"
+		]
+	},
+	{
+		"group": "conditional.javaScriptBranch",
+		"type": "keyword",
+		"keywords": [
+			"break",
+			"continue"
+		]
+	},
+	{
+		"group": "operator.javaScriptOperator",
+		"type": "keyword",
+		"keywords": [
+			"new",
+			"delete",
+			"instanceof",
+			"typeof"
+		]
+	},
+	{
+		"group": "type.javaScriptType",
+		"type": "keyword",
+		"keywords": [
+			"Array",
+			"Boolean",
+			"Date",
+			"Function",
+			"Number",
+			"Object",
+			"String",
+			"RegExp"
+		]
+	},
+	{
+		"group": "statement.javaScriptStatement",
+		"type": "keyword",
+		"keywords": [
+			"return",
+			"with"
+		]
+	},
+	{
+		"group": "constant.boolean.javaScriptBoolean",
+		"type": "keyword",
+		"keywords": [
+			"true",
+			"false"
+		]
+	},
+	{
+		"group": "keyword.javaScriptNull",
+		"type": "keyword",
+		"keywords": [
+			"null",
+			"undefined"
+		]
+	},
+	{
+		"group": "identifier.javaScriptIdentifier",
+		"type": "keyword",
+		"keywords": [
+			"arguments",
+			"this",
+			"var",
+			"let"
+		]
+	},
+	{
+		"group": "label.javaScriptLabel",
+		"type": "keyword",
+		"keywords": [
+			"case",
+			"default"
+		]
+	},
+	{
+		"group": "exception.javaScriptException",
+		"type": "keyword",
+		"keywords": [
+			"try",
+			"catch",
+			"finally",
+			"throw"
+		]
+	},
+	{
+		"group": "keyword.javaScriptMessage",
+		"type": "keyword",
+		"keywords": [
+			"alert",
+			"confirm",
+			"prompt",
+			"status"
+		]
+	},
+	{
+		"group": "keyword.javaScriptGlobal",
+		"type": "keyword",
+		"keywords": [
+			"self",
+			"window",
+			"top",
+			"parent"
+		]
+	},
+	{
+		"group": "keyword.javaScriptMember",
+		"type": "keyword",
+		"keywords": [
+			"document",
+			"event",
+			"location"
+		]
+	},
+	{
+		"group": "exception.javaScriptDeprecated",
+		"type": "keyword",
+		"keywords": [
+			"escape",
+			"unescape"
+		]
+	},
+	{
+		"group": "keyword.javaScriptReserved",
+		"type": "keyword",
+		"keywords": [
+			"abstract",
+			"boolean",
+			"byte",
+			"char",
+			"class",
+			"const",
+			"debugger",
+			"double",
+			"enum",
+			"export",
+			"final",
+			"float",
+			"goto",
+			"implements",
+			"import",
+			"int",
+			"interface",
+			"long",
+			"native",
+			"package",
+			"private",
+			"protected",
+			"public",
+			"short",
+			"static",
+			"super",
+			"synchronized",
+			"throws",
+			"transient",
+			"volatile"
+		],
+		"extend": true
+	},
+	{
+		"group": "function.javaScriptFunction",
+		"type": "match",
+		"match": "\\Afunction\\z"
+	},
+	{
+		"group": "javaScriptFunctionFold",
+		"type": "region",
+		"start": "\\Afunction\\z.*[^};]$",
+		"end": "^(%EXTERNAL:1%)}.*$",
+		"keep_end": true,
+		"transparent": true,
+		"fold": true
+	},
+	{
+		"group": "function.javaScriptFunction",
+		"type": "keyword",
+		"keywords": [
+			"function"
+		]
+	},
+	{
+		"group": "function.javaScriptBraces",
+		"type": "match",
+		"match": "[{}]"
+	},
+	{
+		"group": "javaScriptParens",
+		"type": "match",
+		"match": "[\\(\\)]"
+	}
+]

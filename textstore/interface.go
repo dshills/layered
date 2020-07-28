@@ -33,7 +33,7 @@ type Undoer interface {
 // StoreWriter are store write functionality
 type StoreWriter interface {
 	Reset(s string) uint64
-	NewLine(line int, s string) (int, error)
+	NewLine(line int, s string)
 	DeleteLine(line int) (string, error)
 	ResetLine(line int, s string) (string, error)
 	SetLineDelim(str string)
