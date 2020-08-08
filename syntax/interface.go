@@ -1,11 +1,12 @@
 package syntax
 
 import (
+	"github.com/dshills/layered/conf"
 	"github.com/dshills/layered/textstore"
 )
 
 // Factory is a function that returns new syntax matchers
-type Factory func(rt ...string) Manager
+type Factory func(*conf.Configuration) Manager
 
 // Manager is a collection of syntax rules
 // representing a set of language syntax rules
@@ -13,7 +14,8 @@ type Manager interface {
 	LoadFileType(ft string) error
 	LoadFile(path string) error
 	Add(Ruler)
-	Parse(textstore.TextStorer) []Resulter
+	Parse(ts textstore.TextStorer, groups ...string) []Resulter
+	FilterResults(results []Resulter, groups ...string) []Resulter
 }
 
 // Resulter is a a syntax match result

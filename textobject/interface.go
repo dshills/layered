@@ -1,7 +1,9 @@
 package textobject
 
+import "github.com/dshills/layered/conf"
+
 // Factory will return an Objectr
-type Factory func(rts ...string) Objecter
+type Factory func(*conf.Configuration) Objecter
 
 // TextObjecter is a text object interface
 type TextObjecter interface {
@@ -17,8 +19,6 @@ type TextObjecter interface {
 
 // Objecter is a set of text objects
 type Objecter interface {
-	SetRuntimes(rts ...string)
-	AddRuntimes(rts ...string)
 	LoadDir(path string) error
 	Object(name string) (TextObjecter, error)
 	Add(...TextObjecter)

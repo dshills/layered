@@ -55,7 +55,7 @@ Editorer is an editor interface
 #### func  New
 
 ```go
-func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, rt ...string) (Editorer, error)
+func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, config *conf.Configuration) (Editorer, error)
 ```
 New will return a new editor
 

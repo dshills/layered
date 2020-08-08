@@ -31,7 +31,7 @@ Default objects
 #### type Factory
 
 ```go
-type Factory func(rts ...string) Objecter
+type Factory func(*conf.Configuration) Objecter
 ```
 
 Factory will return an Objectr
@@ -105,8 +105,6 @@ UseLast will return true if match expects the use of the last match
 
 ```go
 type Objecter interface {
-	SetRuntimes(rts ...string)
-	AddRuntimes(rts ...string)
 	LoadDir(path string) error
 	Object(name string) (TextObjecter, error)
 	Add(...TextObjecter)
@@ -119,7 +117,7 @@ Objecter is a set of text objects
 #### func  New
 
 ```go
-func New(rts ...string) Objecter
+func New(config *conf.Configuration) Objecter
 ```
 New returns a text object collection
 
@@ -138,13 +136,6 @@ Objects is a collection of objects
 func (o *Objects) Add(objs ...TextObjecter)
 ```
 Add will add an object to the collection
-
-#### func (*Objects) AddRuntimes
-
-```go
-func (o *Objects) AddRuntimes(rts ...string)
-```
-AddRuntimes will add to the list of runtimes
 
 #### func (*Objects) LoadDir
 
@@ -173,13 +164,6 @@ Remove will remove an object from the collection
 func (o *Objects) Search(txt textstore.TextStorer, cur cursor.Cursor, oname string, cnt int) ([]int, error)
 ```
 Search will search a text store
-
-#### func (*Objects) SetRuntimes
-
-```go
-func (o *Objects) SetRuntimes(rts ...string)
-```
-SetRuntimes will set the list of runtime directories
 
 #### type TextObjecter
 

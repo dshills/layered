@@ -9,30 +9,60 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/dshills/layered/conf"
 	"github.com/dshills/layered/textstore"
 )
 
 // Matcher is syntax matcher
 type Matcher struct {
-	runtimes []string
-	rules    []Ruler
+	rules  []Ruler
+	config *conf.Configuration
 }
 
 // Parse will return a list of results for the text store
-func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter {
+// optionally a list of rule groups to use
+func (m *Matcher) Parse(ts textstore.TextStorer, groups ...string) []Resulter {
 	results := []Resulter{}
 	wg := sync.WaitGroup{}
-	for i := range m.rules {
+	for _, rule := range m.filterRules(groups) {
 		wg.Add(1)
 		go func(rule Ruler, wg *sync.WaitGroup) {
 			results = append(results, rule.Match(ts)...)
 			wg.Done()
-		}(m.rules[i], &wg)
+		}(rule, &wg)
 	}
 	wg.Wait()
 	results = m.dependencies(results)
 	sort.Sort(resultList(results))
 	return results
+}
+
+// FilterResults will filter results by group
+func (m *Matcher) FilterResults(results []Resulter, groups ...string) []Resulter {
+	nr := []Resulter{}
+	for _, res := range results {
+		for _, grp := range groups {
+			if strings.Contains(res.Token(), grp) {
+				nr = append(nr, res)
+			}
+		}
+	}
+	return nr
+}
+
+func (m *Matcher) filterRules(groups []string) []Ruler {
+	if len(groups) == 0 {
+		return m.rules
+	}
+	rules := []Ruler{}
+	for _, r := range m.rules {
+		for _, g := range groups {
+			if strings.Contains(r.Group(), g) {
+				rules = append(rules, r)
+			}
+		}
+	}
+	return rules
 }
 
 func (m *Matcher) dependencies(results []Resulter) []Resulter {
@@ -43,8 +73,8 @@ func (m *Matcher) dependencies(results []Resulter) []Resulter {
 // LoadFileType will load a syntax file by file type
 func (m *Matcher) LoadFileType(ft string) error {
 	ft = strings.ToLower(ft) + ".json"
-	for i := len(m.runtimes) - 1; i >= 0; i-- {
-		path := filepath.Join(m.runtimes[i], "syntax", ft)
+	for _, rt := range m.config.Syntax() {
+		path := filepath.Join(rt, ft)
 		if m.fileExists(path) {
 			return m.LoadFile(path)
 		}
@@ -95,6 +125,6 @@ func (m *Matcher) Add(r Ruler) {
 }
 
 // New returns a new syntax matcher
-func New(rt ...string) Manager {
-	return &Matcher{runtimes: rt}
+func New(config *conf.Configuration) Manager {
+	return &Matcher{config: config}
 }

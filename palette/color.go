@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 	"sync"
+
+	"github.com/dshills/layered/conf"
 )
 
 // Color is a rgb color
@@ -48,6 +50,8 @@ type ColorList struct {
 	cm     sync.RWMutex
 	terms  map[int]Color
 	tm     sync.RWMutex
+	config *conf.Configuration
+	nchan  chan struct{}
 }
 
 // Color will return a color by name
@@ -114,9 +118,28 @@ func (cl *ColorList) Load(path string) error {
 	return nil
 }
 
+func (cl *ColorList) loadAll() {
+	cl.colors = make(map[string]Color)
+	cl.terms = make(map[int]Color)
+	for _, p := range cl.config.Colors() {
+		cl.Load(p)
+	}
+}
+
+func (cl *ColorList) listen() {
+	for {
+		<-cl.nchan
+		cl.loadAll()
+	}
+}
+
 // NewColorList will return a color list
-func NewColorList() ColorList {
-	return ColorList{colors: make(map[string]Color), terms: make(map[int]Color)}
+func NewColorList(c *conf.Configuration) *ColorList {
+	cl := &ColorList{colors: make(map[string]Color), terms: make(map[int]Color), config: c}
+	cl.nchan = make(chan struct{})
+	c.Subscribe(cl.nchan)
+	go cl.listen()
+	return cl
 }
 
 type jsColor struct {

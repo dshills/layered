@@ -6,6 +6,7 @@ import (
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/buffer"
+	"github.com/dshills/layered/conf"
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
 	"github.com/dshills/layered/register"
@@ -29,7 +30,9 @@ func setup() {
 		return
 	}
 	var err error
-	ed, err = New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, rtpath)
+	config := &conf.Configuration{}
+	config.AddRuntime(rtpath)
+	ed, err = New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, config)
 	if err != nil {
 		panic(err)
 	}

@@ -3,7 +3,7 @@ PROJECT_NAME := $(shell echo $${PWD\#\#*/})
 PKG_LIST := $(shell go list ./... | grep -v testdata | grep -v runtime | grep -v .git | grep -v clients)
 SRCDIRS = $(shell find . -type d | grep -v testdata | grep -v runtime | grep -v .git | grep -v clients)
 
-all: lint vet install docs tags
+all: lint vet install docs tags term
 
 install: dep ## Run install
 	go install

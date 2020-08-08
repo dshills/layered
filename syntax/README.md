@@ -17,7 +17,7 @@ Rule types
 #### type Factory
 
 ```go
-type Factory func(rt ...string) Manager
+type Factory func(*conf.Configuration) Manager
 ```
 
 Factory is a function that returns new syntax matchers
@@ -29,7 +29,8 @@ type Manager interface {
 	LoadFileType(ft string) error
 	LoadFile(path string) error
 	Add(Ruler)
-	Parse(textstore.TextStorer) []Resulter
+	Parse(ts textstore.TextStorer, groups ...string) []Resulter
+	FilterResults(results []Resulter, groups ...string) []Resulter
 }
 ```
 
@@ -39,7 +40,7 @@ rules
 #### func  New
 
 ```go
-func New(rt ...string) Manager
+func New(config *conf.Configuration) Manager
 ```
 New returns a new syntax matcher
 
@@ -59,6 +60,13 @@ func (m *Matcher) Add(r Ruler)
 ```
 Add will add a rule to the matcher
 
+#### func (*Matcher) FilterResults
+
+```go
+func (m *Matcher) FilterResults(results []Resulter, groups ...string) []Resulter
+```
+FilterResults will filter results by group
+
 #### func (*Matcher) LoadFile
 
 ```go
@@ -76,9 +84,10 @@ LoadFileType will load a syntax file by file type
 #### func (*Matcher) Parse
 
 ```go
-func (m *Matcher) Parse(ts textstore.TextStorer) []Resulter
+func (m *Matcher) Parse(ts textstore.TextStorer, groups ...string) []Resulter
 ```
-Parse will return a list of results for the text store
+Parse will return a list of results for the text store optionally a list of rule
+groups to use
 
 #### type Result
 

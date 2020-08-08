@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/dshills/layered/buffer"
+	"github.com/dshills/layered/conf"
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/filetype"
 	"github.com/dshills/layered/register"
@@ -16,22 +17,19 @@ import (
 
 // Editor is an editor instance
 type Editor struct {
-	runtimes []string
-	bufs     []buffer.Bufferer
-	bufFac   buffer.Factory
-	curFac   cursor.Factory
-	txtFac   textstore.Factory
-	undoFac  undo.Factory
-	synFac   syntax.Factory
-	//ftFac       filetype.Factory
-	//objFac      textobject.Factory
-	//regFac      register.Factory
+	bufs        []buffer.Bufferer
+	bufFac      buffer.Factory
+	curFac      cursor.Factory
+	txtFac      textstore.Factory
+	undoFac     undo.Factory
+	synFac      syntax.Factory
 	objs        textobject.Objecter
 	ftd         filetype.Manager
 	reg         register.Registerer
 	actC        chan Request
 	doneC       chan struct{}
 	activeBufID string
+	config      *conf.Configuration
 }
 
 // Buffers returns the editors currrent buffers
@@ -73,7 +71,7 @@ func (e *Editor) bufferIdx(id string) (int, error) {
 
 func (e *Editor) newBuffer() string {
 	ts := e.txtFac(e.undoFac)
-	buf := e.bufFac(ts, e.curFac(ts), e.synFac(e.runtimes...), e.ftd, e.reg)
+	buf := e.bufFac(ts, e.curFac(ts), e.synFac(e.config), e.ftd, e.reg)
 	e.bufs = append(e.bufs, buf)
 	return buf.ID()
 }
@@ -89,14 +87,14 @@ func (e *Editor) DoneChan() chan struct{} {
 }
 
 // New will return a new editor
-func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, rt ...string) (Editorer, error) {
-	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, synFac: sf, runtimes: rt}
+func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, config *conf.Configuration) (Editorer, error) {
+	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, synFac: sf, config: config}
 	ed.reg = rf()
-	ed.objs = of(rt...)
+	ed.objs = of(config)
 
 	var err error
 	errs := []string{}
-	ed.ftd, err = ftf(rt...)
+	ed.ftd, err = ftf(config)
 	if err != nil {
 		errs = append(errs, fmt.Sprintf("filetype: %v", err.Error()))
 	}

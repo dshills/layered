@@ -8,14 +8,16 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+
+	"github.com/dshills/layered/conf"
 )
 
 // FTDetecter determines file types
 type FTDetecter struct {
+	config   *conf.Configuration
 	exts     map[string]string
 	m        sync.RWMutex
 	patterns []ftEntry
-	runtimes []string
 }
 
 type ftEntry struct {
@@ -28,9 +30,8 @@ type ftEntry struct {
 // Load will load file type detecters
 func (fd *FTDetecter) Load() error {
 	errs := []string{}
-	for _, p := range fd.runtimes {
-		path := filepath.Join(p, "config", "ftdetect.json")
-		if err := fd._load(path); err != nil {
+	for _, p := range fd.config.FTDetect() {
+		if err := fd._load(p); err != nil {
 			errs = append(errs, err.Error())
 		}
 	}
@@ -98,25 +99,9 @@ func (fd *FTDetecter) Detect(path string) (string, error) {
 	return "", fmt.Errorf("Not found")
 }
 
-// AddRuntime will add a directory to the list of search directories
-func (fd *FTDetecter) AddRuntime(paths ...string) {
-	fd.runtimes = append(fd.runtimes, paths...)
-}
-
-// RemoveRuntime will remove a directory from the runetime list
-func (fd *FTDetecter) RemoveRuntime(path string) {
-	dl := []string{}
-	for i := range fd.runtimes {
-		if fd.runtimes[i] != path {
-			dl = append(dl, fd.runtimes[i])
-		}
-	}
-	fd.runtimes = dl
-}
-
 // New returns a new file type detecter
-func New(rtpaths ...string) (Manager, error) {
-	ft := &FTDetecter{exts: make(map[string]string), runtimes: rtpaths}
+func New(config *conf.Configuration) (Manager, error) {
+	ft := &FTDetecter{exts: make(map[string]string), config: config}
 	err := ft.Load()
 	return ft, err
 }

@@ -7,13 +7,15 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/dshills/layered/conf"
 )
 
 // Objects is a collection of objects
 type Objects struct {
-	runtimes []string
-	objs     map[string]TextObjecter
-	m        sync.RWMutex
+	config *conf.Configuration
+	objs   map[string]TextObjecter
+	m      sync.RWMutex
 }
 
 // LoadDir will load a collection of text objects
@@ -74,28 +76,9 @@ func (o *Objects) Remove(name string) {
 	delete(o.objs, strings.ToLower(name))
 }
 
-// SetRuntimes will set the list of runtime directories
-func (o *Objects) SetRuntimes(rts ...string) {
-	o.runtimes = rts
-	for i := len(rts) - 1; i >= 0; i-- {
-		p := filepath.Join(rts[i], "objects")
-		o.LoadDir(p)
-	}
-}
-
-// AddRuntimes will add to the list of runtimes
-func (o *Objects) AddRuntimes(rts ...string) {
-	o.runtimes = append(o.runtimes, rts...)
-	for i := len(rts) - 1; i >= 0; i-- {
-		p := filepath.Join(rts[i], "objects")
-		o.LoadDir(p)
-	}
-}
-
 // New returns a text object collection
-func New(rts ...string) Objecter {
+func New(config *conf.Configuration) Objecter {
 	objs := &Objects{objs: make(map[string]TextObjecter)}
 	objs.loadDefaults()
-	objs.SetRuntimes(rts...)
 	return objs
 }

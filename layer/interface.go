@@ -17,7 +17,7 @@ type KeyAction interface {
 	Match(keys []key.Keyer) MatchStatus
 }
 
-// Layer is a keyboard interpriter
+// Layer is a set of keyboard / action bindings
 type Layer interface {
 	Name() string
 	Map(name string, keys []key.Keyer, actions []action.Action)

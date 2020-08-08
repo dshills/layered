@@ -9,6 +9,7 @@ import (
 
 	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/buffer"
+	"github.com/dshills/layered/conf"
 	"github.com/dshills/layered/cursor"
 	"github.com/dshills/layered/editor"
 	"github.com/dshills/layered/filetype"
@@ -273,6 +274,8 @@ func (a *App) window(id string) *Window {
 
 func (a *App) init() error {
 	logger.Debugf("Starting editor...")
+	config := conf.New()
+	config.AddRuntime(rt)
 	var err error
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	a.screen, err = tcell.NewScreen()
@@ -284,10 +287,10 @@ func (a *App) init() error {
 	}
 	a.screen.EnableMouse()
 
-	clrs := palette.NewColorList()
+	clrs := palette.NewColorList(config)
 	clrs.Load(filepath.Join(rt, "config", "colors.json"))
 	a.pal = palette.NewPalette()
-	err = a.pal.Load(filepath.Join(rt, "config", "palette.json"), &clrs)
+	err = a.pal.Load(filepath.Join(rt, "config", "palette.json"), clrs)
 	if err != nil {
 		return fmt.Errorf("App.init: %v", err)
 	}
@@ -298,7 +301,7 @@ func (a *App) init() error {
 		return fmt.Errorf("App.init: layer.LoadDirectory %v", err)
 	}
 
-	a.ed, err = editor.New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, rt)
+	a.ed, err = editor.New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, config)
 	if err != nil {
 		return fmt.Errorf("App.init: Editor.New %v", err)
 	}
