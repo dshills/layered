@@ -92,7 +92,7 @@ type Layer interface {
 }
 ```
 
-Layer is a keyboard interpriter
+Layer is a set of keyboard / action bindings
 
 #### func  NewLayer
 

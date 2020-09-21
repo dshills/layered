@@ -86,7 +86,6 @@ docs: dep ## Generate README files
 	@godocdown logger > logger/README.md
 	@godocdown register > register/README.md
 	@godocdown syntax > syntax/README.md
-	@godocdown terminal > terminal/README.md
 	@godocdown textobject > textobject/README.md
 	@godocdown textstore > textstore/README.md
 	@godocdown undo > undo/README.md
