@@ -1,6 +1,9 @@
 package key
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // StrToKey converts a string representaion to a rune, key
 func StrToKey(s string) (r rune, k int, err error) {
@@ -8,6 +11,7 @@ func StrToKey(s string) (r rune, k int, err error) {
 		err = fmt.Errorf("StrToKey: Blank string")
 		return
 	}
+	s = parseKeyString(s)
 	var ok bool
 	k, ok = convertKeyTable[s]
 	if ok {
@@ -73,4 +77,60 @@ func SpecialToString(k int) string {
 		}
 	}
 	return "<unknown>"
+}
+
+func parseKeyString(s string) string {
+	may := false
+	spe := ""
+	norm := ""
+	for _, c := range s {
+		switch {
+		case c == '<' && may:
+			may = false
+			norm += spe
+			spe = ""
+		case c == '<':
+			spe = ""
+			may = true
+		case c == '>' && may:
+			norm += convertSpecial(spe)
+			spe = ""
+		case may:
+			spe += string(c)
+		default:
+			norm += string(c)
+		}
+	}
+	norm += spe
+	return norm
+}
+
+func convertSpecial(s string) string {
+	if len(s) < 3 {
+		return "<" + s + ">"
+	}
+
+	rs := strings.ToLower(string([]rune(s)[:2]))
+	switch rs {
+	case "c-":
+		return "<ctrl-" + string([]rune(s)[3:]) + ">"
+	case "a-":
+		return "<alt-" + string([]rune(s)[3:]) + ">"
+	}
+
+	if s == "ins" {
+		return "<insert>"
+	}
+	if s == "del" {
+		return "<delete>"
+	}
+
+	// Check special list
+	lc := "<" + strings.ToLower(s) + ">"
+	for _, sp := range specialKeys {
+		if lc == sp {
+			return sp
+		}
+	}
+	return "<" + s + ">"
 }
