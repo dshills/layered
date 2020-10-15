@@ -9,8 +9,8 @@ import (
 )
 
 // ExecChan will listen for requests
-func (e *Editor) ExecChan(reqC chan Request, respC chan Response, done chan struct{}) {
-	go func(reqC chan Request, respC chan Response, done chan struct{}) {
+func (e *Editor) ExecChan(reqC chan action.Request, respC chan Response, done chan struct{}) {
+	go func(reqC chan action.Request, respC chan Response, done chan struct{}) {
 		for {
 			select {
 			case req := <-reqC:
@@ -23,7 +23,7 @@ func (e *Editor) ExecChan(reqC chan Request, respC chan Response, done chan stru
 }
 
 // Exec will execute a transaction in the editor
-func (e *Editor) exec(req Request, respC chan Response) {
+func (e *Editor) exec(req action.Request, respC chan Response) {
 	buf, err := e.validateRequest(req)
 	if err != nil {
 		respC <- Response{BufferID: req.BufferID, Err: err}
@@ -303,7 +303,7 @@ func (e *Editor) exec(req Request, respC chan Response) {
 	}
 }
 
-func getInfo(req Request, buf buffer.Bufferer, resp Response) Response {
+func getInfo(req action.Request, buf buffer.Bufferer, resp Response) Response {
 	if buf == nil {
 		return resp
 	}
@@ -322,7 +322,7 @@ func getInfo(req Request, buf buffer.Bufferer, resp Response) Response {
 	return resp
 }
 
-func (e *Editor) updatePos(req Request, buf buffer.Bufferer) Request {
+func (e *Editor) updatePos(req action.Request, buf buffer.Bufferer) action.Request {
 	if buf == nil {
 		return req
 	}
@@ -340,19 +340,16 @@ func (e *Editor) updatePos(req Request, buf buffer.Bufferer) Request {
 	return req
 }
 
-func (e *Editor) validateRequest(req Request) (buffer.Bufferer, error) {
-	need := false
-	for _, act := range req.Actions {
-		if err := act.Valid(req.BufferID); err != nil {
+func (e *Editor) validateRequest(req action.Request) (buffer.Bufferer, error) {
+	var buf buffer.Bufferer
+	var err error
+	if req.BufferID != "" {
+		buf, err = e.buffer(req.BufferID)
+		if err != nil {
 			return nil, err
 		}
-		if act.NeedBuffer() {
-			need = true
-		}
 	}
-
-	buf, err := e.buffer(req.BufferID)
-	if err != nil && need {
+	if err := e.actDefs.ValidRequest(req); err != nil {
 		return nil, err
 	}
 	return buf, nil

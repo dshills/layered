@@ -3,88 +3,170 @@ package action
 import (
 	"fmt"
 	"strings"
+	"sync"
 )
 
+// NewDefinitions will return the action definitions
+func NewDefinitions() *Definitions {
+	dl := Definitions{list: make(map[string]Def)}
+	dl.Add(
+		Def{Name: BufferList, NoReqBuffer: true},
+		Def{Name: ChangeLayer, ReqTarget: true},
+		Def{Name: ChangePrevLayer},
+		Def{Name: CloseBuffer},
+		Def{Name: Content},
+		Def{Name: Delete},
+		Def{Name: DeleteChar},
+		Def{Name: DeleteCharBack},
+		Def{Name: DeleteCmdBack, NoReqBuffer: true},
+		Def{Name: DeleteLine},
+		Def{Name: DeleteObject},
+		Def{Name: DeleteToObject},
+		Def{Name: Down},
+		Def{Name: Indent},
+		Def{Name: InsertLineAbove},
+		Def{Name: InsertLine},
+		Def{Name: InsertString, ReqTarget: true},
+		Def{Name: Move},
+		Def{Name: MoveObj, ReqTarget: true},
+		Def{Name: MoveEnd},
+		Def{Name: MovePrev},
+		Def{Name: MovePrevEnd},
+		Def{Name: CursorMovePast},
+		Def{Name: NewBuffer, NoReqBuffer: true},
+		Def{Name: Next},
+		Def{Name: OpenFile, ReqTarget: true},
+		Def{Name: Outdent},
+		Def{Name: Paste},
+		Def{Name: Prev},
+		Def{Name: Quit, NoReqBuffer: true},
+		Def{Name: Redo},
+		Def{Name: RenameFile, ReqTarget: true},
+		Def{Name: RunCommand},
+		Def{Name: RunMacro},
+		Def{Name: SaveBuffer},
+		Def{Name: SaveFileAs, ReqTarget: true},
+		Def{Name: ScrollDown},
+		Def{Name: ScrollUp},
+		Def{Name: Search, ReqTarget: true},
+		Def{Name: SearchResults},
+		Def{Name: SelectBuffer},
+		Def{Name: SetMark},
+		Def{Name: StartGroupUndo},
+		Def{Name: StartRecordMacro},
+		Def{Name: StartSelection},
+		Def{Name: StopGroupUndo},
+		Def{Name: StopRecordMacro},
+		Def{Name: StopSelection},
+		Def{Name: Syntax},
+		Def{Name: Undo},
+		Def{Name: Up},
+		Def{Name: Yank},
+	)
+	return &dl
+}
+
 // Definitions is a list of action definitions
-var Definitions = []Def{
-	Def{Name: BufferList, Alias: []string{"ls"}},
-	Def{Name: ChangeLayer},
-	Def{Name: ChangePrevLayer},
-	Def{Name: CloseBuffer, ReqBuffer: true},
-	Def{Name: Content, ReqBuffer: true},
-	Def{Name: Delete, ReqBuffer: true},
-	Def{Name: DeleteChar, ReqBuffer: true},
-	Def{Name: DeleteCharBack, ReqBuffer: true},
-	Def{Name: DeleteCmdBack},
-	Def{Name: DeleteLine, ReqBuffer: true},
-	Def{Name: DeleteObject, ReqBuffer: true},
-	Def{Name: DeleteToObject, ReqBuffer: true},
-	Def{Name: Down, ReqBuffer: true},
-	Def{Name: Indent, ReqBuffer: true},
-	Def{Name: InsertLineAbove},
-	Def{Name: InsertLine},
-	Def{Name: InsertString, ReqBuffer: true, ReqParam: true},
-	Def{Name: Move, ReqBuffer: true},
-	Def{Name: MoveObj, ReqBuffer: true},
-	Def{Name: MoveEnd, ReqBuffer: true},
-	Def{Name: MovePrev, ReqBuffer: true},
-	Def{Name: MovePrevEnd, ReqBuffer: true},
-	Def{Name: CursorMovePast, ReqBuffer: true},
-	Def{Name: NewBuffer},
-	Def{Name: Next, ReqBuffer: true},
-	Def{Name: OpenFile, Alias: []string{"e", "edit"}, ReqParam: true},
-	Def{Name: Outdent, ReqBuffer: true},
-	Def{Name: Paste, ReqBuffer: true},
-	Def{Name: Prev, ReqBuffer: true},
-	Def{Name: Quit, Alias: []string{"q"}},
-	Def{Name: Redo, ReqBuffer: true},
-	Def{Name: RenameFile, ReqParam: true},
-	Def{Name: RunCommand, ReqBuffer: true},
-	Def{Name: RunMacro, ReqBuffer: true},
-	Def{Name: SaveBuffer},
-	Def{Name: SaveFileAs, Alias: []string{"w", "write"}, ReqParam: true},
-	Def{Name: ScrollDown, ReqBuffer: true},
-	Def{Name: ScrollUp, ReqBuffer: true},
-	Def{Name: Search, ReqBuffer: true, ReqParam: true},
-	Def{Name: SearchResults, ReqBuffer: true},
-	Def{Name: SelectBuffer, ReqBuffer: true},
-	Def{Name: SetMark, ReqBuffer: true},
-	Def{Name: StartGroupUndo, ReqBuffer: true},
-	Def{Name: StartRecordMacro, ReqBuffer: true},
-	Def{Name: StartSelection, ReqBuffer: true},
-	Def{Name: StopGroupUndo, ReqBuffer: true},
-	Def{Name: StopRecordMacro, ReqBuffer: true},
-	Def{Name: StopSelection, ReqBuffer: true},
-	Def{Name: Syntax, ReqBuffer: true},
-	Def{Name: Undo, ReqBuffer: true},
-	Def{Name: Up, ReqBuffer: true},
-	Def{Name: Yank, ReqBuffer: true},
+type Definitions struct {
+	list map[string]Def
+	m    sync.RWMutex
+}
+
+// Add will add definitions
+func (dl *Definitions) Add(dd ...Def) {
+	dl.m.Lock()
+	defer dl.m.Unlock()
+	for _, d := range dd {
+		dl.list[d.Name] = d
+	}
+}
+
+// Get will return a definition by name or nil if not found
+func (dl *Definitions) Get(n string) *Def {
+	dl.m.RLock()
+	defer dl.m.RUnlock()
+	d, ok := dl.list[n]
+	if !ok {
+		return nil
+	}
+	return &d
+}
+
+// RequireBuffer will return true if the action requires a buffer
+func (dl *Definitions) RequireBuffer(n string) bool {
+	dl.m.RLock()
+	defer dl.m.RUnlock()
+	def := dl.Get(n)
+	if def == nil {
+		return false
+	}
+	return !def.NoReqBuffer
+}
+
+// RequireTarget will return true if the action requires a target
+func (dl *Definitions) RequireTarget(n string) bool {
+	dl.m.RLock()
+	defer dl.m.RUnlock()
+	def := dl.Get(n)
+	if def == nil {
+		return false
+	}
+	return !def.NoReqBuffer
+}
+
+// ValidAction will return an error for an invalid action nil otherwise
+func (dl *Definitions) ValidAction(act Action, bufid string) error {
+	def := dl.Get(act.Name)
+	if def == nil {
+		return fmt.Errorf("Not found")
+	}
+	if def.ReqTarget && act.Target == "" {
+		return fmt.Errorf("Requires target")
+	}
+	if def.ReqCount && act.Count <= 0 {
+		return fmt.Errorf("Requires count > 0")
+	}
+	if def.ReqLine && act.Line <= 0 {
+		return fmt.Errorf("Requires line > 0")
+	}
+	if def.ReqColumn && act.Column <= 0 {
+		return fmt.Errorf("Requires column > 0")
+	}
+	if !def.NoReqBuffer && bufid == "" {
+		return fmt.Errorf("Requires buffer")
+	}
+	return nil
+}
+
+// ValidRequest will return an error for an invalid request nil otherwise
+func (dl *Definitions) ValidRequest(req Request) error {
+	for _, act := range req.Actions {
+		if err := dl.ValidAction(act, req.BufferID); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // StrToAction will convert a string to an action
 // it will return an error if the action is not found
-func StrToAction(s string) (Action, error) {
-	s = strings.ToLower(s)
-	for i := range Definitions {
-		if Definitions[i].Name == s {
-			return Action{Name: Definitions[i].Name}, nil
-		}
-		for _, al := range Definitions[i].Alias {
-			if al == s {
-				return Action{Name: Definitions[i].Name}, nil
-			}
-		}
+func (dl *Definitions) StrToAction(n string) (Action, error) {
+	act := Action{}
+	def := dl.Get(strings.ToLower(n))
+	if def == nil {
+		return act, fmt.Errorf("Action %v Not found", n)
 	}
-	return Action{}, fmt.Errorf("Action %v Not found", s)
+	act.Name = def.Name
+	return act, nil
 }
 
 // Def is a definition for an action
 type Def struct {
-	Name       string
-	Alias      []string
-	ReqBuffer  bool
-	ReqParam   bool
-	ReqTarget  bool
-	Targets    []string
-	IsMovement bool
+	Name        string
+	NoReqBuffer bool
+	ReqTarget   bool
+	IsMovement  bool
+	ReqCount    bool
+	ReqLine     bool
+	ReqColumn   bool
 }

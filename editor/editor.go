@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/dshills/layered/action"
 	"github.com/dshills/layered/buffer"
 	"github.com/dshills/layered/conf"
 	"github.com/dshills/layered/cursor"
@@ -26,10 +27,11 @@ type Editor struct {
 	objs        textobject.Objecter
 	ftd         filetype.Manager
 	reg         register.Registerer
-	actC        chan Request
+	actC        chan action.Request
 	doneC       chan struct{}
 	activeBufID string
 	config      *conf.Configuration
+	actDefs     *action.Definitions
 }
 
 // Buffers returns the editors currrent buffers
@@ -77,7 +79,7 @@ func (e *Editor) newBuffer() string {
 }
 
 // ActionChan returns the action channel
-func (e *Editor) ActionChan() chan Request {
+func (e *Editor) ActionChan() chan action.Request {
 	return e.actC
 }
 
@@ -87,8 +89,8 @@ func (e *Editor) DoneChan() chan struct{} {
 }
 
 // New will return a new editor
-func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, config *conf.Configuration) (Editorer, error) {
-	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, synFac: sf, config: config}
+func New(defs *action.Definitions, uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, config *conf.Configuration) (Editorer, error) {
+	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, synFac: sf, config: config, actDefs: defs}
 	ed.reg = rf()
 	ed.objs = of(config)
 

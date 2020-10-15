@@ -1,5 +1,5 @@
 {
-	"name": "default",
+	"name": "normal",
 	"actions": [
 		{ "keys": [ "d" ], "actions":[ { "action": "Delete" } ]},
 		{ "keys": [ "y" ], "actions":[ { "action": "Yank" } ]},

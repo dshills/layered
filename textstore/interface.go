@@ -1,5 +1,11 @@
 package textstore
 
+/*
+	textstore manages text storage for an editor
+	textstore is a zero based interface meaning that lines and columns start at 0.
+	Generaly an editor will use lines and columns starting with 1. This can be a bit confusing
+*/
+
 import (
 	"fmt"
 	"io"

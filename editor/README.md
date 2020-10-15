@@ -17,7 +17,7 @@ Editor is an editor instance
 #### func (*Editor) ActionChan
 
 ```go
-func (e *Editor) ActionChan() chan Request
+func (e *Editor) ActionChan() chan action.Request
 ```
 ActionChan returns the action channel
 
@@ -38,7 +38,7 @@ DoneChan returns the done channel
 #### func (*Editor) ExecChan
 
 ```go
-func (e *Editor) ExecChan(reqC chan Request, respC chan Response, done chan struct{})
+func (e *Editor) ExecChan(reqC chan action.Request, respC chan Response, done chan struct{})
 ```
 ExecChan will listen for requests
 
@@ -46,7 +46,7 @@ ExecChan will listen for requests
 
 ```go
 type Editorer interface {
-	ExecChan(reqC chan Request, respC chan Response, done chan struct{})
+	ExecChan(reqC chan action.Request, respC chan Response, done chan struct{})
 }
 ```
 
@@ -55,7 +55,7 @@ Editorer is an editor interface
 #### func  New
 
 ```go
-func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, config *conf.Configuration) (Editorer, error)
+func New(defs *action.Definitions, uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, config *conf.Configuration) (Editorer, error)
 ```
 New will return a new editor
 
@@ -69,33 +69,6 @@ type KeyValue struct {
 ```
 
 KeyValue is key/value data
-
-#### type Request
-
-```go
-type Request struct {
-	BufferID   string
-	LineOffset int
-	LineCount  int
-	Actions    []action.Action
-}
-```
-
-Request is a request for actions
-
-#### func  NewRequest
-
-```go
-func NewRequest(bufid string, acts ...action.Action) Request
-```
-NewRequest returns a Request
-
-#### func (*Request) Add
-
-```go
-func (r *Request) Add(act ...action.Action)
-```
-Add will add actions to a request
 
 #### type Response
 

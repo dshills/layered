@@ -19,7 +19,7 @@
 	{ "name": "sbar-notice", "foreground": "whiteGray", "background": "None" },
 	{ "name": "sbar-buffer", "foreground": "blueGray", "background": "TermGrey82"},
 
-	{ "name": "sbar-layer#DEFAULT", "foreground": "blueGray", "background": "neonBlue" },
+	{ "name": "sbar-layer#NORMAL", "foreground": "blueGray", "background": "neonBlue" },
 	{ "name": "sbar-layer#VISUAL", "foreground": "blueGray", "background": "neonPink" },
 	{ "name": "sbar-layer#V-LINE", "foreground": "blueGray", "background": "neonPink" },
 	{ "name": "sbar-layer#V-BLOCK", "foreground": "blueGray", "background": "neonPink" },

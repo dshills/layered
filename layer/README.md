@@ -24,7 +24,7 @@ type Interpriter interface {
 	Status() MatchStatus
 	Add(...Layer)
 	Remove(name string)
-	LoadDirectory(dir string) error
+	LoadDirectory(dl *action.Definitions, dir string) error
 }
 ```
 
@@ -88,7 +88,7 @@ type Layer interface {
 	Match(keys []key.Keyer) ([]action.Action, MatchStatus)
 	MatchSpecial(k key.Keyer) ([]action.Action, bool)
 
-	Load(r io.Reader) error
+	Load(dl *action.Definitions, r io.Reader) error
 }
 ```
 

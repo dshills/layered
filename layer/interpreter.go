@@ -84,7 +84,7 @@ func (i *interpriter) Remove(name string) {
 	}
 }
 
-func (i *interpriter) LoadDirectory(dir string) error {
+func (i *interpriter) LoadDirectory(dl *action.Definitions, dir string) error {
 	fi, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return err
@@ -102,7 +102,7 @@ func (i *interpriter) LoadDirectory(dir string) error {
 			}
 			defer file.Close()
 			lay := layer{}
-			if err := lay.Load(file); err != nil {
+			if err := lay.Load(dl, file); err != nil {
 				errs = append(errs, err.Error())
 				continue
 			}

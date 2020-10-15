@@ -32,7 +32,7 @@ type Window struct {
 	preStyled             [][]tcell.Style
 	cursorLine, cursorCol int
 	numLines              int
-	reqC                  chan editor.Request
+	reqC                  chan action.Request
 }
 
 // SetResponse will interprit an editor response
@@ -91,7 +91,7 @@ func (w *Window) moveCursorVisible() {
 }
 
 func (w *Window) getContent() {
-	req := editor.NewRequest(w.id, action.Action{Name: action.Content})
+	req := action.NewRequest(w.id, action.Action{Name: action.Content})
 	req.LineOffset = w.offset
 	req.LineCount = w.region.Dy()
 	w.reqC <- req
@@ -246,7 +246,7 @@ func (w *Window) clear() {
 }
 
 // NewWindow returns a new window
-func NewWindow(sc tcell.Screen, rgn image.Rectangle, pal *palette.Palette, reqC chan editor.Request) *Window {
+func NewWindow(sc tcell.Screen, rgn image.Rectangle, pal *palette.Palette, reqC chan action.Request) *Window {
 	win := &Window{screen: sc, region: rgn, style: tcell.StyleDefault, pal: pal, tabsize: 4, reqC: reqC}
 	win.preDrawGen()
 	return win

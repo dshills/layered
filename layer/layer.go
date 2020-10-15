@@ -53,7 +53,7 @@ func (l *layer) OnMatch() []action.Action          { return l.onMatch }
 func (l *layer) OnNoMatch() []action.Action        { return l.onNoMatch }
 func (l *layer) OnPartialMatch() []action.Action   { return l.onPartial }
 func (l *layer) KeyActions() []KeyAction           { return l.keyActions }
-func (l *layer) Load(r io.Reader) error {
+func (l *layer) Load(defs *action.Definitions, r io.Reader) error {
 	errs := []string{}
 	var err error
 	lay := layJSON{}
@@ -68,45 +68,45 @@ func (l *layer) Load(r io.Reader) error {
 	l.completeKey, _ = key.StrToKeyer(lay.CompleteOnKey)
 	l.allowCursorPastEnd = lay.AllowCursorPastEnd
 
-	l.any, err = convertActions(lay.OnAnyKey)
+	l.any, err = convertActions(defs, lay.OnAnyKey)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
-	l.anyprint, err = convertActions(lay.OnPrintableKey)
+	l.anyprint, err = convertActions(defs, lay.OnPrintableKey)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
-	l.anynonprint, err = convertActions(lay.OnNonPritableKey)
+	l.anynonprint, err = convertActions(defs, lay.OnNonPritableKey)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
-	l.onEnter, err = convertActions(lay.OnEnterLayer)
+	l.onEnter, err = convertActions(defs, lay.OnEnterLayer)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
-	l.onExit, err = convertActions(lay.OnExitLayer)
+	l.onExit, err = convertActions(defs, lay.OnExitLayer)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
-	l.onComplete, err = convertActions(lay.OnComplete)
+	l.onComplete, err = convertActions(defs, lay.OnComplete)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
-	l.onMatch, err = convertActions(lay.OnMatch)
+	l.onMatch, err = convertActions(defs, lay.OnMatch)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
-	l.onNoMatch, err = convertActions(lay.OnNoMatch)
+	l.onNoMatch, err = convertActions(defs, lay.OnNoMatch)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
-	l.onPartial, err = convertActions(lay.OnPartialMatch)
+	l.onPartial, err = convertActions(defs, lay.OnPartialMatch)
 	if err != nil {
 		errs = append(errs, err.Error())
 	}
 
 	for _, ka := range lay.Actions {
-		acts, err := convertActions(ka.Actions)
+		acts, err := convertActions(defs, ka.Actions)
 		if err != nil {
 			errs = append(errs, err.Error())
 		}
@@ -155,13 +155,13 @@ func (l *layer) Match(keys []key.Keyer) ([]action.Action, MatchStatus) {
 func (l *layer) MatchSpecial(k key.Keyer) ([]action.Action, bool) {
 	acts := []action.Action{}
 	if l.cancelKey != nil && l.cancelKey.Eq(k) {
-		return []action.Action{action.Action{Name: action.ChangeLayer, Target: "default"}}, true
+		return []action.Action{{Name: action.ChangeLayer, Target: "default"}}, true
 	}
 	if l.completeKey != nil && l.completeKey.Eq(k) {
 		return l.onComplete, true
 	}
 	if l.prevlayerKey != nil && l.prevlayerKey.Eq(k) {
-		return []action.Action{action.Action{Name: action.ChangeLayer, Target: "previous"}}, true
+		return []action.Action{{Name: action.ChangeLayer, Target: "previous"}}, true
 	}
 	acts = append(acts, l.OnAnyKey()...)
 	if unicode.IsPrint(k.Rune()) {

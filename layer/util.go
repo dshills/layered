@@ -8,11 +8,11 @@ import (
 	"github.com/dshills/layered/key"
 )
 
-func convertActions(acts []actJSON) ([]action.Action, error) {
+func convertActions(dl *action.Definitions, acts []actJSON) ([]action.Action, error) {
 	actions := []action.Action{}
 	errs := []string{}
 	for _, a := range acts {
-		act, err := action.StrToAction(a.Action)
+		act, err := dl.StrToAction(a.Action)
 		if err != nil {
 			errs = append(errs, err.Error())
 			continue

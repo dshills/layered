@@ -32,7 +32,7 @@ const (
 
 var errDone = fmt.Errorf("DONE")
 
-func logRequest(req editor.Request) {
+func logRequest(req action.Request) {
 	logger.Debugf(fmt.Sprintf("Request: LineOffset: %v, LineCount: %v, Buf: %v", req.LineOffset, req.LineCount, req.BufferID))
 	for i, act := range req.Actions {
 		builder := strings.Builder{}
@@ -115,7 +115,7 @@ func (a *App) handleKeyEvent(ev *tcell.EventKey) error {
 	a.Notify(a.keyscanner.Partial())
 
 	if len(acts) > 0 {
-		req := editor.Request{}
+		req := action.Request{}
 		req.Add(acts...)
 		if a.current != nil {
 			req.BufferID = a.current.id
@@ -137,15 +137,15 @@ func (a *App) handleMouseEvent(ev *tcell.EventMouse) error {
 		if win != nil {
 			a.current = win
 			ln, col := win.pointToPos(x, y)
-			a.reqC <- editor.NewRequest(a.windows[0].id, action.Action{Name: action.Move, Line: ln, Column: col})
+			a.reqC <- action.NewRequest(a.windows[0].id, action.Action{Name: action.Move, Line: ln, Column: col})
 		}
 	case mask&tcell.WheelUp != 0:
 		if a.current != nil {
-			a.reqC <- editor.NewRequest(a.windows[0].id, action.Action{Name: action.ScrollUp})
+			a.reqC <- action.NewRequest(a.windows[0].id, action.Action{Name: action.ScrollUp})
 		}
 	case mask&tcell.WheelDown != 0:
 		if a.current != nil {
-			a.reqC <- editor.NewRequest(a.windows[0].id, action.Action{Name: action.ScrollDown})
+			a.reqC <- action.NewRequest(a.windows[0].id, action.Action{Name: action.ScrollDown})
 		}
 	}
 	return nil
@@ -175,7 +175,7 @@ func (a *App) listen() {
 						a.windows[len(a.windows)-1] = nil
 						a.windows = a.windows[:len(a.windows)-1]
 						if len(a.windows) == 0 {
-							a.reqC <- editor.NewRequest("", action.Action{Name: action.NewBuffer})
+							a.reqC <- action.NewRequest("", action.Action{Name: action.NewBuffer})
 						}
 					}
 				}
@@ -184,7 +184,7 @@ func (a *App) listen() {
 				a.current = win
 				win.SetResponse(resp)
 				a.Notifyf("BufferID %v created", win.bnum)
-				req := editor.NewRequest(resp.BufferID, action.Action{Name: action.OpenFile, Target: demof})
+				req := action.NewRequest(resp.BufferID, action.Action{Name: action.OpenFile, Target: demof})
 				req.LineCount = a.height - 3
 				logRequest(req)
 				a.reqC <- req
@@ -295,17 +295,18 @@ func (a *App) init() error {
 		return fmt.Errorf("App.init: %v", err)
 	}
 
+	defs := action.NewDefinitions()
 	a.keyscanner = layer.NewInterpriter()
-	err = a.keyscanner.LoadDirectory(filepath.Join(rt, "layers"))
+	err = a.keyscanner.LoadDirectory(defs, filepath.Join(rt, "layers"))
 	if err != nil {
 		return fmt.Errorf("App.init: layer.LoadDirectory %v", err)
 	}
 
-	a.ed, err = editor.New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, config)
+	a.ed, err = editor.New(defs, undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, config)
 	if err != nil {
 		return fmt.Errorf("App.init: Editor.New %v", err)
 	}
-	a.reqC = make(chan editor.Request, 10)
+	a.reqC = make(chan action.Request, 10)
 	a.respC = make(chan editor.Response, 10)
 	a.ed.ExecChan(a.reqC, a.respC, a.done)
 	go a.listen()
@@ -319,7 +320,7 @@ func (a *App) init() error {
 	a.notice = NewNoticebar(a.screen, image.Rect(0, a.height-1, a.width, a.height-1))
 	a.notice.Notice("I'm a notice bar")
 
-	a.reqC <- editor.NewRequest("", action.Action{Name: action.NewBuffer})
+	a.reqC <- action.NewRequest("", action.Action{Name: action.NewBuffer})
 	return nil
 }
 
@@ -360,7 +361,7 @@ type App struct {
 	windows       []*Window
 	current       *Window
 	ed            editor.Editorer
-	reqC          chan editor.Request
+	reqC          chan action.Request
 	respC         chan editor.Response
 	width, height int
 	pal           palette.Palette

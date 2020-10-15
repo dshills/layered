@@ -86,15 +86,17 @@ func parseKeyString(s string) string {
 	for _, c := range s {
 		switch {
 		case c == '<' && may:
-			may = false
 			norm += spe
 			spe = ""
+			may = false
 		case c == '<':
+			norm += spe
 			spe = ""
 			may = true
 		case c == '>' && may:
 			norm += convertSpecial(spe)
 			spe = ""
+			may = false
 		case may:
 			spe += string(c)
 		default:

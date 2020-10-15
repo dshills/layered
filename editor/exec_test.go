@@ -21,7 +21,7 @@ const tfile = "/Users/dshills/Development/projects/layered/testdata/scanner_test
 
 var ed Editorer
 var bufid string
-var reqC chan Request
+var reqC chan action.Request
 var respC chan Response
 var doneC chan struct{}
 
@@ -32,11 +32,11 @@ func setup() {
 	var err error
 	config := &conf.Configuration{}
 	config.AddRuntime(rtpath)
-	ed, err = New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, config)
+	ed, err = New(action.NewDefinitions(), undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, config)
 	if err != nil {
 		panic(err)
 	}
-	reqC = make(chan Request)
+	reqC = make(chan action.Request)
 	respC = make(chan Response)
 	doneC = make(chan struct{})
 	ed.ExecChan(reqC, respC, doneC)
@@ -49,7 +49,8 @@ type testAct struct {
 }
 
 func newTestAct(name string, target string, exl, exc int) testAct {
-	act, err := action.StrToAction(name)
+	defs := action.NewDefinitions()
+	act, err := defs.StrToAction(name)
 	if err != nil {
 		panic(err)
 	}
@@ -58,6 +59,7 @@ func newTestAct(name string, target string, exl, exc int) testAct {
 }
 
 func TestMoveObj(t *testing.T) {
+	defs := action.NewDefinitions()
 	setup()
 	// block-(),block-<>,block-[],block-{},bol-not-blankbol,eol-not-blank,eol,line,paragraph,sentence,string-double,string-single,string-tick,tag,word-ext,word
 	reset := newTestAct("Move", "", 10, 0)
@@ -102,11 +104,11 @@ func TestMoveObj(t *testing.T) {
 
 	var buffer string
 	for _, ta := range tests {
-		if ta.action.NeedBuffer() && buffer == "" {
-			t.Fatal("Expected buffer got not")
+		if err := defs.ValidAction(ta.action, buffer); err != nil {
+			t.Fatalf("Invalid action %v %+v", err, ta.action)
 		}
 		fmt.Printf("Request: %v %v %v:%v\n", ta.action.Name, ta.action.Target, ta.action.Line, ta.action.Column)
-		reqC <- NewRequest(buffer, ta.action)
+		reqC <- action.NewRequest(buffer, ta.action)
 		resp := <-respC
 		fmt.Printf("Response: %v %v => %v:%v\n", resp.Action.Name, resp.Action.Target, resp.Line, resp.Column)
 		if resp.BufferID != "" {
