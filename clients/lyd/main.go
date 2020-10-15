@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/dshills/layered/logger"
 )
 
 func main() {
@@ -19,6 +21,12 @@ func main() {
 		os.Exit(1)
 	}
 	log.SetOutput(f)
-	app := NewApp()
+
+	app := App{done: make(chan struct{})}
+	if err := app.init(); err != nil {
+		fmt.Printf("[ERROR] app.init %v", err)
+		os.Exit(1)
+	}
+	logger.Debugf("%+v", app)
 	app.ProcessKeys()
 }

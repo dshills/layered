@@ -9,8 +9,8 @@ import (
 
 func TestInterp(t *testing.T) {
 	rt := "/Users/dshills/Development/projects/layered/runtime/layers"
-	interp := NewInterpriter()
-	if err := interp.LoadDirectory(action.NewDefinitions(), rt); err != nil {
+	interp := NewInterpriter(action.New(), "normal")
+	if err := interp.LoadDirectory(rt); err != nil {
 		t.Fatal(err)
 	}
 	test := [][]string{

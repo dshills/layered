@@ -158,68 +158,33 @@ Def is a definition for an action
 #### type Definitions
 
 ```go
-type Definitions struct {
+type Definitions interface {
+	Add(dd ...Def)
+	Get(n string) *Def
+	RequireBuffer(n string) bool
+	RequireTarget(n string) bool
+	ValidAction(act Action, bufid string) error
+	ValidRequest(req Request) error
+	StrToAction(n string) (Action, error)
 }
 ```
 
-Definitions is a list of action definitions
+Definitions is a validator and string conversion tool for Actions and Requests
 
-#### func  NewDefinitions
-
-```go
-func NewDefinitions() *Definitions
-```
-NewDefinitions will return the action definitions
-
-#### func (*Definitions) Add
+#### func  New
 
 ```go
-func (dl *Definitions) Add(dd ...Def)
+func New() Definitions
 ```
-Add will add definitions
+New return the action definitions
 
-#### func (*Definitions) Get
+#### type Factory
 
 ```go
-func (dl *Definitions) Get(n string) *Def
+type Factory func() Definitions
 ```
-Get will return a definition by name or nil if not found
 
-#### func (*Definitions) RequireBuffer
-
-```go
-func (dl *Definitions) RequireBuffer(n string) bool
-```
-RequireBuffer will return true if the action requires a buffer
-
-#### func (*Definitions) RequireTarget
-
-```go
-func (dl *Definitions) RequireTarget(n string) bool
-```
-RequireTarget will return true if the action requires a target
-
-#### func (*Definitions) StrToAction
-
-```go
-func (dl *Definitions) StrToAction(n string) (Action, error)
-```
-StrToAction will convert a string to an action it will return an error if the
-action is not found
-
-#### func (*Definitions) ValidAction
-
-```go
-func (dl *Definitions) ValidAction(act Action, bufid string) error
-```
-ValidAction will return an error for an invalid action nil otherwise
-
-#### func (*Definitions) ValidRequest
-
-```go
-func (dl *Definitions) ValidRequest(req Request) error
-```
-ValidRequest will return an error for an invalid request nil otherwise
+Factory is function that returns new action definitions
 
 #### type Request
 

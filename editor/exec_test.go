@@ -32,7 +32,7 @@ func setup() {
 	var err error
 	config := &conf.Configuration{}
 	config.AddRuntime(rtpath)
-	ed, err = New(action.NewDefinitions(), undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, config)
+	ed, err = New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, action.New(), config)
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +49,7 @@ type testAct struct {
 }
 
 func newTestAct(name string, target string, exl, exc int) testAct {
-	defs := action.NewDefinitions()
+	defs := action.New()
 	act, err := defs.StrToAction(name)
 	if err != nil {
 		panic(err)
@@ -59,7 +59,7 @@ func newTestAct(name string, target string, exl, exc int) testAct {
 }
 
 func TestMoveObj(t *testing.T) {
-	defs := action.NewDefinitions()
+	defs := action.New()
 	setup()
 	// block-(),block-<>,block-[],block-{},bol-not-blankbol,eol-not-blank,eol,line,paragraph,sentence,string-double,string-single,string-tick,tag,word-ext,word
 	reset := newTestAct("Move", "", 10, 0)

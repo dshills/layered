@@ -32,6 +32,109 @@ const (
 
 var errDone = fmt.Errorf("DONE")
 
+// App is the primary application
+type App struct {
+	done          chan struct{}
+	status        *Statusbar
+	notice        *Noticebar
+	screen        tcell.Screen
+	windows       []*Window
+	current       *Window
+	ed            editor.Editorer
+	reqC          chan action.Request
+	respC         chan editor.Response
+	width, height int
+	pal           *palette.Palette
+	keyscanner    layer.Interpriter
+	bnum          int
+	actDefs       action.Definitions
+}
+
+func (a *App) init() error {
+	logger.Debugf("Starting editor...")
+	config := conf.New()
+	config.AddRuntime(rt)
+	var err error
+	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
+	a.screen, err = tcell.NewScreen()
+	if err != nil {
+		a.screen.Fini()
+		return fmt.Errorf("App.init: NewScreen %v", err)
+	}
+	if err := a.screen.Init(); err != nil {
+		a.screen.Fini()
+		return fmt.Errorf("App.init: Screen init %v", err)
+	}
+	a.screen.EnableMouse()
+
+	clrs := palette.NewColorList(config)
+	clrs.Load(filepath.Join(rt, "config", "colors.json"))
+	a.pal = palette.NewPalette()
+	err = a.pal.Load(filepath.Join(rt, "palette", "default.json"), clrs)
+	if err != nil {
+		a.screen.Fini()
+		return fmt.Errorf("App.init: %v", err)
+	}
+
+	a.actDefs = action.New()
+	a.ed, err = editor.New(undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, a.actDefs, config)
+	if err != nil {
+		a.screen.Fini()
+		return fmt.Errorf("App.init: Editor.New %v", err)
+	}
+	a.keyscanner = layer.NewInterpriter(a.actDefs, "normal")
+	err = a.keyscanner.LoadDirectory(filepath.Join(rt, "layers"))
+	if err != nil {
+		a.screen.Fini()
+		return fmt.Errorf("App.init: layer.LoadDirectory %v", err)
+	}
+	a.reqC = make(chan action.Request, 10)
+	a.respC = make(chan editor.Response, 10)
+	a.ed.ExecChan(a.reqC, a.respC, a.done)
+	go a.listen()
+
+	a.screen.SetStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite))
+	a.screen.Clear()
+
+	a.width, a.height = a.screen.Size()
+	a.status = NewStatusbar(a.screen, image.Rect(0, a.height-2, a.width, a.height-2), a.done)
+	a.initStatusbar()
+	a.notice = NewNoticebar(a.screen, image.Rect(0, a.height-1, a.width, a.height-1))
+	a.notice.Notice("I'm a notice bar")
+
+	a.reqC <- action.NewRequest("", action.Action{Name: action.NewBuffer})
+	logger.Debugf("%v", a)
+	return nil
+}
+
+func (a *App) initStatusbar() {
+	st := tcell.StyleDefault.Foreground(tcell.NewRGBColor(255, 255, 255)).Background(tcell.NewRGBColor(15, 77, 118))
+	a.status.style = styleEntry(a.pal, "sbar-default", st)
+	a.status.Palette(a.pal)
+
+	a.status.AddItem(SBItem{Key: SBLayer, Pre: " ", Post: " "}, 1000)
+	a.status.AddItem(SBItem{Key: SBBufNum, Pre: " ", Post: " "}, 1000)
+	a.status.AddItem(SBItem{Key: SBFilename, Pre: " ", Post: " "}, 1000)
+	a.status.AddItem(SBItem{Key: SBDirty, Post: " "}, 1000)
+
+	a.status.AddItem(SBItem{Key: SBFiletype, Right: true, Post: " "}, 1000)
+	a.status.AddItem(SBItem{Key: SBLine, Right: true, Pre: " ", Post: ":"}, 1000)
+	a.status.AddItem(SBItem{Key: SBColumn, Right: true, Post: " "}, 1000)
+	a.status.AddItem(SBItem{Key: SBNumLines, Right: true, Pre: " ", Post: " "}, 1000)
+	a.status.AddItem(SBItem{Key: SBPercent, Right: true, Pre: " ", Post: " "}, 1000)
+	a.status.AddItem(SBItem{Key: SBClock, Right: true, Pre: " ", Post: " "}, 1000)
+
+	// Default values
+	a.status.SetValue(SBLayer, "DEFAULT")
+	a.status.SetValue(SBFilename, "No file")
+	a.status.SetValue(SBFiletype, "unknown")
+	a.status.SetValue(SBLine, "1")
+	a.status.SetValue(SBColumn, "1")
+	a.status.SetValue(SBNumLines, "0")
+	a.status.SetValue(SBPercent, "0%")
+	a.status.SetValue(SBClock, time.Now().Format(time.Kitchen))
+}
+
 func logRequest(req action.Request) {
 	logger.Debugf(fmt.Sprintf("Request: LineOffset: %v, LineCount: %v, Buf: %v", req.LineOffset, req.LineCount, req.BufferID))
 	for i, act := range req.Actions {
@@ -109,6 +212,9 @@ func (a *App) handleKeyEvent(ev *tcell.EventKey) error {
 	if err != nil {
 		logger.Errorf("handleKeyEvent: convertKey %v", err)
 		return nil
+	}
+	if a.keyscanner == nil {
+		panic("handleKeyEvent: no interpritter")
 	}
 	acts := a.keyscanner.Match(k)
 	a.status.SetValue("layer", strings.ToUpper(a.keyscanner.Active().Name()))
@@ -256,7 +362,7 @@ func (a *App) Notify(msg string) {
 }
 
 func (a *App) newWindow(rgn image.Rectangle) *Window {
-	win := NewWindow(a.screen, rgn, &a.pal, a.reqC)
+	win := NewWindow(a.screen, rgn, a.pal, a.reqC)
 	a.bnum++
 	win.bnum = a.bnum
 	a.windows = append(a.windows, win)
@@ -270,108 +376,4 @@ func (a *App) window(id string) *Window {
 		}
 	}
 	return nil
-}
-
-func (a *App) init() error {
-	logger.Debugf("Starting editor...")
-	config := conf.New()
-	config.AddRuntime(rt)
-	var err error
-	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
-	a.screen, err = tcell.NewScreen()
-	if err != nil {
-		return fmt.Errorf("App.init: NewScreen %v", err)
-	}
-	if err := a.screen.Init(); err != nil {
-		return fmt.Errorf("App.init: Screen init %v", err)
-	}
-	a.screen.EnableMouse()
-
-	clrs := palette.NewColorList(config)
-	clrs.Load(filepath.Join(rt, "config", "colors.json"))
-	a.pal = palette.NewPalette()
-	err = a.pal.Load(filepath.Join(rt, "config", "palette.json"), clrs)
-	if err != nil {
-		return fmt.Errorf("App.init: %v", err)
-	}
-
-	defs := action.NewDefinitions()
-	a.keyscanner = layer.NewInterpriter()
-	err = a.keyscanner.LoadDirectory(defs, filepath.Join(rt, "layers"))
-	if err != nil {
-		return fmt.Errorf("App.init: layer.LoadDirectory %v", err)
-	}
-
-	a.ed, err = editor.New(defs, undo.New, textstore.New, buffer.New, cursor.New, syntax.New, filetype.New, textobject.New, register.New, config)
-	if err != nil {
-		return fmt.Errorf("App.init: Editor.New %v", err)
-	}
-	a.reqC = make(chan action.Request, 10)
-	a.respC = make(chan editor.Response, 10)
-	a.ed.ExecChan(a.reqC, a.respC, a.done)
-	go a.listen()
-
-	a.screen.SetStyle(tcell.StyleDefault.Foreground(tcell.ColorWhite))
-	a.screen.Clear()
-
-	a.width, a.height = a.screen.Size()
-	a.status = NewStatusbar(a.screen, image.Rect(0, a.height-2, a.width, a.height-2), a.done)
-	a.initStatusbar()
-	a.notice = NewNoticebar(a.screen, image.Rect(0, a.height-1, a.width, a.height-1))
-	a.notice.Notice("I'm a notice bar")
-
-	a.reqC <- action.NewRequest("", action.Action{Name: action.NewBuffer})
-	return nil
-}
-
-func (a *App) initStatusbar() {
-	st := tcell.StyleDefault.Foreground(tcell.NewRGBColor(255, 255, 255)).Background(tcell.NewRGBColor(15, 77, 118))
-	a.status.style = styleEntry(&a.pal, "sbar-default", st)
-	a.status.Palette(&a.pal)
-
-	a.status.AddItem(SBItem{Key: SBLayer, Pre: " ", Post: " "}, 1000)
-	a.status.AddItem(SBItem{Key: SBBufNum, Pre: " ", Post: " "}, 1000)
-	a.status.AddItem(SBItem{Key: SBFilename, Pre: " ", Post: " "}, 1000)
-	a.status.AddItem(SBItem{Key: SBDirty, Post: " "}, 1000)
-
-	a.status.AddItem(SBItem{Key: SBFiletype, Right: true, Post: " "}, 1000)
-	a.status.AddItem(SBItem{Key: SBLine, Right: true, Pre: " ", Post: ":"}, 1000)
-	a.status.AddItem(SBItem{Key: SBColumn, Right: true, Post: " "}, 1000)
-	a.status.AddItem(SBItem{Key: SBNumLines, Right: true, Pre: " ", Post: " "}, 1000)
-	a.status.AddItem(SBItem{Key: SBPercent, Right: true, Pre: " ", Post: " "}, 1000)
-	a.status.AddItem(SBItem{Key: SBClock, Right: true, Pre: " ", Post: " "}, 1000)
-
-	// Default values
-	a.status.SetValue(SBLayer, "DEFAULT")
-	a.status.SetValue(SBFilename, "No file")
-	a.status.SetValue(SBFiletype, "unknown")
-	a.status.SetValue(SBLine, "1")
-	a.status.SetValue(SBColumn, "1")
-	a.status.SetValue(SBNumLines, "0")
-	a.status.SetValue(SBPercent, "0%")
-	a.status.SetValue(SBClock, time.Now().Format(time.Kitchen))
-}
-
-// App is the primary application
-type App struct {
-	done          chan struct{}
-	status        *Statusbar
-	notice        *Noticebar
-	screen        tcell.Screen
-	windows       []*Window
-	current       *Window
-	ed            editor.Editorer
-	reqC          chan action.Request
-	respC         chan editor.Response
-	width, height int
-	pal           palette.Palette
-	keyscanner    layer.Interpriter
-	bnum          int
-}
-
-// NewApp will return a new app
-func NewApp() *App {
-	app := &App{done: make(chan struct{})}
-	app.init()
-	return app
 }

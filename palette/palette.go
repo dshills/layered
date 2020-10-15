@@ -78,18 +78,10 @@ func (p *Palette) Load(path string, cl *ColorList) error {
 		return err
 	}
 	errs := []string{}
-	for i := range js.Colors {
-		clr, err := parseRGB(js.Colors[i].Color)
-		if err != nil {
-			errs = append(errs, err.Error())
-			continue
-		}
-		cl.Add(js.Colors[i].Name, clr)
-	}
 
 	none := Color{}
 	none.Transparent = true
-	for _, pal := range js.Palette {
+	for _, pal := range js {
 		e := Entry{Name: pal.Name}
 		if strings.ToLower(pal.Foreground) != "none" {
 			clr, err := cl.Color(pal.Foreground)
@@ -121,16 +113,13 @@ func (p *Palette) Load(path string, cl *ColorList) error {
 }
 
 // NewPalette will return a palette
-func NewPalette() Palette {
-	return Palette{entries: make(map[string]Entry)}
+func NewPalette() *Palette {
+	return &Palette{entries: make(map[string]Entry)}
 }
 
-type jsPalette struct {
-	Colors  []jsColor `json:"colors"`
-	Palette []struct {
-		Name       string `json:"name"`
-		Foreground string `json:"foreground"`
-		Background string `json:"background"`
-		Modifier   string `json:"modifier"`
-	} `json:"palette"`
+type jsPalette []struct {
+	Name       string `json:"name"`
+	Foreground string `json:"foreground"`
+	Background string `json:"background"`
+	Modifier   string `json:"modifier,omitempty"`
 }

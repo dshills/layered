@@ -31,7 +31,12 @@ type Editor struct {
 	doneC       chan struct{}
 	activeBufID string
 	config      *conf.Configuration
-	actDefs     *action.Definitions
+	actDefs     action.Definitions
+}
+
+// ActionDefs returns the action definitions
+func (e *Editor) ActionDefs() action.Definitions {
+	return e.actDefs
 }
 
 // Buffers returns the editors currrent buffers
@@ -89,8 +94,8 @@ func (e *Editor) DoneChan() chan struct{} {
 }
 
 // New will return a new editor
-func New(defs *action.Definitions, uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, config *conf.Configuration) (Editorer, error) {
-	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, synFac: sf, config: config, actDefs: defs}
+func New(uf undo.Factory, tf textstore.Factory, bf buffer.Factory, cf cursor.Factory, sf syntax.Factory, ftf filetype.Factory, of textobject.Factory, rf register.Factory, ad action.Definitions, config *conf.Configuration) (Editorer, error) {
+	ed := &Editor{undoFac: uf, bufFac: bf, curFac: cf, txtFac: tf, synFac: sf, config: config, actDefs: ad}
 	ed.reg = rf()
 	ed.objs = of(config)
 

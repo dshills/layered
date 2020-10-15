@@ -13,12 +13,14 @@ import (
 )
 
 type interpriter struct {
-	layers      []Layer
-	partial     []key.Keyer
-	lastStatus  MatchStatus
-	stack       []Layer
-	active      Layer
-	lastPartial string
+	layers       []Layer
+	partial      []key.Keyer
+	lastStatus   MatchStatus
+	stack        []Layer
+	active       Layer
+	lastPartial  string
+	actDefs      action.Definitions
+	defaultLayer string
 }
 
 func (i *interpriter) push(l Layer) {
@@ -84,7 +86,7 @@ func (i *interpriter) Remove(name string) {
 	}
 }
 
-func (i *interpriter) LoadDirectory(dl *action.Definitions, dir string) error {
+func (i *interpriter) LoadDirectory(dir string) error {
 	fi, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return err
@@ -102,18 +104,17 @@ func (i *interpriter) LoadDirectory(dl *action.Definitions, dir string) error {
 			}
 			defer file.Close()
 			lay := layer{}
-			if err := lay.Load(dl, file); err != nil {
+			if err := lay.Load(i.actDefs, file); err != nil {
 				errs = append(errs, err.Error())
 				continue
 			}
 			i.Add(&lay)
 		}
 	}
-	i.active = i.getLayer("default")
 	if i.active == nil {
-		return fmt.Errorf("Interpriter: Failed to load default layer")
+		i.active = i.getLayer(i.defaultLayer)
+		i.push(i.active)
 	}
-	i.push(i.active)
 	if len(errs) > 0 {
 		return fmt.Errorf("Interpriter.LoadDirectory: %v", strings.Join(errs, ", "))
 	}
@@ -121,7 +122,11 @@ func (i *interpriter) LoadDirectory(dl *action.Definitions, dir string) error {
 }
 
 func (i *interpriter) Match(keys ...key.Keyer) []action.Action {
-	if len(keys) == 0 || i.active == nil {
+	if i.active == nil {
+		logger.Errorf("No default layer set")
+		return nil
+	}
+	if len(keys) == 0 {
 		return nil
 	}
 	i.addPartial(keys...)
@@ -198,6 +203,6 @@ func (i *interpriter) clearPartial() {
 }
 
 // NewInterpriter returns an interpriter
-func NewInterpriter() Interpriter {
-	return &interpriter{}
+func NewInterpriter(ad action.Definitions, deflayer string) Interpriter {
+	return &interpriter{actDefs: ad, defaultLayer: deflayer}
 }

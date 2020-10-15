@@ -8,7 +8,7 @@
 #### type Factory
 
 ```go
-type Factory func() Interpriter
+type Factory func(action.Definitions) Interpriter
 ```
 
 Factory will return an Interpriter
@@ -24,7 +24,7 @@ type Interpriter interface {
 	Status() MatchStatus
 	Add(...Layer)
 	Remove(name string)
-	LoadDirectory(dl *action.Definitions, dir string) error
+	LoadDirectory(dir string) error
 }
 ```
 
@@ -33,7 +33,7 @@ Interpriter will convert keystrokes into actions
 #### func  NewInterpriter
 
 ```go
-func NewInterpriter() Interpriter
+func NewInterpriter(ad action.Definitions, deflayer string) Interpriter
 ```
 NewInterpriter returns an interpriter
 
@@ -88,7 +88,7 @@ type Layer interface {
 	Match(keys []key.Keyer) ([]action.Action, MatchStatus)
 	MatchSpecial(k key.Keyer) ([]action.Action, bool)
 
-	Load(dl *action.Definitions, r io.Reader) error
+	Load(dl action.Definitions, r io.Reader) error
 }
 ```
 

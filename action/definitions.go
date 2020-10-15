@@ -6,9 +6,9 @@ import (
 	"sync"
 )
 
-// NewDefinitions will return the action definitions
-func NewDefinitions() *Definitions {
-	dl := Definitions{list: make(map[string]Def)}
+// New return the action definitions
+func New() Definitions {
+	dl := deflist{list: make(map[string]Def)}
 	dl.Add(
 		Def{Name: BufferList, NoReqBuffer: true},
 		Def{Name: ChangeLayer, ReqTarget: true},
@@ -66,14 +66,14 @@ func NewDefinitions() *Definitions {
 	return &dl
 }
 
-// Definitions is a list of action definitions
-type Definitions struct {
+// deflist is a list of action definitions
+type deflist struct {
 	list map[string]Def
 	m    sync.RWMutex
 }
 
 // Add will add definitions
-func (dl *Definitions) Add(dd ...Def) {
+func (dl *deflist) Add(dd ...Def) {
 	dl.m.Lock()
 	defer dl.m.Unlock()
 	for _, d := range dd {
@@ -82,7 +82,7 @@ func (dl *Definitions) Add(dd ...Def) {
 }
 
 // Get will return a definition by name or nil if not found
-func (dl *Definitions) Get(n string) *Def {
+func (dl *deflist) Get(n string) *Def {
 	dl.m.RLock()
 	defer dl.m.RUnlock()
 	d, ok := dl.list[n]
@@ -93,7 +93,7 @@ func (dl *Definitions) Get(n string) *Def {
 }
 
 // RequireBuffer will return true if the action requires a buffer
-func (dl *Definitions) RequireBuffer(n string) bool {
+func (dl *deflist) RequireBuffer(n string) bool {
 	dl.m.RLock()
 	defer dl.m.RUnlock()
 	def := dl.Get(n)
@@ -104,7 +104,7 @@ func (dl *Definitions) RequireBuffer(n string) bool {
 }
 
 // RequireTarget will return true if the action requires a target
-func (dl *Definitions) RequireTarget(n string) bool {
+func (dl *deflist) RequireTarget(n string) bool {
 	dl.m.RLock()
 	defer dl.m.RUnlock()
 	def := dl.Get(n)
@@ -115,7 +115,7 @@ func (dl *Definitions) RequireTarget(n string) bool {
 }
 
 // ValidAction will return an error for an invalid action nil otherwise
-func (dl *Definitions) ValidAction(act Action, bufid string) error {
+func (dl *deflist) ValidAction(act Action, bufid string) error {
 	def := dl.Get(act.Name)
 	if def == nil {
 		return fmt.Errorf("Not found")
@@ -139,7 +139,7 @@ func (dl *Definitions) ValidAction(act Action, bufid string) error {
 }
 
 // ValidRequest will return an error for an invalid request nil otherwise
-func (dl *Definitions) ValidRequest(req Request) error {
+func (dl *deflist) ValidRequest(req Request) error {
 	for _, act := range req.Actions {
 		if err := dl.ValidAction(act, req.BufferID); err != nil {
 			return err
@@ -150,7 +150,7 @@ func (dl *Definitions) ValidRequest(req Request) error {
 
 // StrToAction will convert a string to an action
 // it will return an error if the action is not found
-func (dl *Definitions) StrToAction(n string) (Action, error) {
+func (dl *deflist) StrToAction(n string) (Action, error) {
 	act := Action{}
 	def := dl.Get(strings.ToLower(n))
 	if def == nil {
@@ -158,15 +158,4 @@ func (dl *Definitions) StrToAction(n string) (Action, error) {
 	}
 	act.Name = def.Name
 	return act, nil
-}
-
-// Def is a definition for an action
-type Def struct {
-	Name        string
-	NoReqBuffer bool
-	ReqTarget   bool
-	IsMovement  bool
-	ReqCount    bool
-	ReqLine     bool
-	ReqColumn   bool
 }

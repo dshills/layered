@@ -53,7 +53,8 @@ func (l *layer) OnMatch() []action.Action          { return l.onMatch }
 func (l *layer) OnNoMatch() []action.Action        { return l.onNoMatch }
 func (l *layer) OnPartialMatch() []action.Action   { return l.onPartial }
 func (l *layer) KeyActions() []KeyAction           { return l.keyActions }
-func (l *layer) Load(defs *action.Definitions, r io.Reader) error {
+
+func (l *layer) Load(defs action.Definitions, r io.Reader) error {
 	errs := []string{}
 	var err error
 	lay := layJSON{}

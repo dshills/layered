@@ -24,7 +24,12 @@ func StrToKey(s string) (r rune, k int, err error) {
 	if len(s) > 1 {
 		return 0, 0, fmt.Errorf("StrToKey: Unknown key %v", s)
 	}
-	r = []rune(s)[0]
+	for i, rr := range s {
+		if i > 0 {
+			break
+		}
+		r = rr
+	}
 	return
 }
 

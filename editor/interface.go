@@ -1,6 +1,8 @@
 package editor
 
-import "github.com/dshills/layered/action"
+import (
+	"github.com/dshills/layered/action"
+)
 
 // Editorer is an editor interface
 type Editorer interface {

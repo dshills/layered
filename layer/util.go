@@ -8,7 +8,7 @@ import (
 	"github.com/dshills/layered/key"
 )
 
-func convertActions(dl *action.Definitions, acts []actJSON) ([]action.Action, error) {
+func convertActions(dl action.Definitions, acts []actJSON) ([]action.Action, error) {
 	actions := []action.Action{}
 	errs := []string{}
 	for _, a := range acts {
