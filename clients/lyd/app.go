@@ -82,7 +82,7 @@ func (a *App) init() error {
 		a.screen.Fini()
 		return fmt.Errorf("App.init: Editor.New %v", err)
 	}
-	a.keyscanner = layer.NewInterpriter(a.actDefs, "normal")
+	a.keyscanner = layer.NewInterpreter(a.actDefs, "normal")
 	err = a.keyscanner.LoadDirectory(filepath.Join(rt, "layers"))
 	if err != nil {
 		a.screen.Fini()
@@ -216,7 +216,7 @@ func (a *App) handleKeyEvent(ev *tcell.EventKey) error {
 	if a.keyscanner == nil {
 		panic("handleKeyEvent: no interpritter")
 	}
-	acts := a.keyscanner.Match(k)
+	acts, _ := a.keyscanner.Match(k)
 	a.status.SetValue("layer", strings.ToUpper(a.keyscanner.Active().Name()))
 	a.Notify(a.keyscanner.Partial())
 

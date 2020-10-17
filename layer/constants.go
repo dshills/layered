@@ -8,6 +8,8 @@ const (
 	NoMatch MatchStatus = iota
 	PartialMatch
 	Match
+	ErrorMatch
+	CancelMatch
 )
 
 func (s MatchStatus) String() string {

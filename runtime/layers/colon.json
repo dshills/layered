@@ -4,7 +4,7 @@
 	"editable": true,
 	"waitForComplete": true,
 	"completeOnKey": "<cr>",
-	"onComplete": [{ "action": "RunCommand",  "target": "input"}, { "action": "ChangePrevLayer" }],
+	"onComplete": [{ "action": "ChangeLayer", "target": "previous" }],
 	"actions": []
 }
 

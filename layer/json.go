@@ -4,6 +4,7 @@ type layJSON struct {
 	Name               string     `json:"name"`
 	Editable           bool       `json:"editable"`
 	WaitForComplete    bool       `json:"waitForComplete"`
+	AlwaysPartial      bool       `json:"alwaysPartialMatch"`
 	PrevLayerOnKey     string     `json:"prevLayerOnKey"`
 	CompleteOnKey      string     `json:"completeOnKey"`
 	CancelOnKey        string     `json:"cancelOnKey"`

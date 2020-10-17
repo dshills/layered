@@ -81,7 +81,7 @@ func SpecialToString(k int) string {
 			return key
 		}
 	}
-	return "<unknown>"
+	return ""
 }
 
 func parseKeyString(s string) string {

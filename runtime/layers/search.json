@@ -1,10 +1,10 @@
 {
 	"name": "search",
-	"waitForComplete": false,
+	"alwaysPartialMatch": true,
 	"editable": true,
 	"prevLayerOnKey": "<esc>",
 	"completeOnKey": "<cr>",
-	"onPrintableKey": [{ "action": "Search",  "target": "input"}],
+	"onPartialMatch": [{ "action": "Search",  "target": "input"}],
 	"onComplete": [{ "action": "ChangePrevLayer" }],
 	"actions": []
 }

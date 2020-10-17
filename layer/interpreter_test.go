@@ -7,60 +7,30 @@ import (
 	"github.com/dshills/layered/key"
 )
 
-func TestInterp(t *testing.T) {
+func TestInterpeter(t *testing.T) {
 	rt := "/Users/dshills/Development/projects/layered/runtime/layers"
-	interp := NewInterpriter(action.New(), "normal")
+	interp := NewInterpreter(action.New(), "normal")
 	if err := interp.LoadDirectory(rt); err != nil {
 		t.Fatal(err)
 	}
-	test := [][]string{
-		{"$"},
-		{"0"},
-		{"^"},
-		{"b"},
-		{"%"},
-		{"e"},
-		{"G"},
-		{"g", "_"},
-		{"g", "g"},
-		{"h"},
-		{"j"},
-		{"k"},
-		{"l"},
-		{"N"},
-		{"n"},
-		{"W"},
-		{"w"},
-		{"a"},
-		{"A"},
-		{"I"},
-		{"D"},
-		{"d", "d"},
-		{"x"},
-		{"X"},
-		{"O"},
-		{"o"},
-		{">", ">"},
-		{"<", "<"},
-		{"H"},
-		{"L"},
-		{"M"},
-		{"z", "z"},
-	}
 
 	acts := []action.Action{}
-	for _, kk := range test {
-		for _, k := range kk {
-			ak, err := key.StrToKeyer(k)
-			if err != nil {
-				t.Error(err)
-				continue
-			}
-			acts = interp.Match(ak)
+	var err error
+	lay := interp.Active()
+	for _, ka := range lay.KeyActions() {
+		acts, err = interp.Match(ka.Keys()...)
+		if err != nil {
+			t.Error(err)
+			continue
 		}
 		if len(acts) == 0 {
-			t.Errorf("Expected actions got none for %v", kk)
+			t.Errorf("Expected actions got none for %v", ka.Keys())
 		}
+		k, err := key.StrToKeyer("<esc>")
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+		interp.Match(k)
 	}
-
 }

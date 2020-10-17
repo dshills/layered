@@ -44,7 +44,7 @@ type Layer interface {
 
 	KeyActions() []KeyAction
 
-	Match(keys []key.Keyer) ([]action.Action, MatchStatus)
+	Match(keys ...key.Keyer) MatchInfo
 	MatchSpecial(k key.Keyer) ([]action.Action, bool)
 
 	Load(dl action.Definitions, r io.Reader) error
@@ -54,7 +54,7 @@ type Layer interface {
 type Interpriter interface {
 	Layers() []Layer
 	Active() Layer
-	Match(k ...key.Keyer) []action.Action
+	Match(k ...key.Keyer) ([]action.Action, error)
 	Partial() string
 	Status() MatchStatus
 	Add(...Layer)

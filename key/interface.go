@@ -5,4 +5,5 @@ type Keyer interface {
 	Rune() rune
 	Key() int
 	Eq(Keyer) bool
+	String() string
 }

@@ -12,81 +12,184 @@ import (
 	"github.com/dshills/layered/logger"
 )
 
-type interpriter struct {
+type interpreter struct {
+	status       MatchStatus
 	layers       []Layer
-	partial      []key.Keyer
-	lastStatus   MatchStatus
-	stack        []Layer
 	active       Layer
-	lastPartial  string
+	prevPartial  []key.Keyer
+	partial      []key.Keyer
 	actDefs      action.Definitions
+	layerStack   []Layer
 	defaultLayer string
 }
 
-func (i *interpriter) push(l Layer) {
-	if len(i.stack) == 0 {
-		i.stack = append(i.stack, l)
+func (in *interpreter) Match(ks ...key.Keyer) ([]action.Action, error) {
+	return in._match([]action.Action{}, ks)
+}
+
+func (in *interpreter) _match(pacts []action.Action, ks []key.Keyer) ([]action.Action, error) {
+	acts := pacts
+	if in.active == nil {
+		in.status = ErrorMatch
+		return acts, fmt.Errorf("No active layer")
+	}
+	if len(ks) == 0 {
+		in.status = ErrorMatch
+		return acts, fmt.Errorf("Nothing to process")
+	}
+
+	in.addPartial(ks...)
+
+	mi := in.active.Match(in.partial...)
+	in.status = mi.Status
+	logger.Debugf("_match: %q => %q Val: %q Rem: %q %+v", in.partial, in.status, in.partToString(mi.MatchValue), in.partToString(mi.Remaining), mi.Actions)
+
+	if in.status != PartialMatch {
+		in.clearPartial()
+	}
+	la := in.fortifyActions(mi.Actions, in.partToString(mi.MatchValue))
+	acts = append(acts, la...)
+	if len(mi.Remaining) > 0 {
+		return in._match(acts, mi.Remaining)
+	}
+	return acts, nil
+}
+
+func (in *interpreter) fortifyActions(acts []action.Action, part string) []action.Action {
+	pre := []action.Action{}
+	post := []action.Action{}
+	active := in.active
+	for i, act := range acts {
+		if act.Target == "input" {
+			acts[i].Target = part
+		}
+		if act.Name == action.ChangeLayer {
+			if err := in.changeLayer(act.Target); err != nil {
+				logger.Errorf("fortifyActions: %v", err)
+				continue
+			}
+			pre = append(pre, active.OnExitLayer()...)
+			post = append(post, in.active.OnEnterLayer()...)
+		}
+		if act.Name == action.ChangePrevLayer {
+			if err := in.changeLayer("previous"); err != nil {
+				logger.Errorf("fortifyActions: %v", err)
+				continue
+			}
+			pre = append(pre, active.OnExitLayer()...)
+			post = append(post, in.active.OnEnterLayer()...)
+		}
+	}
+	fin := make([]action.Action, len(pre)+len(acts)+len(post), len(pre)+len(acts)+len(post))
+	idx := 0
+	for i := range pre {
+		fin[idx] = pre[i]
+		idx++
+	}
+	for i := range acts {
+		fin[idx] = acts[i]
+		idx++
+	}
+	for i := range post {
+		fin[idx] = post[i]
+		idx++
+	}
+	return fin
+}
+
+func (in *interpreter) changeLayer(n string) error {
+	if strings.ToLower(n) == "previous" {
+		lay := in.pop()
+		if lay == nil {
+			return fmt.Errorf("Layer stack is empty")
+		}
+		in.active = lay
+		return nil
+	}
+
+	lay := in.getLayer(n)
+	if lay == nil {
+		return fmt.Errorf("Layer not found")
+	}
+	in.push(in.active)
+	in.active = lay
+	return nil
+}
+
+func (in *interpreter) push(l Layer) {
+	if l == nil {
 		return
 	}
-	if i.stack[len(i.stack)-1].Name() == l.Name() {
+	if len(in.layerStack) == 0 {
+		in.layerStack = append(in.layerStack, l)
+		return
+	}
+	logger.Debugf("push: %v", in.layerStack)
+	if in.layerStack[len(in.layerStack)-1].Name() == l.Name() {
 		return
 	}
 	if l.NotStacked() {
 		return
 	}
-	i.stack = append(i.stack, l)
+	in.layerStack = append(in.layerStack, l)
 }
 
-func (i *interpriter) pop() Layer {
-	if len(i.stack) == 1 {
-		return i.stack[0]
+func (in *interpreter) pop() Layer {
+	if len(in.layerStack) == 0 {
+		return nil
 	}
-	var l Layer
-	l, i.stack = i.stack[len(i.stack)-1], i.stack[:len(i.stack)-1]
-	return l
+	var x Layer
+	x, in.layerStack = in.layerStack[len(in.layerStack)-1], in.layerStack[:len(in.layerStack)-1]
+	return x
 }
 
-func (i *interpriter) Layers() []Layer { return i.layers }
-
-func (i *interpriter) Active() Layer {
-	return i.active
-}
-
-func (i *interpriter) addPartial(kk ...key.Keyer) {
-	i.partial = append(i.partial, kk...)
-}
-
-func (i *interpriter) Partial() string {
-	str := ""
-	for _, k := range i.partial {
-		if k.Rune() != 0 {
-			str += string(k.Rune())
+func (in *interpreter) getLayer(n string) Layer {
+	for _, l := range in.layers {
+		if l.Name() == n {
+			return l
 		}
 	}
-	return str
-}
-func (i *interpriter) Status() MatchStatus { return i.lastStatus }
-func (i *interpriter) Add(ls ...Layer) {
-	for _, l := range ls {
-		i.layers = append(i.layers, l)
-	}
+	return nil
 }
 
-func (i *interpriter) Remove(name string) {
-	idx := -1
-	for i, l := range i.layers {
-		if l.Name() == name {
-			idx = i
-			break
+func (in *interpreter) Layers() []Layer {
+	return in.layers
+}
+
+func (in *interpreter) Active() Layer {
+	return in.active
+}
+
+func (in *interpreter) Partial() string {
+	return in.partToString(in.partial)
+}
+
+func (in *interpreter) partToString(p []key.Keyer) string {
+	builder := strings.Builder{}
+	for _, p := range p {
+		builder.WriteString(p.String())
+	}
+	return builder.String()
+}
+
+func (in *interpreter) Status() MatchStatus {
+	return in.status
+}
+
+func (in *interpreter) Add(ll ...Layer) {
+	in.layers = append(in.layers, ll...)
+}
+
+func (in *interpreter) Remove(name string) {
+	for i := range in.layers {
+		if in.layers[i].Name() == name {
+			in.layers = append(in.layers[:i], in.layers[i+1:]...)
+			return
 		}
 	}
-	if idx != -1 {
-		i.layers[idx] = i.layers[len(i.layers)-1]
-		i.layers = i.layers[:len(i.layers)-1]
-	}
 }
 
-func (i *interpriter) LoadDirectory(dir string) error {
+func (in *interpreter) LoadDirectory(dir string) error {
 	fi, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return err
@@ -104,16 +207,15 @@ func (i *interpriter) LoadDirectory(dir string) error {
 			}
 			defer file.Close()
 			lay := layer{}
-			if err := lay.Load(i.actDefs, file); err != nil {
+			if err := lay.Load(in.actDefs, file); err != nil {
 				errs = append(errs, err.Error())
 				continue
 			}
-			i.Add(&lay)
+			in.Add(&lay)
 		}
 	}
-	if i.active == nil {
-		i.active = i.getLayer(i.defaultLayer)
-		i.push(i.active)
+	if in.active == nil {
+		in.changeLayer(in.defaultLayer)
 	}
 	if len(errs) > 0 {
 		return fmt.Errorf("Interpriter.LoadDirectory: %v", strings.Join(errs, ", "))
@@ -121,88 +223,16 @@ func (i *interpriter) LoadDirectory(dir string) error {
 	return nil
 }
 
-func (i *interpriter) Match(keys ...key.Keyer) []action.Action {
-	if i.active == nil {
-		logger.Errorf("No default layer set")
-		return nil
-	}
-	if len(keys) == 0 {
-		return nil
-	}
-	i.addPartial(keys...)
-
-	ak := keys[len(keys)-1]
-	acts, end := i.active.MatchSpecial(ak)
-	if end {
-		i.clearPartial()
-		return i.processActions(acts)
-	}
-
-	aa, st := i.active.Match(i.partial)
-	if st != PartialMatch {
-		i.clearPartial()
-	}
-	acts = append(acts, aa...)
-
-	return i.processActions(acts)
+func (in *interpreter) addPartial(ks ...key.Keyer) {
+	in.partial = append(in.partial, ks...)
 }
 
-func (i *interpriter) processActions(acts []action.Action) []action.Action {
-	active := i.Active()
-	pre := []action.Action{}
-	post := []action.Action{}
-	for ii, act := range acts {
-		if act.Name == action.ChangeLayer {
-			i.clearPartial()
-			pre = append(pre, active.OnExitLayer()...)
-			active = i.getLayer(act.Target)
-			if active == nil {
-				active = i.stack[0]
-			}
-			i.push(i.active)
-			i.active = active
-			post = append(post, i.active.OnEnterLayer()...)
-			edact := action.Action{Name: action.CursorMovePast, Target: "false"}
-			if i.active.AllowCursorPastEnd() {
-				edact.Target = "true"
-			}
-			// Add cursor in pre so edit commands have it
-			pre = append(pre, edact)
-		}
-
-		if act.Target == "input" {
-			logger.Debugf("Target==input, %v", i.lastPartial)
-			acts[ii].Target = i.lastPartial
-		}
-
-		acts[ii].Line = -1
-		acts[ii].Column = -1
-		acts[ii].Count = 0
-	}
-	acts = append(pre, acts...)
-	acts = append(acts, post...)
-	return acts
+func (in *interpreter) clearPartial() {
+	copy(in.prevPartial, in.partial)
+	in.partial = []key.Keyer{}
 }
 
-func (i *interpriter) getLayer(name string) Layer {
-	name = strings.ToLower(name)
-	if name == "previous" {
-		return i.pop()
-	}
-	for _, l := range i.layers {
-		if l.Name() == name {
-			return l
-		}
-	}
-	return nil
-}
-
-func (i *interpriter) clearPartial() {
-	i.lastPartial = i.Partial()
-	i.partial = []key.Keyer{}
-}
-
-// NewInterpriter returns an interpriter
-func NewInterpriter(ad action.Definitions, deflayer string) Interpriter {
-	return &interpriter{actDefs: ad, defaultLayer: deflayer}
+// NewInterpreter returns an interpreter
+func NewInterpreter(ad action.Definitions, deflayer string) Interpriter {
+	return &interpreter{actDefs: ad, defaultLayer: deflayer}
 }

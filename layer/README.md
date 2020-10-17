@@ -19,7 +19,7 @@ Factory will return an Interpriter
 type Interpriter interface {
 	Layers() []Layer
 	Active() Layer
-	Match(k ...key.Keyer) []action.Action
+	Match(k ...key.Keyer) ([]action.Action, error)
 	Partial() string
 	Status() MatchStatus
 	Add(...Layer)
@@ -30,12 +30,12 @@ type Interpriter interface {
 
 Interpriter will convert keystrokes into actions
 
-#### func  NewInterpriter
+#### func  NewInterpreter
 
 ```go
-func NewInterpriter(ad action.Definitions, deflayer string) Interpriter
+func NewInterpreter(ad action.Definitions, deflayer string) Interpriter
 ```
-NewInterpriter returns an interpriter
+NewInterpreter returns an interpreter
 
 #### type KeyAction
 
@@ -85,7 +85,7 @@ type Layer interface {
 
 	KeyActions() []KeyAction
 
-	Match(keys []key.Keyer) ([]action.Action, MatchStatus)
+	Match(keys ...key.Keyer) MatchInfo
 	MatchSpecial(k key.Keyer) ([]action.Action, bool)
 
 	Load(dl action.Definitions, r io.Reader) error
@@ -101,6 +101,19 @@ func NewLayer(name string) Layer
 ```
 NewLayer will return a Layer
 
+#### type MatchInfo
+
+```go
+type MatchInfo struct {
+	Actions    []action.Action
+	Status     MatchStatus
+	MatchValue []key.Keyer
+	Remaining  []key.Keyer
+}
+```
+
+MatchInfo is information about the match
+
 #### type MatchStatus
 
 ```go
@@ -114,6 +127,8 @@ const (
 	NoMatch MatchStatus = iota
 	PartialMatch
 	Match
+	ErrorMatch
+	CancelMatch
 )
 ```
 ParseStatus constants

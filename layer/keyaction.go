@@ -21,16 +21,20 @@ func (k *keyact) Actions() []action.Action {
 
 func (k *keyact) Match(keys []key.Keyer) MatchStatus {
 	if len(keys) > len(k.keys) {
+		//logger.Debugf("Match: NoMatch len %v %v %v", len(keys), len(k.keys), keys)
 		return NoMatch
 	}
 	for i := range keys {
 		if !k.keys[i].Eq(keys[i]) {
+			//logger.Debugf("Match: NoMatch key %v %v %v", keys[i], k.keys[i], keys)
 			return NoMatch
 		}
 	}
 	if len(keys) == len(k.keys) {
+		//logger.Debugf("Match: Match key %v %v", keys, k.keys)
 		return Match
 	}
+	//logger.Debugf("Match: Partial %v", keys)
 	return PartialMatch
 }
 
