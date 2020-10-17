@@ -8,6 +8,11 @@
 		{ "keys": [ "@" ], "actions":[ { "action": "RunMacro", "target": "macro" } ]},
 		{ "keys": [ "m" ], "actions":[ { "action": "SetMark", "target": "mark" } ]},
 		{ "keys": [ "'" ], "actions":[ { "action": "Move", "target": "mark" } ]},
+		{ "keys": [ "-", "s" ], "actions":[ { "action": "TypeHighlight", "target": "string" } ]},
+		{ "keys": [ "-", "c" ], "actions":[ { "action": "TypeHighlight", "target": "comment" } ]},
+		{ "keys": [ "-", "t" ], "actions":[ { "action": "TypeHighlight", "target": "statement" } ]},
+		{ "keys": [ "-", "k" ], "actions":[ { "action": "TypeHighlight", "target": "keyword" } ]},
+		{ "keys": [ "-", "-" ], "actions":[ { "action": "TypeHighlight", "target": "" } ]},
 
 		{"keys": [ ":" ], "actions":[ { "action": "ChangeLayer", "target": "colon" } ], "name": "ChangeToColon" },
 		{"keys": [ "/" ], "actions":[ { "action": "ChangeLayer", "target": "search" } ], "name": "ChangeToSearch" },

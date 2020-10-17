@@ -10,18 +10,25 @@ import (
 	"sync"
 
 	"github.com/dshills/layered/conf"
+	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/textstore"
 )
 
 // Matcher is syntax matcher
 type Matcher struct {
-	rules  []Ruler
-	config *conf.Configuration
+	rules    []Ruler
+	config   *conf.Configuration
+	typeHigh bool
 }
 
 // Parse will return a list of results for the text store
 // optionally a list of rule groups to use
 func (m *Matcher) Parse(ts textstore.TextStorer, groups ...string) []Resulter {
+	if len(groups) > 0 {
+		m.typeHigh = true
+	} else {
+		m.typeHigh = false
+	}
 	results := []Resulter{}
 	wg := sync.WaitGroup{}
 	for _, rule := range m.filterRules(groups) {
@@ -33,6 +40,7 @@ func (m *Matcher) Parse(ts textstore.TextStorer, groups ...string) []Resulter {
 	}
 	wg.Wait()
 	results = m.dependencies(results)
+	results = m.typeHighTok(results)
 	sort.Sort(resultList(results))
 	return results
 }
@@ -48,6 +56,17 @@ func (m *Matcher) FilterResults(results []Resulter, groups ...string) []Resulter
 		}
 	}
 	return nr
+}
+
+func (m *Matcher) typeHighTok(res []Resulter) []Resulter {
+	if !m.typeHigh {
+		logger.Debugf("Not highlight")
+		return res
+	}
+	for _, r := range res {
+		r.SetToken("type-highlight")
+	}
+	return res
 }
 
 func (m *Matcher) filterRules(groups []string) []Ruler {

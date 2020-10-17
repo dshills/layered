@@ -69,7 +69,7 @@
 		]
 	},
 	{
-		"group": "repeat.goRepeat",
+		"group": "keyword.repeat.goRepeat",
 		"type": "keyword",
 		"keywords": [
 			"for",
@@ -223,13 +223,13 @@
 		"skip": "\\\\\\\\|\\\\'"
 	},
 	{
-		"group": "goBlock",
+		"group": "block.goBlock",
 		"type": "region",
 		"start": "{",
 		"end": "}"
 	},
 	{
-		"group": "goParen",
+		"group": "block.goParen",
 		"type": "region",
 		"start": "\\(",
 		"end": "\\)"

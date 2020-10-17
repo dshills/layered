@@ -55,7 +55,6 @@ func (b *Buffer) SetFilename(n string) {
 	if err != nil {
 		return
 	}
-	logger.Debugf("File %v FT %v", n, ft)
 	b.SetFiletype(ft)
 }
 
@@ -65,7 +64,9 @@ func (b *Buffer) Filetype() string { return b.filetype }
 // SetFiletype will set the buffer's file type
 func (b *Buffer) SetFiletype(ft string) {
 	b.filetype = ft
-	b.mat.LoadFileType(ft)
+	if err := b.mat.LoadFileType(ft); err != nil {
+		logger.Errorf("Buffer.SetFiletype: %v", err)
+	}
 	b.matchSyntax()
 }
 
@@ -89,17 +90,23 @@ func (b *Buffer) listenUpdates() {
 	}
 }
 
-func (b *Buffer) matchSyntax() {
-	b.syntaxResults = b.mat.Parse(b.txt)
+func (b *Buffer) matchSyntax(fgrps ...string) {
+	b.syntaxResults = b.mat.Parse(b.txt, fgrps...)
 }
 
 // SyntaxResults returns the syntax scanning results
-func (b *Buffer) SyntaxResults() []syntax.Resulter {
+func (b *Buffer) SyntaxResults(update bool, fgrps ...string) []syntax.Resulter {
+	if len(fgrps) > 0 || update {
+		b.matchSyntax(fgrps...)
+	}
 	return b.syntaxResults
 }
 
 // SyntaxResultsRange returns the syntax scanning results
-func (b *Buffer) SyntaxResultsRange(ln, cnt int) []syntax.Resulter {
+func (b *Buffer) SyntaxResultsRange(ln, cnt int, update bool, fgrps ...string) []syntax.Resulter {
+	if len(fgrps) > 0 || update {
+		b.matchSyntax(fgrps...)
+	}
 	mx := ln + cnt
 	res := []syntax.Resulter{}
 	for _, r := range b.syntaxResults {

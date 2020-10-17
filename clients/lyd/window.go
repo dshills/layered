@@ -189,6 +189,7 @@ func (w *Window) preDrawGen() {
 }
 
 func (w *Window) preDraw() {
+	logger.Debugf("preDraw entries %v", len(w.syntax))
 	w.preDrawClear()
 
 	minl := w.offset

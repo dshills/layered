@@ -5,6 +5,8 @@
 	"waitForComplete": true,
 	"completeOnKey": "<cr>",
 	"onComplete": [{ "action": "ChangeLayer", "target": "previous" }],
-	"actions": []
+	"actions": [
+		{ "keys": [ "q" ], "actions":[ { "action": "Quit" } ]}
+	]
 }
 

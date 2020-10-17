@@ -67,11 +67,16 @@ func (a *App) init() error {
 	}
 	a.screen.EnableMouse()
 
+	// Colors
 	clrs := palette.NewColorList(config)
-	clrs.Load(filepath.Join(rt, "config", "colors.json"))
+	if err := clrs.Load(filepath.Join(rt, "config", "colors.json")); err != nil {
+		a.screen.Fini()
+		return fmt.Errorf("App.init: %v", err)
+	}
+
+	// Palette
 	a.pal = palette.NewPalette()
-	err = a.pal.Load(filepath.Join(rt, "palette", "default.json"), clrs)
-	if err != nil {
+	if err = a.pal.Load(filepath.Join(rt, "palette", "default.json"), clrs); err != nil {
 		a.screen.Fini()
 		return fmt.Errorf("App.init: %v", err)
 	}
@@ -103,7 +108,6 @@ func (a *App) init() error {
 	a.notice.Notice("I'm a notice bar")
 
 	a.reqC <- action.NewRequest("", action.Action{Name: action.NewBuffer})
-	logger.Debugf("%v", a)
 	return nil
 }
 
@@ -152,7 +156,7 @@ func logRequest(req action.Request) {
 
 func logResponse(resp editor.Response) {
 	builder := strings.Builder{}
-	builder.WriteString(fmt.Sprintf("Response: %q, Line: %v, Col: %v", resp.Action, resp.Line, resp.Column))
+	builder.WriteString(fmt.Sprintf("Response: %v, Line: %v, Col: %v Syntax %v Search %v", resp.Action, resp.Line, resp.Column, len(resp.Syntax), len(resp.Search)))
 	if resp.ContentChanged {
 		builder.WriteString(", Content changed")
 	}

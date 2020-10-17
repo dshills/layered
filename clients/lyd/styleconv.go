@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/dshills/layered/logger"
 	"github.com/dshills/layered/palette"
 	"github.com/gdamore/tcell"
 )
@@ -8,6 +9,7 @@ import (
 func styleEntry(pal *palette.Palette, name string, def tcell.Style) tcell.Style {
 	ent, err := pal.Entry(name)
 	if err != nil {
+		logger.Errorf("styleEntry: %v", err)
 		return def
 	}
 	return entryToStyle(ent)

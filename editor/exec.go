@@ -72,8 +72,17 @@ func (e *Editor) exec(req action.Request, respC chan Response) {
 			resp.ContentChanged = false
 
 		// Syntax
+		case action.TypeHighlight:
+			if act.Target == "" {
+				resp.Syntax = buf.SyntaxResults(true)
+			} else {
+				fgrps := strings.Split(act.Target, ",")
+				resp.Syntax = buf.SyntaxResults(true, fgrps...)
+			}
+			resp.ContentChanged = true
+
 		case action.Syntax:
-			resp.Syntax = buf.SyntaxResults()
+			resp.Syntax = buf.SyntaxResults(false)
 			resp.ContentChanged = false
 
 		// File / buffer
@@ -316,7 +325,7 @@ func getInfo(req action.Request, buf buffer.Bufferer, resp Response) Response {
 	resp.NumLines = buf.TextStore().NumLines()
 	if resp.ContentChanged {
 		resp.Content, _ = buf.TextStore().LineRange(req.LineOffset, req.LineCount)
-		resp.Syntax = buf.SyntaxResultsRange(req.LineOffset, req.LineCount)
+		resp.Syntax = buf.SyntaxResultsRange(req.LineOffset, req.LineCount, false)
 		resp.Search = buf.SearchResults()
 	}
 	return resp

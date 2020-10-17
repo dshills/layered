@@ -11,6 +11,7 @@
 	{ "name": "matchpair", "foreground": "None", "background": "TermSlateBlue3"},
 	{ "name": "sidebar-dir", "foreground": "TermSteelBlue1", "background": "None" },
 	{ "name": "sidebar",  "foreground": "whiteGray", "background": "None" },
+	{ "name": "type-highlight", "foreground": "TermSteelBlue1", "background": "None" },
 
 	{ "name": "sbar-default", "foreground": "white", "background": "sbarback" },
 	{ "name": "sbar-line", "foreground": "black", "background": "lcback", "modifier": "bold"},

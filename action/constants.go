@@ -81,5 +81,6 @@ const (
 	SetMark         = "setmark"
 	ChangeLayer     = "changelayer"
 	ChangePrevLayer = "changeprevlayer"
+	TypeHighlight   = "typehighlight"
 	Quit            = "quit"
 )

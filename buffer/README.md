@@ -305,14 +305,14 @@ StopGroupUndo will stop grouping undos
 #### func (*Buffer) SyntaxResults
 
 ```go
-func (b *Buffer) SyntaxResults() []syntax.Resulter
+func (b *Buffer) SyntaxResults(update bool, fgrps ...string) []syntax.Resulter
 ```
 SyntaxResults returns the syntax scanning results
 
 #### func (*Buffer) SyntaxResultsRange
 
 ```go
-func (b *Buffer) SyntaxResultsRange(ln, cnt int) []syntax.Resulter
+func (b *Buffer) SyntaxResultsRange(ln, cnt int, update bool, fgrps ...string) []syntax.Resulter
 ```
 SyntaxResultsRange returns the syntax scanning results
 
@@ -349,8 +349,8 @@ type Bufferer interface {
 	Mover
 	TextEditor
 	Selector
-	SyntaxResults() []syntax.Resulter
-	SyntaxResultsRange(ln, cnt int) []syntax.Resulter
+	SyntaxResults(update bool, filterGroups ...string) []syntax.Resulter
+	SyntaxResultsRange(ln, cnt int, update bool, filterGroups ...string) []syntax.Resulter
 	SearchResults() []SearchResult
 	Search(string) ([]SearchResult, error)
 }

@@ -23,16 +23,18 @@ type Palette struct {
 
 // Entry will return a palette entry by name
 func (p *Palette) Entry(name string) (Entry, error) {
-	if name == "" {
-		return Entry{}, fmt.Errorf("Palette.Entry: %v Not found", name)
-	}
+	org := name
 	p.m.RLock()
 	defer p.m.RUnlock()
-	e, ok := p.entries[strings.ToLower(name)]
-	if !ok {
-		return p.Entry(generalize(name))
+	for name != "" {
+		e, ok := p.entries[strings.ToLower(name)]
+		if !ok {
+			name = generalize(name)
+			continue
+		}
+		return e, nil
 	}
-	return e, nil
+	return Entry{}, fmt.Errorf("Palette.Entry: %v Not found", org)
 }
 
 // HasPrefix will return palette items with names starting with pre

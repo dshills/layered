@@ -59,6 +59,7 @@ func New() Definitions {
 		Def{Name: StopRecordMacro},
 		Def{Name: StopSelection},
 		Def{Name: Syntax},
+		Def{Name: TypeHighlight},
 		Def{Name: Undo},
 		Def{Name: Up},
 		Def{Name: Yank},

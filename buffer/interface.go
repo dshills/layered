@@ -22,8 +22,8 @@ type Bufferer interface {
 	Mover
 	TextEditor
 	Selector
-	SyntaxResults() []syntax.Resulter
-	SyntaxResultsRange(ln, cnt int) []syntax.Resulter
+	SyntaxResults(update bool, filterGroups ...string) []syntax.Resulter
+	SyntaxResultsRange(ln, cnt int, update bool, filterGroups ...string) []syntax.Resulter
 	SearchResults() []SearchResult
 	Search(string) ([]SearchResult, error)
 }
