@@ -42,7 +42,7 @@ func (in *interpreter) _match(pacts []action.Action, ks []key.Keyer) ([]action.A
 
 	mi := in.active.Match(in.partial...)
 	in.status = mi.Status
-	logger.Debugf("_match: %q => %q Val: %q Rem: %q %+v", in.partial, in.status, in.partToString(mi.MatchValue), in.partToString(mi.Remaining), mi.Actions)
+	//logger.Debugf("_match: %q => %q Val: %q Rem: %q %+v", in.partial, in.status, in.partToString(mi.MatchValue), in.partToString(mi.Remaining), mi.Actions)
 
 	if in.status != PartialMatch {
 		in.clearPartial()
@@ -124,7 +124,6 @@ func (in *interpreter) push(l Layer) {
 		in.layerStack = append(in.layerStack, l)
 		return
 	}
-	logger.Debugf("push: %v", in.layerStack)
 	if in.layerStack[len(in.layerStack)-1].Name() == l.Name() {
 		return
 	}
